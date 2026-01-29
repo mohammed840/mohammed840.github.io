@@ -6,9 +6,20 @@
 
   function typesetIn(el) {
     if (!window.MathJax || !window.MathJax.typesetPromise) return;
-    window.MathJax.typesetPromise([el]).catch(function () {
-      // no-op
-    });
+
+    var doTypeset = function () {
+      window.MathJax.typesetPromise([el]).catch(function () {
+        // no-op
+      });
+    };
+
+    // If MathJax is still initializing, wait for it.
+    if (window.MathJax.startup && window.MathJax.startup.promise) {
+      window.MathJax.startup.promise.then(doTypeset).catch(doTypeset);
+      return;
+    }
+
+    doTypeset();
   }
 
   ready(function () {
@@ -25,9 +36,16 @@
 
     // Also typeset once on load in case some math is visible immediately.
     if (window.MathJax && window.MathJax.typesetPromise) {
-      window.MathJax.typesetPromise().catch(function () {
-        // no-op
-      });
+      var initial = function () {
+        window.MathJax.typesetPromise().catch(function () {
+          // no-op
+        });
+      };
+      if (window.MathJax.startup && window.MathJax.startup.promise) {
+        window.MathJax.startup.promise.then(initial).catch(initial);
+      } else {
+        initial();
+      }
     }
   });
 })();
