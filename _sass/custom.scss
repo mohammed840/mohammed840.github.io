@@ -1,3 +1,14 @@
 .post-header p { margin: 0.25rem 0; }
 .post-header a { text-decoration: none; }
 .post-header a:hover { text-decoration: underline; }
+
+ .wrapper { max-width: 1180px; }
+
+ code { background: transparent; color: #111; padding: 0; }
+ pre { background: transparent; color: #111; border: 0; }
+ pre code { background: transparent; color: #111; }
+ .highlighter-rouge .highlight { background: transparent; }
+ .highlight { background: transparent; }
+ .sourceCode { background: transparent; }
+ pre.sourceCode { background: transparent; }
+ code.sourceCode { background: transparent; }
