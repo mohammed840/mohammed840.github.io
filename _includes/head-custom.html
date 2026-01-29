@@ -2,6 +2,7 @@
   window.MathJax = {
     tex: {
       packages: {"[+]": ["ams"]},
+      tags: "ams",
       inlineMath: [["$", "$"], ["\\(", "\\)"]],
       displayMath: [["$$", "$$"], ["\\[", "\\]"]],
       processEscapes: true
@@ -11,6 +12,10 @@
     }
   };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script
+  defer
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  onload="window.__mathjax_ready__ = true; window.dispatchEvent(new Event('mathjax-ready'));"
+></script>
 
 <script defer src="{{ "/assets/js/mathjax-details.js" | relative_url }}"></script>

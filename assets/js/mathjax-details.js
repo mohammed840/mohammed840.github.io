@@ -4,8 +4,14 @@
     else document.addEventListener("DOMContentLoaded", fn);
   }
 
+  var pending = new Set();
+
   function typesetIn(el) {
-    if (!window.MathJax || !window.MathJax.typesetPromise) return;
+    // If MathJax isn't ready yet, remember this element and retry when ready.
+    if (!window.MathJax || !window.MathJax.typesetPromise) {
+      pending.add(el);
+      return;
+    }
 
     var doTypeset = function () {
       window.MathJax.typesetPromise([el]).catch(function () {
@@ -22,6 +28,27 @@
     doTypeset();
   }
 
+  function flushPending() {
+    if (!window.MathJax || !window.MathJax.typesetPromise) return;
+    if (pending.size === 0) return;
+    var els = Array.from(pending);
+    pending.clear();
+    // Typeset all pending containers.
+    if (window.MathJax.startup && window.MathJax.startup.promise) {
+      window.MathJax.startup.promise
+        .then(function () {
+          return window.MathJax.typesetPromise(els);
+        })
+        .catch(function () {
+          // no-op
+        });
+      return;
+    }
+    window.MathJax.typesetPromise(els).catch(function () {
+      // no-op
+    });
+  }
+
   ready(function () {
     document.addEventListener(
       "toggle",
@@ -33,6 +60,9 @@
       },
       true
     );
+
+    // When MathJax finishes loading, typeset anything that was expanded early.
+    window.addEventListener("mathjax-ready", flushPending);
 
     // Also typeset once on load in case some math is visible immediately.
     if (window.MathJax && window.MathJax.typesetPromise) {
@@ -46,6 +76,11 @@
       } else {
         initial();
       }
+    }
+
+    // If MathJax was already loaded before this script ran.
+    if (window.__mathjax_ready__) {
+      flushPending();
     }
   });
 })();
