@@ -10,6 +10,32 @@ layout: default
     {% if page.venue %}<p><strong>Venue:</strong> {{ page.venue }}</p>{% endif %}
     {% if page.year %}<p><strong>Year:</strong> {{ page.year }}</p>{% endif %}
 
+    {% if page.tldr %}
+      <p><strong>TL;DR:</strong> {{ page.tldr }}</p>
+    {% endif %}
+
+    {% if page.highlights %}
+      <div style="margin: 0.75rem 0;">
+        <strong>Highlights</strong>
+        <ul>
+          {% for item in page.highlights %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if page.contributions %}
+      <div style="margin: 0.75rem 0;">
+        <strong>Key contributions</strong>
+        <ul>
+          {% for item in page.contributions %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
     <p>
       {% if page.pdf %}
         {% assign pdf_href = page.pdf %}
