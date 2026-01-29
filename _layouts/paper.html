@@ -1,0 +1,54 @@
+---
+layout: default
+---
+
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title }}</h1>
+
+    {% if page.authors %}<p><strong>Authors:</strong> {{ page.authors }}</p>{% endif %}
+    {% if page.venue %}<p><strong>Venue:</strong> {{ page.venue }}</p>{% endif %}
+    {% if page.year %}<p><strong>Year:</strong> {{ page.year }}</p>{% endif %}
+
+    <p>
+      {% if page.pdf %}
+        {% assign pdf_href = page.pdf %}
+        {% unless pdf_href contains "://" %}{% assign pdf_href = pdf_href | relative_url %}{% endunless %}
+        <a href="{{ pdf_href }}">PDF</a>
+      {% endif %}
+      {% if page.code %}
+        {% assign code_href = page.code %}
+        {% unless code_href contains "://" %}{% assign code_href = code_href | relative_url %}{% endunless %}
+        {% if page.pdf %} | {% endif %}<a href="{{ code_href }}">Code</a>
+      {% endif %}
+      {% if page.slides %}
+        {% assign slides_href = page.slides %}
+        {% unless slides_href contains "://" %}{% assign slides_href = slides_href | relative_url %}{% endunless %}
+        {% if page.pdf or page.code %} | {% endif %}<a href="{{ slides_href }}">Slides</a>
+      {% endif %}
+    </p>
+
+    {% if page.pdf %}
+      <div style="margin: 1rem 0;">
+        <iframe
+          title="{{ page.title }} PDF"
+          src="{{ pdf_href }}#view=FitH"
+          style="width: 100%; height: 85vh; border: 1px solid #e5e7eb; border-radius: 8px;"
+          loading="lazy"
+        ></iframe>
+        <p style="margin-top: 0.5rem;">
+          If the embedded viewer doesn’t load, open the PDF directly:
+          <a href="{{ pdf_href }}">{{ pdf_href }}</a>
+        </p>
+      </div>
+    {% endif %}
+
+    {% if page.abstract %}
+      <p>{{ page.abstract }}</p>
+    {% endif %}
+  </header>
+
+  <div class="post-content">
+    {{ content }}
+  </div>
+</article>

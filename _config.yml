@@ -1,0 +1,22 @@
+title: Research Papers
+description: Publications and research notes
+url: "https://mohammed840.github.io"
+baseurl: "/research-papers"
+theme: minima
+markdown: kramdown
+kramdown:
+  input: GFM
+collections:
+  papers:
+    output: true
+    permalink: /papers/:name/
+defaults:
+  - scope:
+      path: ""
+      type: papers
+    values:
+      layout: paper
+  - scope:
+      path: ""
+    values:
+      layout: default
