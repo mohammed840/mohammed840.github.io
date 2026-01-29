@@ -6,7 +6,7 @@ permalink: /papers/
 {% assign papers_sorted = site.papers | sort: "date" | reverse %}
 
 {% for p in papers_sorted %}
-<details style="margin: 1rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff;">
+<details style="margin: 1rem 0; padding: 0.75rem; border: 0; border-radius: 0; background: transparent;">
   <summary style="cursor: pointer; font-size: 1.25rem; font-weight: 600;">
     {{ p.title }}
   </summary>
