@@ -1,0 +1,489 @@
+<p><strong>Keywords:</strong> reinforcement learning; DQN; imperfect information; card games; evaluation; large language models</p>
+<h1 id="introduction-and-motivation">Introduction and Motivation</h1>
+<h2 id="the-challenge-of-imperfect-information-games">The challenge of imperfect information games</h2>
+<p>Card games are a standard benchmark for decision-making under uncertainty. Unlike perfect-information games (e.g., Chess, Go), Uno introduces:</p>
+<p>This work builds on deep reinforcement learning methods for control <span class="citation" data-cites="mnih2015human">(Mnih et al. 2015)</span> and subsequent improvements in stabilizing value-based learning <span class="citation" data-cites="vanhasselt2016double">(Hasselt et al. 2016)</span>.</p>
+<ul>
+<li><p><strong>Imperfect information</strong>: opponents’ hands are hidden.</p></li>
+<li><p><strong>Stochastic transitions</strong>: shuffling and drawing induce randomness.</p></li>
+<li><p><strong>Variable action spaces</strong>: legal actions change with the top discard card and the hand.</p></li>
+<li><p><strong>Delayed rewards</strong>: local actions may have long-term consequences.</p></li>
+</ul>
+<h2 id="research-objectives">Research objectives</h2>
+<p>We pursue four objectives:</p>
+<ul>
+<li><p>Statistical characterization of baseline play.</p></li>
+<li><p>Implementation and training of a DQN agent.</p></li>
+<li><p>Comparative evaluation against random baselines and frontier LLMs.</p></li>
+<li><p>Deployment of an interactive web interface for demonstration.</p></li>
+</ul>
+<h2 id="contributions">Contributions</h2>
+<p>Our contributions include (i) a fixed-dimensional state encoding, (ii) tournament-based experience collection, (iii) empirical comparisons versus LLM-based opponents, and (iv) a deployable system design.</p>
+<h1 id="problem-setting-and-rules">Problem setting and rules</h1>
+<h2 id="two-player-uno-variant">Two-player Uno variant</h2>
+<p>We study a two-player version of Uno. The game is played with a standard Uno deck and proceeds in alternating turns until one player plays their final card. Special action cards modify turn order or force draws; wild cards allow the acting player to declare the next active color. For baseline rule definitions we follow the official Uno instructions <span class="citation" data-cites="mattel_uno_rules">(Mattel n.d.)</span>. <em>Implementation note:</em> Uno has rule variants (e.g., stacking draw cards); therefore, any empirical results in this paper should be interpreted with respect to the specific rules implemented in our codebase <span class="citation" data-cites="policyuno_repo">(<span class="nocase">mohammed840</span> 2026)</span>.</p>
+<h2 id="learning-problem-formulation">Learning problem formulation</h2>
+<p>We model the environment as a partially observable sequential decision problem: the agent observes its private hand and public information (e.g., discard top card) but not the opponent’s hand <span class="citation" data-cites="kaelbling1998pomdp">(Kaelbling et al. 1998)</span>. We train the agent using episodic win/loss feedback as the primary learning signal.</p>
+<h1 id="related-work">Related work</h1>
+<p>Deep reinforcement learning for control with value-based methods has been widely studied, including the original DQN formulation <span class="citation" data-cites="mnih2015human">(Mnih et al. 2015)</span> and Double DQN <span class="citation" data-cites="vanhasselt2016double">(Hasselt et al. 2016)</span>. Multiple stabilisation and performance extensions have been proposed, including dueling networks <span class="citation" data-cites="wang2016dueling">(Wang et al. 2016)</span>, prioritised experience replay <span class="citation" data-cites="schaul2016prioritized">(Schaul et al. 2016)</span>, and combined variants such as Rainbow <span class="citation" data-cites="hessel2018rainbow">(Hessel et al. 2018)</span>. For card-game research and benchmarking, RLCard provides a general-purpose toolkit <span class="citation" data-cites="zha2019rlcard">(<span class="nocase">Zha et al.</span> 2019)</span>.</p>
+<p>A course report by Brown, Jasson and Swarnakar <span class="citation" data-cites="brown_uno_rl_report">(Brown et al. 2020)</span> also explores Uno with DQN and DeepSARSA in an RLCard-based environment, focusing on multi-player games (3–5 players) and tournament-style experience collection.</p>
+<h1 id="game-statistics-from-large-scale-simulations">Game Statistics from Large-Scale Simulations</h1>
+<h2 id="experimental-setup">Experimental setup</h2>
+<p>We simulated 100<span>,</span>000 games under uniformly random legal play. For each episode we recorded total turns to termination, the starting player, and per-player counts of cards played and drawn. Our implementation is compatible with standard card-game RL toolkits <span class="citation" data-cites="zha2019rlcard">(<span class="nocase">Zha et al.</span> 2019)</span>.</p>
+<h2 id="game-length-distribution">Game length distribution</h2>
+<figure id="fig:turns-distribution" data-latex-placement="tbp">
+<img src="{{ "/assets/assets-/turns_distribution.png" | relative_url }}" />
+<figcaption>Turns-per-game distribution from 100<span>,</span>000 simulated Uno games under uniformly random legal play.</figcaption>
+</figure>
+<p>Figure <a href="#fig:turns-distribution" data-reference-type="ref" data-reference="fig:turns-distribution">1</a> visualizes the empirical episode-length distribution used to calibrate training horizons. The pronounced right tail indicates that while many games finish quickly, a non-negligible fraction of episodes are substantially longer, which motivates reporting both central tendency and tail statistics.</p>
+<p>Summary statistics (random baseline):</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Statistic</th>
+<th style="text-align: left;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Mean</td>
+<td style="text-align: left;">46.5 turns</td>
+</tr>
+<tr>
+<td style="text-align: left;">Median</td>
+<td style="text-align: left;">37.0 turns</td>
+</tr>
+<tr>
+<td style="text-align: left;">Mode</td>
+<td style="text-align: left;">13 turns</td>
+</tr>
+<tr>
+<td style="text-align: left;">Standard deviation</td>
+<td style="text-align: left;">33.8 turns</td>
+</tr>
+<tr>
+<td style="text-align: left;">Minimum</td>
+<td style="text-align: left;">7 turns</td>
+</tr>
+<tr>
+<td style="text-align: left;">Maximum</td>
+<td style="text-align: left;">418 turns</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="percentile-analysis">Percentile analysis</h2>
+<figure id="fig:percentiles" data-latex-placement="ht">
+<img src="{{ "/assets/assets-/percentile_analysis.png" | relative_url }}" />
+<figcaption>Turns-per-game percentiles from 100<span>,</span>000 random simulations.</figcaption>
+</figure>
+<p>Figure <a href="#fig:percentiles" data-reference-type="ref" data-reference="fig:percentiles">2</a> complements the histogram by summarizing the episode-length distribution at selected quantiles, which is often more stable than single-point summaries such as the mean.</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Percentile</th>
+<th style="text-align: right;">Turns</th>
+<th style="text-align: left;">Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">25th</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: left;">25% of games complete by this point</td>
+</tr>
+<tr>
+<td style="text-align: left;">50th (median)</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: left;">Half of games complete</td>
+</tr>
+<tr>
+<td style="text-align: left;">75th</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: left;">Three quarters of games complete</td>
+</tr>
+<tr>
+<td style="text-align: left;">90th</td>
+<td style="text-align: right;">90</td>
+<td style="text-align: left;">Only 10% exceed this length</td>
+</tr>
+<tr>
+<td style="text-align: left;">95th</td>
+<td style="text-align: right;">113</td>
+<td style="text-align: left;">Long games (5% tail)</td>
+</tr>
+<tr>
+<td style="text-align: left;">99th</td>
+<td style="text-align: right;">167</td>
+<td style="text-align: left;">Extreme tail (1%)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>These percentiles informed our choice of discount factor <span class="math inline">\(\gamma=0.95\)</span>, which appropriately weights future rewards across typical game horizons.</p>
+<h2 id="cumulative-distribution-function">Cumulative distribution function</h2>
+<figure id="fig:turns-cdf" data-latex-placement="ht">
+<img src="{{ "/assets/assets-/turns_cdf.png" | relative_url }}" />
+<figcaption>Cumulative distribution function (CDF) of turns per game from 100<span>,</span>000 simulations.</figcaption>
+</figure>
+<p>Figure <a href="#fig:turns-cdf" data-reference-type="ref" data-reference="fig:turns-cdf">3</a> provides a cumulative view of episode length; for example, the value at <span class="math inline">\(x\)</span> turns corresponds to the fraction of games that terminate within <span class="math inline">\(x\)</span> turns.</p>
+<h2 id="first-player-advantage">First-player advantage</h2>
+<figure id="fig:first-player" data-latex-placement="ht">
+<img src="{{ "/assets/assets-/game_statistics.png" | relative_url }}" />
+<figcaption>Game-length summary and first-player advantage analysis (random baseline).</figcaption>
+</figure>
+<p>Figure <a href="#fig:first-player" data-reference-type="ref" data-reference="fig:first-player">4</a> summarizes variability in episode length and reports the estimated advantage of moving first under random play, which serves as a basic sanity check for the simulator and a reference point for learned agents.</p>
+<p>We observe a modest first-player advantage: first player wins 51.07% of games (51<span>,</span>068 / 100<span>,</span>000).</p>
+<h1 id="deep-q-network-dqn-architecture">Deep Q-Network (DQN) Architecture</h1>
+<h2 id="overview-and-design-rationale">Overview and design rationale</h2>
+<p>Deep Q-Networks (DQN) learn a parametric approximation <span class="math inline">\(Q(s,a;\theta)\)</span> to the optimal action-value function and are well suited to environments with (i) large or continuous observation spaces and (ii) discrete actions <span class="citation" data-cites="mnih2015human">(Mnih et al. 2015)</span>. In our setting, the observation is a fixed-length 420-dimensional feature vector (Section <a href="#fig:state-encoding" data-reference-type="ref" data-reference="fig:state-encoding">5</a>), while the action set is a 61-way discrete encoding with dynamic legality constraints (Section <a href="#fig:action-space" data-reference-type="ref" data-reference="fig:action-space">6</a>).</p>
+<p>Two practical challenges are central in Uno: (a) <em>stochasticity and partial observability</em> (hidden opponent hand and random draws), and (b) <em>variable legal actions</em>. To address (b), we explicitly apply an <em>action mask</em> at decision time so that the policy never selects illegal actions.</p>
+<h2 id="theoretical-foundation">Theoretical foundation</h2>
+<p>DQN builds on the Bellman optimality equation for Markov decision processes: <span class="math display">\[\begin{equation}
+Q^*(s,a)=\mathbb{E}\left[r_{t+1}+\gamma \max_{a&#39;} Q^*(s_{t+1},a&#39;)\mid s_t=s, a_t=a\right].
+\end{equation}\]</span></p>
+<p>Given a transition tuple <span class="math inline">\((s_t,a_t,r_{t+1},s_{t+1})\)</span>, the <em>one-step TD target</em> used by DQN is <span class="math display">\[\begin{equation}
+  y_t \;=\; r_{t+1} + \gamma\max_{a&#39;} Q\bigl(s_{t+1},a&#39;;\theta^{-}\bigr),
+\end{equation}\]</span> where <span class="math inline">\(\theta^{-}\)</span> denotes parameters of a slowly-updated <em>target network</em> that stabilises learning <span class="citation" data-cites="mnih2015human">(Mnih et al. 2015)</span>.</p>
+<p>We minimise the squared TD error over samples drawn from a replay buffer: <span class="math display">\[\begin{equation}
+\mathcal{L}(\theta)=\mathbb{E}_{(s,a,r,s&#39;)\sim\mathcal{D}}\left[\left(y - Q(s,a;\theta)\right)^2\right].
+\end{equation}\]</span></p>
+<h4 id="double-dqn-target-reduced-overestimation.">Double DQN target (reduced overestimation).</h4>
+<p>In standard DQN, the maximisation in <span class="math inline">\(y_t\)</span> can introduce positive bias (“overestimation”). We therefore use the Double DQN decomposition, selecting the greedy action under the online network but evaluating it with the target network <span class="citation" data-cites="vanhasselt2016double">(Hasselt et al. 2016)</span>: <span class="math display">\[\begin{equation}
+  y_t^{\mathrm{DDQN}} \;=\; r_{t+1} + \gamma\,Q\Bigl(s_{t+1},\arg\max_{a&#39;}Q(s_{t+1},a&#39;;\theta);\theta^{-}\Bigr).
+\end{equation}\]</span></p>
+<h2 id="experience-replay-and-target-network">Experience replay and target network</h2>
+<p>DQN uses two key stabilisation mechanisms <span class="citation" data-cites="mnih2015human">(Mnih et al. 2015)</span>:</p>
+<ul>
+<li><p><strong>Experience replay.</strong> Transitions are stored in a replay buffer <span class="math inline">\(\mathcal{D}\)</span> and mini-batches are sampled uniformly during training. This breaks short-term temporal correlations and improves sample efficiency.</p></li>
+<li><p><strong>Target network.</strong> A separate network with parameters <span class="math inline">\(\theta^{-}\)</span> is updated periodically (every <span class="math inline">\(C\)</span> gradient steps) from the online network parameters <span class="math inline">\(\theta\)</span>, reducing non-stationarity of TD targets.</p></li>
+</ul>
+<h2 id="state-representation">State representation</h2>
+<p>We encode the game state as a 420-dimensional feature vector structured as 7 planes of 60 features each (4 colors <span class="math inline">\(\times\)</span> 15 card types). This representation is designed to be (i) fixed-dimensional, (ii) permutation-invariant with respect to hand order, and (iii) directly aligned with Uno’s public and private information.</p>
+<figure id="fig:state-encoding" data-latex-placement="ht">
+<img src="{{ "/assets/assets-/state_encoding_breakdown.png" | relative_url }}" style="width:60.0%" />
+<figcaption>Distribution of the 420 state features across information categories.</figcaption>
+</figure>
+<p><strong>Detailed encoding scheme:</strong></p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Planes</th>
+<th style="text-align: right;">Features</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">0–2</td>
+<td style="text-align: right;">180</td>
+<td style="text-align: left;">Own hand card-count buckets (0, 1, 2+ copies)</td>
+</tr>
+<tr>
+<td style="text-align: left;">3–5</td>
+<td style="text-align: right;">180</td>
+<td style="text-align: left;">Estimated opponent card counts (0, 1, 2+)</td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: left;">Current discard pile top card (one-hot)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Total</td>
+<td style="text-align: right;">420</td>
+<td style="text-align: left;">Complete state representation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="why-bucketed-counts">Why bucketed counts?</h4>
+<p>We use <span class="math inline">\((0,1,2+)\)</span> buckets rather than raw counts to keep the input scale bounded and to emphasise strategically relevant distinctions (e.g., “have at least one playable card type” versus “none”). In a two-player setting, a coarse opponent model (estimated counts) is often sufficient to induce defensive play (e.g., holding wild cards) without requiring full belief-state inference.</p>
+<h2 id="action-space-and-legality-masking">Action space and legality masking</h2>
+<figure id="fig:action-space" data-latex-placement="!t">
+<img src="{{ "/assets/assets-/action_space_breakdown.png" | relative_url }}" style="width:60.0%" />
+<figcaption>Breakdown of the 61-action space.</figcaption>
+</figure>
+<p>The action space consists of 61 discrete actions representing all possible moves; illegal actions are masked during action selection.</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Action range</th>
+<th style="text-align: right;">Count</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">0–39</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: left;">Number cards (0–9 <span class="math inline">\(\times\)</span> 4 colors)</td>
+</tr>
+<tr>
+<td style="text-align: left;">40–43</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Skip (4 colors)</td>
+</tr>
+<tr>
+<td style="text-align: left;">44–47</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Reverse (4 colors)</td>
+</tr>
+<tr>
+<td style="text-align: left;">48–51</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Draw Two (4 colors)</td>
+</tr>
+<tr>
+<td style="text-align: left;">52–55</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Wild (declare 4 colors)</td>
+</tr>
+<tr>
+<td style="text-align: left;">56–59</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Wild Draw Four (declare 4 colors)</td>
+</tr>
+<tr>
+<td style="text-align: left;">60</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Draw from deck</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Let <span class="math inline">\(m(s)\in\{0,1\}^{61}\)</span> be a binary mask indicating action legality in state <span class="math inline">\(s\)</span>. During greedy action selection we compute <span class="math display">\[\begin{equation}
+  a^* \;=\; \arg\max_{a}\; \Bigl(Q(s,a;\theta) + (1-m_a(s))\cdot (-\infty)\Bigr),
+\end{equation}\]</span> which guarantees that illegal moves are never chosen.</p>
+<h2 id="network-architecture">Network architecture</h2>
+<p>Our Q-network maps 420 input features to 61 Q-values using a fully-connected multilayer perceptron. This choice is appropriate because the observation is already a compact, hand-crafted vector rather than an image.</p>
+<div class="center">
+
+</div>
+<h4 id="regularisation-and-optimisation-details.">Regularisation and optimisation details.</h4>
+<p>Dropout provides mild regularisation against overfitting to early replay-buffer distributions. In addition, common DQN stabilisation practices include gradient clipping and the use of a robust loss (Huber) <span class="citation" data-cites="mnih2015human">(Mnih et al. 2015)</span>. (We report the MSE objective above for clarity; in practice, replacing MSE with Huber is a drop-in change.)</p>
+<h2 id="relation-to-common-dqn-extensions-context">Relation to common DQN extensions (context)</h2>
+<p>Several extensions to DQN can further improve stability and performance, including dueling networks <span class="citation" data-cites="wang2016dueling">(Wang et al. 2016)</span>, prioritised experience replay <span class="citation" data-cites="schaul2016prioritized">(Schaul et al. 2016)</span>, and combined “Rainbow” variants <span class="citation" data-cites="hessel2018rainbow">(Hessel et al. 2018)</span>. We retain a relatively simple architecture to keep the Uno pipeline reproducible, and focus our improvements on state encoding, action masking, and tournament-style experience collection.</p>
+<h1 id="training-methodology">Training Methodology</h1>
+<h2 id="tournament-based-experience-collection">Tournament-based experience collection</h2>
+<p>Each training iteration aggregates experience over a tournament of <span class="math inline">\(N\)</span> complete games, improving stability and diversifying trajectories.</p>
+<h1 id="experiments-and-reproducibility">Experiments and reproducibility</h1>
+<h2 id="experimental-protocol">Experimental protocol</h2>
+<p>All experimental results in this paper are conditional on the ruleset and experimental protocol implemented in the accompanying codebase <span class="citation" data-cites="policyuno_repo">(<span class="nocase">mohammed840</span> 2026)</span>. In our implementation, training uses fixed random-policy opponents in a two-player setting (the learning agent is always player 0), and the reward is terminal only (<span class="math inline">\(+1\)</span> for win, <span class="math inline">\(-1\)</span> for loss, <span class="math inline">\(0\)</span> otherwise).</p>
+<h2 id="metrics-and-reporting">Metrics and reporting</h2>
+<p>We report (i) win rate and average reward for tournament-style evaluation, and (ii) summary statistics of game length (turns per game) under random play. The code writes training metrics to <code>runs/&lt;run_id&gt;/metrics_train.csv</code> and evaluation metrics to <code>runs/&lt;run_id&gt;/metrics_eval.csv</code> <span class="citation" data-cites="policyuno_repo">(<span class="nocase">mohammed840</span> 2026)</span>.</p>
+<h2 id="reproducibility-checklist">Reproducibility checklist</h2>
+<ul>
+<li><p><strong>Random seeds.</strong> Training and evaluation set seeds for NumPy and PyTorch; the environment is also initialised with a seed parameter <span class="citation" data-cites="policyuno_repo">(<span class="nocase">mohammed840</span> 2026)</span>.</p></li>
+<li><p><strong>Artifacts.</strong> Each run stores <code>config.json</code>, per-iteration tournament logs (<code>tournaments/dqn_iter_&lt;i&gt;.jsonl</code>), and plots under <code>runs/&lt;run_id&gt;/plots/</code> <span class="citation" data-cites="policyuno_repo">(<span class="nocase">mohammed840</span> 2026)</span>.</p></li>
+<li><p><strong>LLM evaluation.</strong> OpenRouter opponents are specified by model slugs (e.g., <code>google/gemini-3-flash-preview</code>, <code>openai/gpt-5.2</code>, <code>anthropic/claude-opus-4.5</code>) and queried with <code>max_tokens=50</code> and <code>temperature=0.1</code> in our adapter <span class="citation" data-cites="policyuno_repo">(<span class="nocase">mohammed840</span> 2026)</span>.</p></li>
+</ul>
+<h2 id="hyperparameter-configuration">Hyperparameter configuration</h2>
+<figure id="fig:hyperparams" data-latex-placement="ht">
+<img src="{{ "/assets/assets-/training_hyperparameters.png" | relative_url }}" style="width:90.0%" />
+<figcaption>Exploration rate decay and temporal-difference learning components (illustrative).</figcaption>
+</figure>
+<p>Figure <a href="#fig:hyperparams" data-reference-type="ref" data-reference="fig:hyperparams">7</a> summarizes key training signals, in particular the exploration schedule that transitions from broad exploration to more exploitative play as the replay buffer grows.</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Hyperparameter</th>
+<th style="text-align: right;">Value</th>
+<th style="text-align: left;">Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Learning rate (<span class="math inline">\(\alpha\)</span>)</td>
+<td style="text-align: right;"><span class="math inline">\(10^{-4}\)</span></td>
+<td style="text-align: left;">Stable learning without oscillation</td>
+</tr>
+<tr>
+<td style="text-align: left;">Discount factor (<span class="math inline">\(\gamma\)</span>)</td>
+<td style="text-align: right;">0.95</td>
+<td style="text-align: left;">Appropriate for <span class="math inline">\(\sim\)</span>40-turn games</td>
+</tr>
+<tr>
+<td style="text-align: left;">Initial epsilon (<span class="math inline">\(\varepsilon_0\)</span>)</td>
+<td style="text-align: right;">0.95</td>
+<td style="text-align: left;">High initial exploration</td>
+</tr>
+<tr>
+<td style="text-align: left;">Epsilon decay (<span class="math inline">\(\kappa\)</span>)</td>
+<td style="text-align: right;">0.995</td>
+<td style="text-align: left;">Gradual transition to exploitation</td>
+</tr>
+<tr>
+<td style="text-align: left;">Minimum epsilon (<span class="math inline">\(\varepsilon_{\min}\)</span>)</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: left;">Maintain exploration</td>
+</tr>
+<tr>
+<td style="text-align: left;">Batch size</td>
+<td style="text-align: right;">256</td>
+<td style="text-align: left;">Efficient GPU utilization</td>
+</tr>
+<tr>
+<td style="text-align: left;">Replay buffer size</td>
+<td style="text-align: right;">100<span>,</span>000</td>
+<td style="text-align: left;">Experience diversity</td>
+</tr>
+<tr>
+<td style="text-align: left;">Target update frequency</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: left;">Stabilize TD targets</td>
+</tr>
+<tr>
+<td style="text-align: left;">Games per iteration</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: left;">Tournament size</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="training-dynamics">Training dynamics</h2>
+<figure id="fig:training-curve" data-latex-placement="ht">
+<img src="{{ "/assets/assets-/fig2_dqn_avg_reward_over_iters.png" | relative_url }}" style="width:45.0%" />
+<figcaption>Average reward over training iterations.</figcaption>
+</figure>
+<p>Figure <a href="#fig:training-curve" data-reference-type="ref" data-reference="fig:training-curve">8</a> reports the evolution of training reward, which serves as a coarse indicator of policy improvement and training stability over iterations.</p>
+<p>The training progression exhibits three phases: (i) rapid learning in early iterations (1–50), (ii) strategy refinement (50–200), and (iii) convergence after approximately 200 iterations.</p>
+<h1 id="evaluation-rl-agent-vs.-large-language-models">Evaluation: RL Agent vs. Large Language Models</h1>
+<h2 id="experimental-design">Experimental design</h2>
+<p>We evaluate the trained agent in head-to-head tournaments against multiple LLM opponents accessed via an API, focusing on win-rate as the primary metric.</p>
+<h4 id="protocol.">Protocol.</h4>
+<p>For each opponent configuration, we run 100 games (consistent with the win/loss counts reported in Table 1). In our evaluation harness, the learning agent is player 0 and the starting player is determined by the environment reset; we do not explicitly force alternation of the starting player. The LLM opponents are accessed through an external API gateway; in our implementation we use OpenRouter <span class="citation" data-cites="openrouter_docs">(OpenRouter n.d.)</span>. We use the OpenRouter model identifiers <code>google/gemini-3-flash-preview</code>, <code>openai/gpt-5.2</code>, and <code>anthropic/claude-opus-4.5</code>, queried with <code>temperature=0.1</code> and <code>max_tokens=50</code> <span class="citation" data-cites="policyuno_repo">(<span class="nocase">mohammed840</span> 2026)</span>.</p>
+<h2 id="tournament-results">Tournament results</h2>
+<figure id="fig:rl-vs-llm" data-latex-placement="ht">
+<img src="{{ "/assets/assets-/rl_vs_llm_tournament.png" | relative_url }}" />
+<figcaption>Tournament win rates between the trained DQN agent and selected LLM opponents.</figcaption>
+</figure>
+<p>Figure <a href="#fig:rl-vs-llm" data-reference-type="ref" data-reference="fig:rl-vs-llm">9</a> provides a compact summary of the main comparative evaluation, indicating which LLM-based opponents are consistently outperformed by the learned policy and highlighting cases where the LLM exhibits a systematic advantage.</p>
+<div class="center">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Opponent</th>
+<th style="text-align: center;">RL wins</th>
+<th style="text-align: center;">LLM wins</th>
+<th style="text-align: center;">RL win rate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Gemini 3 Flash</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">80%</td>
+</tr>
+<tr>
+<td style="text-align: left;">GPT 5.2</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">80%</td>
+</tr>
+<tr>
+<td style="text-align: left;">Opus 4.5</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: center;">20%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="qualitative-analysis-of-llm-behavior">Qualitative analysis of LLM behavior</h2>
+<p>Careful observation of gameplay revealed systematic differences in decision-making.</p>
+<h3 id="gemini-3-flash-and-gpt-5.2">Gemini 3 Flash and GPT 5.2</h3>
+<p>In qualitative inspection of gameplay, these models often selected immediately playable cards without clear evidence of longer-horizon hand management. This observation is anecdotal and may be sensitive to the prompt template and sampling configuration <span class="citation" data-cites="policyuno_repo">(<span class="nocase">mohammed840</span> 2026)</span>.</p>
+<h3 id="opus-4.5">Opus 4.5</h3>
+<p>In contrast, Opus 4.5 displayed behaviors consistent with longer-horizon tactics, including deliberate hand management (preserving wild cards for flexibility), proactive color control (shifting to colors held in greater quantity), occasional defensive play (drawing instead of playing the last matching card), and actions consistent with anticipating inferred opponent constraints.</p>
+<h2 id="interpretation-hypothesis-on-longer-horizon-decision-making">Interpretation: hypothesis on longer-horizon decision making</h2>
+<p>We hypothesize that the observed advantage of Opus 4.5 in our setting may reflect differences in longer-horizon decision making (e.g., preserving flexibility, controlling colors, or implicitly tracking opponent constraints). This interpretation is qualitative and requires further controlled study; in particular, it would benefit from (i) an explicitly specified prompt and sampling configuration for the LLM opponent, and (ii) quantitative ablations that isolate which information and planning components contribute to performance.</p>
+<h1 id="discussion-and-future-work">Discussion and Future Work</h1>
+<h2 id="summary-of-findings">Summary of findings</h2>
+<p>Overall, we find that DQN is viable for Uno in the sense that the agent learns competitive strategies without hand-crafted rules. We also find that performance varies substantially across LLM-based opponents under our evaluation protocol, so opponent choice strongly affects observed win rates. The large-scale simulation analysis provides practical guidance for selecting design choices such as discounting and evaluation horizons, while the LLM results highlight the importance of careful reproducibility reporting for API-served models.</p>
+<h2 id="limitations">Limitations</h2>
+<p>LLM evaluations are API-dependent and therefore difficult to reproduce at scale. In addition, we restrict attention to a two-player variant (excluding multi-player dynamics), and self-play training may reduce robustness to diverse opponent policies.</p>
+<h2 id="future-work">Future work</h2>
+<p>Promising directions include integrating explicit planning (e.g., Monte Carlo tree search) with learned value functions, population-based training against diverse opponents, extension to multi-agent (3–4 player) settings, and improved opponent modeling. Related advances in policy optimization and self-play motivate these directions <span class="citation" data-cites="schulman2017ppo silver2017mastering">(Schulman et al. 2017; Silver et al. 2017)</span>.</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>We presented a complete pipeline for training, evaluating, and deploying a DQN agent for Uno. Our systematic approach—from 100<span>,</span>000-game statistical analysis through tournament-based training to LLM tournament evaluation—yields practical artifacts and insights.</p>
+<p>We observe large differences in win rates across the evaluated LLM opponents under our protocol. Because LLM evaluation is API-dependent and model endpoints may change over time, these results should be interpreted as conditional on the exact access configuration, and they motivate further controlled experiments and hybrid approaches that combine reinforcement learning with planning.</p>
+<h1 id="reproducibility-commands">Reproducibility (Commands)</h1>
+<h2 id="environment-setup">Environment setup</h2>
+<p>Source code and instructions are available in the accompanying repository <span class="citation" data-cites="policyuno_repo">(<span class="nocase">mohammed840</span> 2026)</span>.</p>
+<div class="sourceCode" id="cb1" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clone repository</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/mohammed840/policy-uno.git</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> policy-uno</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Install dependencies</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Set API key for LLM evaluation (optional)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OPENROUTER_API_KEY</span><span class="op">=</span>your_key_here</span></code></pre></div>
+<h2 id="training-and-evaluation-commands">Training and evaluation commands</h2>
+<div class="sourceCode" id="cb2" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run game statistics simulation (random baseline)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> rl.game_statistics <span class="at">--games</span> 100000 <span class="at">--seed</span> 42</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Train DQN</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> rl.dqn_train <span class="at">--iters</span> 1000 <span class="at">--games_per_iter</span> 100 <span class="at">--seed</span> 42</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate a saved run</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> rl.eval <span class="at">--run_id</span> <span class="op">&lt;</span>run_id<span class="op">&gt;</span> --games 1000 <span class="at">--seed</span> 42</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate plots for a run</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> rl.plots <span class="at">--run_id</span> <span class="op">&lt;</span>run_id<span class="op">&gt;</span></span></code></pre></div>
+<h2 id="web-server">Web server</h2>
+<div class="sourceCode" id="cb3" data-language="bash"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start the web application</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> web/server.py</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Access at http://localhost:5000</span></span></code></pre></div>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-brown_uno_rl_report" class="csl-entry" role="listitem">
+Brown, Olivia, Diego Jasson, and Ankush Swarnakar. 2020. <em>Winning Uno with Reinforcement Learning</em>. Course report, Stanford University.
+</div>
+<div id="ref-vanhasselt2016double" class="csl-entry" role="listitem">
+Hasselt, Hado van, Arthur Guez, and David Silver. 2016. <span>“Deep Reinforcement Learning with Double q-Learning.”</span> <em>Proceedings of the AAAI Conference on Artificial Intelligence</em> 30. <a href="https://doi.org/10.1609/aaai.v30i1.10295">https://doi.org/10.1609/aaai.v30i1.10295</a>.
+</div>
+<div id="ref-hessel2018rainbow" class="csl-entry" role="listitem">
+Hessel, Matteo, Joseph Modayil, Hado van Hasselt, et al. 2018. <span>“Rainbow: Combining Improvements in Deep Reinforcement Learning.”</span> <em>Proceedings of the AAAI Conference on Artificial Intelligence</em> 32 (1). <a href="https://doi.org/10.1609/aaai.v32i1.11796">https://doi.org/10.1609/aaai.v32i1.11796</a>.
+</div>
+<div id="ref-kaelbling1998pomdp" class="csl-entry" role="listitem">
+Kaelbling, Leslie Pack, Michael L Littman, and Anthony R Cassandra. 1998. <span>“Planning and Acting in Partially Observable Stochastic Domains.”</span> <em>Artificial Intelligence</em> 101 (1–2): 99–134. <a href="https://doi.org/10.1016/S0004-3702(98)00023-X">https://doi.org/10.1016/S0004-3702(98)00023-X</a>.
+</div>
+<div id="ref-mattel_uno_rules" class="csl-entry" role="listitem">
+Mattel. n.d. <em>UNO Instructions (Braille Rules)</em>. Web page. <a href="https://shop.mattel.com/pages/uno-instructions">https://shop.mattel.com/pages/uno-instructions</a>.
+</div>
+<div id="ref-mnih2015human" class="csl-entry" role="listitem">
+Mnih, Volodymyr, Koray Kavukcuoglu, David Silver, et al. 2015. <span>“Human-Level Control Through Deep Reinforcement Learning.”</span> <em>Nature</em> 518 (7540): 529–33. <a href="https://doi.org/10.1038/nature14236">https://doi.org/10.1038/nature14236</a>.
+</div>
+<div id="ref-policyuno_repo" class="csl-entry" role="listitem">
+<span class="nocase">mohammed840</span>. 2026. <em>Policy-Uno: Reinforcement Learning Agents for Uno</em>. GitHub repository. <a href="https://github.com/mohammed840/policy-uno">https://github.com/mohammed840/policy-uno</a>.
+</div>
+<div id="ref-final79_2" class="csl-entry" role="listitem">
+Name, Author. 2026. <em>Training a Deep q-Network to Master Uno: A Comprehensive Study in Reinforcement Learning for Imperfect Information Games</em>. Unpublished manuscript (PDF included in project as <code>final79-2.pdf</code>).
+</div>
+<div id="ref-openrouter_docs" class="csl-entry" role="listitem">
+OpenRouter. n.d. <em>OpenRouter Documentation</em>. Web documentation. <a href="https://openrouter.ai/docs">https://openrouter.ai/docs</a>.
+</div>
+<div id="ref-schaul2016prioritized" class="csl-entry" role="listitem">
+Schaul, Tom, John Quan, Ioannis Antonoglou, and David Silver. 2016. <span>“Prioritized Experience Replay.”</span> <em>arXiv Preprint arXiv:1511.05952</em>, ahead of print. <a href="https://doi.org/10.48550/arXiv.1511.05952">https://doi.org/10.48550/arXiv.1511.05952</a>.
+</div>
+<div id="ref-schulman2017ppo" class="csl-entry" role="listitem">
+Schulman, John, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. 2017. <span>“Proximal Policy Optimization Algorithms.”</span> <em>arXiv Preprint arXiv:1707.06347</em>.
+</div>
+<div id="ref-silver2017mastering" class="csl-entry" role="listitem">
+Silver, David, Julian Schrittwieser, Karen Simonyan, et al. 2017. <span>“Mastering the Game of Go Without Human Knowledge.”</span> <em>Nature</em> 550 (7676): 354–59. <a href="https://doi.org/10.1038/nature24270">https://doi.org/10.1038/nature24270</a>.
+</div>
+<div id="ref-wang2016dueling" class="csl-entry" role="listitem">
+Wang, Ziyu, Tom Schaul, Matteo Hessel, Hado van Hasselt, Marc Lanctot, and Nando de Freitas. 2016. <span>“Dueling Network Architectures for Deep Reinforcement Learning.”</span> <em>arXiv Preprint arXiv:1511.06581</em>, ahead of print. <a href="https://doi.org/10.48550/arXiv.1511.06581">https://doi.org/10.48550/arXiv.1511.06581</a>.
+</div>
+<div id="ref-zha2019rlcard" class="csl-entry" role="listitem">
+<span class="nocase">Zha, Daochen, Kaixiong H Lai, Yuanpu Cao, et al.</span> 2019. <span>“RLCard: A Toolkit for Reinforcement Learning in Card Games.”</span> <em>arXiv Preprint arXiv:1910.04376</em>.
+</div>
+</div>
