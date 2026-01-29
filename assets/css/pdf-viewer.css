@@ -1,0 +1,6 @@
+#pdfjs-viewer { margin: 1rem 0; }
+#pdfjs-status { margin: 0.5rem 0; color: #6b7280; }
+#pdfjs-pages { display: flex; flex-direction: column; gap: 1rem; }
+.pdfjs-page { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.75rem; overflow-x: auto; }
+.pdfjs-page-label { font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem; }
+.pdfjs-canvas { display: block; max-width: 100%; height: auto; }

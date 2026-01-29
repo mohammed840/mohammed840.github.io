@@ -55,18 +55,19 @@ layout: default
     </p>
 
     {% if page.pdf %}
-      <div style="margin: 1rem 0;">
-        <iframe
-          title="{{ page.title }} PDF"
-          src="{{ pdf_href }}#view=FitH"
-          style="width: 100%; height: 85vh; border: 1px solid #e5e7eb; border-radius: 8px;"
-          loading="lazy"
-        ></iframe>
+      <link rel="stylesheet" href="{{ "/assets/css/pdf-viewer.css" | relative_url }}">
+
+      <div id="pdfjs-viewer" data-pdf-url="{{ pdf_href }}" data-pdf-worker-src="{{ "/assets/pdfjs/pdf.worker.min.js" | relative_url }}" data-scale="1.25">
+        <div id="pdfjs-status"></div>
+        <div id="pdfjs-pages"></div>
         <p style="margin-top: 0.5rem;">
-          If the embedded viewer doesn’t load, open the PDF directly:
+          If the viewer doesn’t load, open the PDF directly:
           <a href="{{ pdf_href }}">{{ pdf_href }}</a>
         </p>
       </div>
+
+      <script src="{{ "/assets/pdfjs/pdf.min.js" | relative_url }}"></script>
+      <script src="{{ "/assets/js/pdf-viewer.js" | relative_url }}"></script>
     {% endif %}
 
     {% if page.abstract %}
