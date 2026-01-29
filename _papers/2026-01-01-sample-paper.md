@@ -16,4 +16,6 @@ contributions:
 abstract: "We study Deep Q-Network (DQN) learning for Uno, an imperfect-information card game with stochastic transitions and a variable legal action set. We introduce a fixed-dimensional state encoding and a masked discrete action encoding, and train the agent using tournament-based experience collection. Using 100,000 random-play simulations, we report baseline game statistics and evaluate the learned agent against API-served LLM opponents. Because LLM endpoints may change over time, these results are conditional on the specific model identifiers and access configuration."
 ---
 
+{::nomarkdown}
 {% include papers/issue-paper-1.html %}
+{:/nomarkdown}
