@@ -12,36 +12,6 @@ permalink: /papers/
   </summary>
 
   <div style="margin-top: 0.75rem;">
-    {% if p.authors %}<p><strong>Authors:</strong> {{ p.authors }}</p>{% endif %}
-    {% if p.venue %}<p><strong>Venue:</strong> {{ p.venue }}</p>{% endif %}
-    {% if p.year %}<p><strong>Year:</strong> {{ p.year }}</p>{% endif %}
-
-    {% if p.tldr %}<p><strong>TL;DR:</strong> {{ p.tldr }}</p>{% endif %}
-
-    {% if p.highlights %}
-      <div style="margin: 0.75rem 0;">
-        <strong>Highlights</strong>
-        <ul>
-          {% for item in p.highlights %}
-            <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-
-    {% if p.contributions %}
-      <div style="margin: 0.75rem 0;">
-        <strong>Key contributions</strong>
-        <ul>
-          {% for item in p.contributions %}
-            <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-
-    {% if p.abstract %}<p>{{ p.abstract }}</p>{% endif %}
-
     <p>
       {% if p.pdf %}
         {% assign pdf_href = p.pdf %}
