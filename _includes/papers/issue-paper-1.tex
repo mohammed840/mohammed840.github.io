@@ -1,0 +1,455 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{placeins}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=authoryear,natbib=true]{biblatex}
+\addbibresource{references.bib}
+
+% Bibliography layout (avoid inheriting large global paragraph spacing)
+\renewcommand*{\bibfont}{\small}
+\AtBeginBibliography{%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{0pt}%
+  \setlength{\itemsep}{0.35\baselineskip}%
+}
+
+\usepackage{listings}
+
+\hypersetup{
+  colorlinks=false,
+  hidelinks
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.7\baselineskip}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\graphicspath{{./assets/assets-/}{./}}
+\setkeys{Gin}{width=0.45\linewidth,keepaspectratio}
+\captionsetup{font=small,labelfont=bf}
+
+\title{Training a Deep Q-Network to Master Uno: \\ A Comprehensive Study in Reinforcement Learning for Imperfect Information Games}
+\author{Mohammed Alshehri \\ \texttt{mohammed@redec.io}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We study Deep Q-Network (DQN) learning for Uno, an imperfect-information card game with stochastic transitions and a variable legal action set. We introduce a fixed-dimensional state encoding and a masked discrete action encoding, and train the agent using tournament-based experience collection.
+
+Using 100{,}000 random-play simulations, we report baseline game statistics and evaluate the learned agent against API-served LLM opponents. Because LLM endpoints may change over time, these results are conditional on the specific model identifiers and access configuration.
+\end{abstract}
+
+\textbf{Keywords:} reinforcement learning; DQN; imperfect information; card games; evaluation; large language models
+
+\section{Introduction and Motivation}
+\subsection{The challenge of imperfect information games}
+Card games are a standard benchmark for decision-making under uncertainty. Unlike perfect-information games (e.g., Chess, Go), Uno introduces:
+
+This work builds on deep reinforcement learning methods for control \parencite{mnih2015human} and subsequent improvements in stabilizing value-based learning \parencite{vanhasselt2016double}.
+\begin{itemize}
+  \item \textbf{Imperfect information}: opponents' hands are hidden.
+  \item \textbf{Stochastic transitions}: shuffling and drawing induce randomness.
+  \item \textbf{Variable action spaces}: legal actions change with the top discard card and the hand.
+  \item \textbf{Delayed rewards}: local actions may have long-term consequences.
+\end{itemize}
+
+\subsection{Research objectives}
+We pursue four objectives:
+\begin{itemize}
+  \item Statistical characterization of baseline play.
+  \item Implementation and training of a DQN agent.
+  \item Comparative evaluation against random baselines and frontier LLMs.
+  \item Deployment of an interactive web interface for demonstration.
+\end{itemize}
+
+\subsection{Contributions}
+Our contributions include (i) a fixed-dimensional state encoding, (ii) tournament-based experience collection, (iii) empirical comparisons versus LLM-based opponents, and (iv) a deployable system design.
+
+\section{Problem setting and rules}
+\subsection{Two-player Uno variant}
+We study a two-player version of Uno. The game is played with a standard Uno deck and proceeds in alternating turns until one player plays their final card. Special action cards modify turn order or force draws; wild cards allow the acting player to declare the next active color. For baseline rule definitions we follow the official Uno instructions \parencite{mattel_uno_rules}. \emph{Implementation note:} Uno has rule variants (e.g., stacking draw cards); therefore, any empirical results in this paper should be interpreted with respect to the specific rules implemented in our codebase \parencite{policyuno_repo}.
+
+\subsection{Learning problem formulation}
+We model the environment as a partially observable sequential decision problem: the agent observes its private hand and public information (e.g., discard top card) but not the opponent's hand \parencite{kaelbling1998pomdp}. We train the agent using episodic win/loss feedback as the primary learning signal.
+
+\section{Related work}
+Deep reinforcement learning for control with value-based methods has been widely studied, including the original DQN formulation \parencite{mnih2015human} and Double DQN \parencite{vanhasselt2016double}. Multiple stabilisation and performance extensions have been proposed, including dueling networks \parencite{wang2016dueling}, prioritised experience replay \parencite{schaul2016prioritized}, and combined variants such as Rainbow \parencite{hessel2018rainbow}. For card-game research and benchmarking, RLCard provides a general-purpose toolkit \parencite{zha2019rlcard}.
+
+A course report by Brown, Jasson and Swarnakar \parencite{brown_uno_rl_report} also explores Uno with DQN and DeepSARSA in an RLCard-based environment, focusing on multi-player games (3--5 players) and tournament-style experience collection.
+
+\section{Game Statistics from Large-Scale Simulations}
+\subsection{Experimental setup}
+We simulated 100{,}000 games under uniformly random legal play. For each episode we recorded total turns to termination, the starting player, and per-player counts of cards played and drawn. Our implementation is compatible with standard card-game RL toolkits \parencite{zha2019rlcard}.
+
+\subsection{Game length distribution}
+\begin{figure}[tbp]
+  \centering
+  \includegraphics{turns_distribution.png}
+  \caption{Turns-per-game distribution from 100{,}000 simulated Uno games under uniformly random legal play.}
+  \label{fig:turns-distribution}
+\end{figure}
+
+Figure~\ref{fig:turns-distribution} visualizes the empirical episode-length distribution used to calibrate training horizons. The pronounced right tail indicates that while many games finish quickly, a non-negligible fraction of episodes are substantially longer, which motivates reporting both central tendency and tail statistics.
+
+Summary statistics (random baseline):
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Statistic & Value \\
+\midrule
+Mean & 46.5 turns \\
+Median & 37.0 turns \\
+Mode & 13 turns \\
+Standard deviation & 33.8 turns \\
+Minimum & 7 turns \\
+Maximum & 418 turns \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Percentile analysis}
+\begin{figure}[ht]
+  \centering
+  \includegraphics{percentile_analysis.png}
+  \caption{Turns-per-game percentiles from 100{,}000 random simulations.}
+  \label{fig:percentiles}
+\end{figure}
+
+Figure~\ref{fig:percentiles} complements the histogram by summarizing the episode-length distribution at selected quantiles, which is often more stable than single-point summaries such as the mean.
+
+\begin{center}
+\begin{tabular}{@{}lrl@{}}
+\toprule
+Percentile & Turns & Interpretation \\
+\midrule
+25th & 23 & 25\% of games complete by this point \\
+50th (median) & 37 & Half of games complete \\
+75th & 60 & Three quarters of games complete \\
+90th & 90 & Only 10\% exceed this length \\
+95th & 113 & Long games (5\% tail) \\
+99th & 167 & Extreme tail (1\%) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+These percentiles informed our choice of discount factor $\gamma=0.95$, which appropriately weights future rewards across typical game horizons.
+
+\subsection{Cumulative distribution function}
+\begin{figure}[ht]
+  \centering
+  \includegraphics{turns_cdf.png}
+  \caption{Cumulative distribution function (CDF) of turns per game from 100{,}000 simulations.}
+  \label{fig:turns-cdf}
+\end{figure}
+
+Figure~\ref{fig:turns-cdf} provides a cumulative view of episode length; for example, the value at $x$ turns corresponds to the fraction of games that terminate within $x$ turns.
+
+\subsection{First-player advantage}
+\begin{figure}[ht]
+  \centering
+  \includegraphics{game_statistics.png}
+  \caption{Game-length summary and first-player advantage analysis (random baseline).}
+  \label{fig:first-player}
+\end{figure}
+
+Figure~\ref{fig:first-player} summarizes variability in episode length and reports the estimated advantage of moving first under random play, which serves as a basic sanity check for the simulator and a reference point for learned agents.
+
+We observe a modest first-player advantage: first player wins 51.07\% of games (51{,}068 / 100{,}000).
+
+\section{Deep Q-Network (DQN) Architecture}
+\subsection{Overview and design rationale}
+Deep Q-Networks (DQN) learn a parametric approximation $Q(s,a;\theta)$ to the optimal action-value function and are well suited to environments with (i) large or continuous observation spaces and (ii) discrete actions \parencite{mnih2015human}. In our setting, the observation is a fixed-length 420-dimensional feature vector (Section~\ref{fig:state-encoding}), while the action set is a 61-way discrete encoding with dynamic legality constraints (Section~\ref{fig:action-space}).
+
+Two practical challenges are central in Uno: (a) \emph{stochasticity and partial observability} (hidden opponent hand and random draws), and (b) \emph{variable legal actions}. To address (b), we explicitly apply an \emph{action mask} at decision time so that the policy never selects illegal actions.
+
+\subsection{Theoretical foundation}
+DQN builds on the Bellman optimality equation for Markov decision processes:
+\begin{equation}
+Q^*(s,a)=\mathbb{E}\left[r_{t+1}+\gamma \max_{a'} Q^*(s_{t+1},a')\mid s_t=s, a_t=a\right].
+\end{equation}
+
+Given a transition tuple $(s_t,a_t,r_{t+1},s_{t+1})$, the \emph{one-step TD target} used by DQN is
+\begin{equation}
+  y_t \;=\; r_{t+1} + \gamma\max_{a'} Q\bigl(s_{t+1},a';\theta^{-}\bigr),
+\end{equation}
+where $\theta^{-}$ denotes parameters of a slowly-updated \emph{target network} that stabilises learning \parencite{mnih2015human}.
+
+We minimise the squared TD error over samples drawn from a replay buffer:
+\begin{equation}
+\mathcal{L}(\theta)=\mathbb{E}_{(s,a,r,s')\sim\mathcal{D}}\left[\left(y - Q(s,a;\theta)\right)^2\right].
+\end{equation}
+
+\paragraph{Double DQN target (reduced overestimation).}
+In standard DQN, the maximisation in $y_t$ can introduce positive bias (``overestimation''). We therefore use the Double DQN decomposition, selecting the greedy action under the online network but evaluating it with the target network \parencite{vanhasselt2016double}:
+\begin{equation}
+  y_t^{\mathrm{DDQN}} \;=\; r_{t+1} + \gamma\,Q\Bigl(s_{t+1},\arg\max_{a'}Q(s_{t+1},a';\theta);\theta^{-}\Bigr).
+\end{equation}
+
+\subsection{Experience replay and target network}
+DQN uses two key stabilisation mechanisms \parencite{mnih2015human}:
+\begin{itemize}
+  \item \textbf{Experience replay.} Transitions are stored in a replay buffer $\mathcal{D}$ and mini-batches are sampled uniformly during training. This breaks short-term temporal correlations and improves sample efficiency.
+  \item \textbf{Target network.} A separate network with parameters $\theta^{-}$ is updated periodically (every $C$ gradient steps) from the online network parameters $\theta$, reducing non-stationarity of TD targets.
+\end{itemize}
+
+\FloatBarrier
+\subsection{State representation}
+We encode the game state as a 420-dimensional feature vector structured as 7 planes of 60 features each (4 colors $\times$ 15 card types). This representation is designed to be (i) fixed-dimensional, (ii) permutation-invariant with respect to hand order, and (iii) directly aligned with Uno's public and private information.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.6\linewidth]{state_encoding_breakdown.png}
+  \caption{Distribution of the 420 state features across information categories.}
+  \label{fig:state-encoding}
+\end{figure}
+
+\textbf{Detailed encoding scheme:}
+\begin{center}
+\begin{tabular}{@{}lrl@{}}
+\toprule
+Planes & Features & Description \\
+\midrule
+0--2 & 180 & Own hand card-count buckets (0, 1, 2+ copies) \\
+3--5 & 180 & Estimated opponent card counts (0, 1, 2+) \\
+6 & 60 & Current discard pile top card (one-hot) \\
+\midrule
+Total & 420 & Complete state representation \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Why bucketed counts?}
+We use $(0,1,2+)$ buckets rather than raw counts to keep the input scale bounded and to emphasise strategically relevant distinctions (e.g., ``have at least one playable card type'' versus ``none''). In a two-player setting, a coarse opponent model (estimated counts) is often sufficient to induce defensive play (e.g., holding wild cards) without requiring full belief-state inference.
+
+\subsection{Action space and legality masking}
+\FloatBarrier
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.6\linewidth]{action_space_breakdown.png}
+  \caption{Breakdown of the 61-action space.}
+  \label{fig:action-space}
+\end{figure}
+
+The action space consists of 61 discrete actions representing all possible moves; illegal actions are masked during action selection.
+
+\begin{center}
+\begin{tabular}{@{}lrl@{}}
+\toprule
+Action range & Count & Description \\
+\midrule
+0--39 & 40 & Number cards (0--9 $\times$ 4 colors) \\
+40--43 & 4 & Skip (4 colors) \\
+44--47 & 4 & Reverse (4 colors) \\
+48--51 & 4 & Draw Two (4 colors) \\
+52--55 & 4 & Wild (declare 4 colors) \\
+56--59 & 4 & Wild Draw Four (declare 4 colors) \\
+60 & 1 & Draw from deck \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Let $m(s)\in\{0,1\}^{61}$ be a binary mask indicating action legality in state $s$. During greedy action selection we compute
+\begin{equation}
+  a^* \;=\; \arg\max_{a}\; \Bigl(Q(s,a;\theta) + (1-m_a(s))\cdot (-\infty)\Bigr),
+\end{equation}
+which guarantees that illegal moves are never chosen.
+
+\subsection{Network architecture}
+Our Q-network maps 420 input features to 61 Q-values using a fully-connected multilayer perceptron. This choice is appropriate because the observation is already a compact, hand-crafted vector rather than an image.
+
+\begin{center}
+\fbox{\parbox{0.95\linewidth}{
+\textbf{Architecture summary.} Input: 420 $\rightarrow$ Hidden: 512 (ReLU, Dropout 0.1) $\rightarrow$ Hidden: 512 (ReLU, Dropout 0.1) $\rightarrow$ Output: 61 (linear). Optimizer: Adam with learning rate $10^{-4}$.
+}}
+\end{center}
+
+\paragraph{Regularisation and optimisation details.}
+Dropout provides mild regularisation against overfitting to early replay-buffer distributions. In addition, common DQN stabilisation practices include gradient clipping and the use of a robust loss (Huber) \parencite{mnih2015human}. (We report the MSE objective above for clarity; in practice, replacing MSE with Huber is a drop-in change.)
+
+\subsection{Relation to common DQN extensions (context)}
+Several extensions to DQN can further improve stability and performance, including dueling networks \parencite{wang2016dueling}, prioritised experience replay \parencite{schaul2016prioritized}, and combined ``Rainbow'' variants \parencite{hessel2018rainbow}. We retain a relatively simple architecture to keep the Uno pipeline reproducible, and focus our improvements on state encoding, action masking, and tournament-style experience collection.
+
+\section{Training Methodology}
+\subsection{Tournament-based experience collection}
+Each training iteration aggregates experience over a tournament of $N$ complete games, improving stability and diversifying trajectories.
+
+\section{Experiments and reproducibility}
+\subsection{Experimental protocol}
+All experimental results in this paper are conditional on the ruleset and experimental protocol implemented in the accompanying codebase \parencite{policyuno_repo}. In our implementation, training uses fixed random-policy opponents in a two-player setting (the learning agent is always player 0), and the reward is terminal only ($+1$ for win, $-1$ for loss, $0$ otherwise).
+
+\subsection{Metrics and reporting}
+We report (i) win rate and average reward for tournament-style evaluation, and (ii) summary statistics of game length (turns per game) under random play. The code writes training metrics to \texttt{runs/<run\_id>/metrics\_train.csv} and evaluation metrics to \texttt{runs/<run\_id>/metrics\_eval.csv} \parencite{policyuno_repo}.
+
+\subsection{Reproducibility checklist}
+\begin{itemize}
+  \item \textbf{Random seeds.} Training and evaluation set seeds for NumPy and PyTorch; the environment is also initialised with a seed parameter \parencite{policyuno_repo}.
+  \item \textbf{Artifacts.} Each run stores \texttt{config.json}, per-iteration tournament logs (\texttt{tournaments/dqn\_iter\_<i>.jsonl}), and plots under \texttt{runs/<run\_id>/plots/} \parencite{policyuno_repo}.
+  \item \textbf{LLM evaluation.} OpenRouter opponents are specified by model slugs (e.g., \texttt{google/gemini-3-flash-preview}, \texttt{openai/gpt-5.2}, \texttt{anthropic/claude-opus-4.5}) and queried with \texttt{max\_tokens=50} and \texttt{temperature=0.1} in our adapter \parencite{policyuno_repo}.
+\end{itemize}
+
+\subsection{Hyperparameter configuration}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\linewidth]{training_hyperparameters.png}
+  \caption{Exploration rate decay and temporal-difference learning components (illustrative).}
+  \label{fig:hyperparams}
+\end{figure}
+
+Figure~\ref{fig:hyperparams} summarizes key training signals, in particular the exploration schedule that transitions from broad exploration to more exploitative play as the replay buffer grows.
+
+\begin{center}
+\begin{tabular}{@{}lrl@{}}
+\toprule
+Hyperparameter & Value & Rationale \\
+\midrule
+Learning rate ($\alpha$) & $10^{-4}$ & Stable learning without oscillation \\
+Discount factor ($\gamma$) & 0.95 & Appropriate for $\sim$40-turn games \\
+Initial epsilon ($\varepsilon_0$) & 0.95 & High initial exploration \\
+Epsilon decay ($\kappa$) & 0.995 & Gradual transition to exploitation \\
+Minimum epsilon ($\varepsilon_{\min}$) & 0.01 & Maintain exploration \\
+Batch size & 256 & Efficient GPU utilization \\
+Replay buffer size & 100{,}000 & Experience diversity \\
+Target update frequency & 100 & Stabilize TD targets \\
+Games per iteration & 100 & Tournament size \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Training dynamics}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\linewidth]{fig2_dqn_avg_reward_over_iters.png}
+  \caption{Average reward over training iterations.}
+  \label{fig:training-curve}
+\end{figure}
+
+Figure~\ref{fig:training-curve} reports the evolution of training reward, which serves as a coarse indicator of policy improvement and training stability over iterations.
+
+The training progression exhibits three phases: (i) rapid learning in early iterations (1--50), (ii) strategy refinement (50--200), and (iii) convergence after approximately 200 iterations.
+
+\section{Evaluation: RL Agent vs. Large Language Models}
+\subsection{Experimental design}
+We evaluate the trained agent in head-to-head tournaments against multiple LLM opponents accessed via an API, focusing on win-rate as the primary metric.
+
+\paragraph{Protocol.}
+For each opponent configuration, we run 100 games (consistent with the win/loss counts reported in Table~1). In our evaluation harness, the learning agent is player 0 and the starting player is determined by the environment reset; we do not explicitly force alternation of the starting player. The LLM opponents are accessed through an external API gateway; in our implementation we use OpenRouter \parencite{openrouter_docs}. We use the OpenRouter model identifiers \texttt{google/gemini-3-flash-preview}, \texttt{openai/gpt-5.2}, and \texttt{anthropic/claude-opus-4.5}, queried with \texttt{temperature=0.1} and \texttt{max\_tokens=50} \parencite{policyuno_repo}.
+
+\subsection{Tournament results}
+\begin{figure}[ht]
+  \centering
+  \includegraphics{rl_vs_llm_tournament.png}
+  \caption{Tournament win rates between the trained DQN agent and selected LLM opponents.}
+  \label{fig:rl-vs-llm}
+\end{figure}
+
+Figure~\ref{fig:rl-vs-llm} provides a compact summary of the main comparative evaluation, indicating which LLM-based opponents are consistently outperformed by the learned policy and highlighting cases where the LLM exhibits a systematic advantage.
+
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Opponent & RL wins & LLM wins & RL win rate \\
+\midrule
+Gemini 3 Flash & 80 & 20 & 80\% \\
+GPT 5.2 & 80 & 20 & 80\% \\
+Opus 4.5 & 20 & 80 & 20\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Qualitative analysis of LLM behavior}
+Careful observation of gameplay revealed systematic differences in decision-making.
+
+\FloatBarrier
+\subsubsection{Gemini 3 Flash and GPT 5.2}
+In qualitative inspection of gameplay, these models often selected immediately playable cards without clear evidence of longer-horizon hand management. This observation is anecdotal and may be sensitive to the prompt template and sampling configuration \parencite{policyuno_repo}.
+
+\subsubsection{Opus 4.5}
+In contrast, Opus 4.5 displayed behaviors consistent with longer-horizon tactics, including deliberate hand management (preserving wild cards for flexibility), proactive color control (shifting to colors held in greater quantity), occasional defensive play (drawing instead of playing the last matching card), and actions consistent with anticipating inferred opponent constraints.
+
+\subsection{Interpretation: hypothesis on longer-horizon decision making}
+We hypothesize that the observed advantage of Opus 4.5 in our setting may reflect differences in longer-horizon decision making (e.g., preserving flexibility, controlling colors, or implicitly tracking opponent constraints). This interpretation is qualitative and requires further controlled study; in particular, it would benefit from (i) an explicitly specified prompt and sampling configuration for the LLM opponent, and (ii) quantitative ablations that isolate which information and planning components contribute to performance.
+
+
+\FloatBarrier
+\section{Discussion and Future Work}
+\subsection{Summary of findings}
+Overall, we find that DQN is viable for Uno in the sense that the agent learns competitive strategies without hand-crafted rules. We also find that performance varies substantially across LLM-based opponents under our evaluation protocol, so opponent choice strongly affects observed win rates. The large-scale simulation analysis provides practical guidance for selecting design choices such as discounting and evaluation horizons, while the LLM results highlight the importance of careful reproducibility reporting for API-served models.
+
+\subsection{Limitations}
+LLM evaluations are API-dependent and therefore difficult to reproduce at scale. In addition, we restrict attention to a two-player variant (excluding multi-player dynamics), and self-play training may reduce robustness to diverse opponent policies.
+
+\subsection{Future work}
+Promising directions include integrating explicit planning (e.g., Monte Carlo tree search) with learned value functions, population-based training against diverse opponents, extension to multi-agent (3--4 player) settings, and improved opponent modeling. Related advances in policy optimization and self-play motivate these directions \parencite{schulman2017ppo,silver2017mastering}.
+
+\section{Conclusion}
+We presented a complete pipeline for training, evaluating, and deploying a DQN agent for Uno. Our systematic approach---from 100{,}000-game statistical analysis through tournament-based training to LLM tournament evaluation---yields practical artifacts and insights.
+
+We observe large differences in win rates across the evaluated LLM opponents under our protocol. Because LLM evaluation is API-dependent and model endpoints may change over time, these results should be interpreted as conditional on the exact access configuration, and they motivate further controlled experiments and hybrid approaches that combine reinforcement learning with planning.
+
+\FloatBarrier
+\clearpage
+\phantomsection
+\nocite{final79_2}
+\printbibliography[heading=bibintoc,title={References}]
+\clearpage
+
+\appendix
+\section{Reproducibility (Commands)}
+\subsection{Environment setup}
+Source code and instructions are available in the accompanying repository \parencite{policyuno_repo}.
+\begin{lstlisting}[language=bash]
+# Clone repository
+git clone https://github.com/mohammed840/policy-uno.git
+cd policy-uno
+
+# Install dependencies
+pip install -e .
+
+# Set API key for LLM evaluation (optional)
+export OPENROUTER_API_KEY=your_key_here
+\end{lstlisting}
+
+\subsection{Training and evaluation commands}
+\begin{lstlisting}[language=bash]
+# Run game statistics simulation (random baseline)
+python -m rl.game_statistics --games 100000 --seed 42
+
+# Train DQN
+python -m rl.dqn_train --iters 1000 --games_per_iter 100 --seed 42
+
+# Evaluate a saved run
+python -m rl.eval --run_id <run_id> --games 1000 --seed 42
+
+# Generate plots for a run
+python -m rl.plots --run_id <run_id>
+\end{lstlisting}
+
+\subsection{Web server}
+\begin{lstlisting}[language=bash]
+# Start the web application
+python3 web/server.py
+
+# Access at http://localhost:5000
+\end{lstlisting}
+
+\end{document}
