@@ -6,34 +6,65 @@ permalink: /papers/
 {% assign papers_sorted = site.papers | sort: "date" | reverse %}
 
 {% for p in papers_sorted %}
-## [{{ p.title }}]({{ p.url }})
+<details style="margin: 1rem 0; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff;">
+  <summary style="cursor: pointer; font-size: 1.25rem; font-weight: 600;">
+    {{ p.title }}
+  </summary>
 
-{% if p.authors %}**Authors:** {{ p.authors }}
-{% endif %}
-{% if p.venue %}**Venue:** {{ p.venue }}
-{% endif %}
-{% if p.year %}**Year:** {{ p.year }}
-{% endif %}
+  <div style="margin-top: 0.75rem;">
+    {% if p.authors %}<p><strong>Authors:</strong> {{ p.authors }}</p>{% endif %}
+    {% if p.venue %}<p><strong>Venue:</strong> {{ p.venue }}</p>{% endif %}
+    {% if p.year %}<p><strong>Year:</strong> {{ p.year }}</p>{% endif %}
 
-{% if p.abstract %}
-{{ p.abstract }}
-{% endif %}
+    {% if p.tldr %}<p><strong>TL;DR:</strong> {{ p.tldr }}</p>{% endif %}
 
-{% if p.pdf %}
-  {% assign pdf_href = p.pdf %}
-  {% unless pdf_href contains "://" %}{% assign pdf_href = pdf_href | relative_url %}{% endunless %}
-  [PDF]({{ pdf_href }})
-{% endif %}
-{% if p.code %}
-  {% assign code_href = p.code %}
-  {% unless code_href contains "://" %}{% assign code_href = code_href | relative_url %}{% endunless %}
-  {% if p.pdf %} | {% endif %}[Code]({{ code_href }})
-{% endif %}
-{% if p.slides %}
-  {% assign slides_href = p.slides %}
-  {% unless slides_href contains "://" %}{% assign slides_href = slides_href | relative_url %}{% endunless %}
-  {% if p.pdf or p.code %} | {% endif %}[Slides]({{ slides_href }})
-{% endif %}
+    {% if p.highlights %}
+      <div style="margin: 0.75rem 0;">
+        <strong>Highlights</strong>
+        <ul>
+          {% for item in p.highlights %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if p.contributions %}
+      <div style="margin: 0.75rem 0;">
+        <strong>Key contributions</strong>
+        <ul>
+          {% for item in p.contributions %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if p.abstract %}<p>{{ p.abstract }}</p>{% endif %}
+
+    <p>
+      {% if p.pdf %}
+        {% assign pdf_href = p.pdf %}
+        {% unless pdf_href contains "://" %}{% assign pdf_href = pdf_href | relative_url %}{% endunless %}
+        <a href="{{ pdf_href }}">PDF</a>
+      {% endif %}
+      {% if p.code %}
+        {% assign code_href = p.code %}
+        {% unless code_href contains "://" %}{% assign code_href = code_href | relative_url %}{% endunless %}
+        {% if p.pdf %} | {% endif %}<a href="{{ code_href }}">Code</a>
+      {% endif %}
+      {% if p.slides %}
+        {% assign slides_href = p.slides %}
+        {% unless slides_href contains "://" %}{% assign slides_href = slides_href | relative_url %}{% endunless %}
+        {% if p.pdf or p.code %} | {% endif %}<a href="{{ slides_href }}">Slides</a>
+      {% endif %}
+    </p>
+
+    <div>
+      {{ p.content }}
+    </div>
+  </div>
+</details>
 
 ---
 {% endfor %}
