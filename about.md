@@ -9,7 +9,7 @@ permalink: /about/
   <div class="about-links">
     <a href="mailto:mohammed@redec.io">mohammed@redec.io</a>
     <span class="sep">·</span>
-    <span>Data Science</span>
+    <span>Mathematics</span>
   </div>
 </div>
 
@@ -21,7 +21,7 @@ I'm drawn to spaces where there are **major gaps** between what exists and what'
 
 ## What I'm Building Now
 
-I'm the Founding Lead Researcher & Engineer at [redec.io](https://redec.io), where we're building a voice enabled patient education agent. It uses foundation models to simplify lab analysis, post clinical guidance, and patient follow ups across speech and text. We're piloting with 2 clinics, handling 150+ patient interactions weekly. I've been applying RL to fine tune the conversational policy and building evaluation frameworks for RLHF and preference tuning.
+I'm the Founding Lead Researcher & Engineer at [redec.io](https://www.redec.io), where we're building a voice enabled patient education agent. It uses foundation models to simplify lab analysis, post clinical guidance, and patient follow ups across speech and text. We're piloting with 2 clinics, handling 150+ patient interactions weekly. I've been applying RL to fine tune the conversational policy and building evaluation frameworks for RLHF and preference tuning.
 
 ## Things I've Worked On
 
