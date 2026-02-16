@@ -22,7 +22,7 @@ permalink: /about/
   </div>
 </div>
 
-Hey, I'm Mohammed. I'm an AI/ML Research Engineer based in Dublin. I graduated from University College Dublin with a BSc in Computer Science with Mathematics.
+Hey, I'm Mohammed. I'm an AI/ML Research Engineer based in London. I graduated from University College Dublin with a BSc in Computer Science with Mathematics.
 
 I'm drawn to spaces where there are **major gaps** between what exists and what's needed. Whether it's speech technology, LLM tooling, or domain specific AI, I like finding the problems that haven't been solved well yet and building real solutions for them.
 
