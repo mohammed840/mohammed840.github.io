@@ -42,5 +42,86 @@
  table th:nth-child(2) { text-align: right; }
  table td:nth-child(1),
  table th:nth-child(1),
- table td:nth-child(3),
  table th:nth-child(3) { text-align: left; }
+
+/* ── Navigation ── */
+.site-header .wrapper {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.site-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.nav-link:hover {
+  color: #111;
+  text-decoration: none;
+}
+
+.nav-link.active {
+  color: #111;
+  border-bottom: 2px solid #111;
+}
+
+/* ── About page ── */
+.about-hero {
+  text-align: center;
+  margin: 2rem 0 1.5rem;
+}
+
+.about-name {
+  font-size: 2.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.about-tagline {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0.25rem 0;
+}
+
+.about-subtitle {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0.15rem 0 0.75rem;
+}
+
+.about-links {
+  font-size: 0.9rem;
+}
+
+.about-links a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+.about-links a:hover {
+  text-decoration: underline;
+}
+
+.about-links .sep {
+  margin: 0 0.35rem;
+  color: #999;
+}
+
+.exp-date {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
