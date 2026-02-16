@@ -1,48 +1,120 @@
-.post-header p { margin: 0.25rem 0; }
-.post-header a { text-decoration: none; }
-.post-header a:hover { text-decoration: underline; }
+.post-header p {
+  margin: 0.25rem 0;
+}
 
- .wrapper { max-width: 1180px; }
+.post-header a {
+  text-decoration: none;
+}
 
- body { font-family: "Computer Modern Serif", "CMU Serif", "Computer Modern", serif; }
+.post-header a:hover {
+  text-decoration: underline;
+}
 
- code { background: transparent; color: #111; padding: 0; }
- pre { background: transparent; color: #111; border: 0; }
- pre code { background: transparent; color: #111; }
- .highlighter-rouge .highlight { background: transparent; }
- .highlight { background: transparent; }
- .sourceCode { background: transparent; }
- pre.sourceCode { background: transparent; }
- code.sourceCode { background: transparent; }
+.wrapper {
+  max-width: 1180px;
+}
 
- .sourceCode span { background: transparent !important; color: #111 !important; }
- .sourceCode a { background: transparent !important; color: inherit !important; box-shadow: none !important; }
- .sourceCode pre { box-shadow: none !important; }
+body {
+  font-family: "Computer Modern Serif", "CMU Serif", "Computer Modern", serif;
+}
 
- figure { text-align: center; }
- figure img { width: 45% !important; max-width: 100% !important; height: auto !important; display: inline-block; }
+code {
+  background: transparent;
+  color: #111;
+  padding: 0;
+}
 
- table {
-   border-collapse: collapse;
-   margin: 1.25rem auto;
-   width: auto;
-   max-width: 100%;
-   border-top: 2px solid #111;
-   border-bottom: 2px solid #111;
- }
- table thead tr { border-bottom: 1px solid #111; }
- table th,
- table td {
-   padding: 0.35rem 0.75rem;
-   border: 0;
-   background: transparent;
- }
- table th { font-weight: 600; }
- table td:nth-child(2),
- table th:nth-child(2) { text-align: right; }
- table td:nth-child(1),
- table th:nth-child(1),
- table th:nth-child(3) { text-align: left; }
+pre {
+  background: transparent;
+  color: #111;
+  border: 0;
+}
+
+pre code {
+  background: transparent;
+  color: #111;
+}
+
+.highlighter-rouge .highlight {
+  background: transparent;
+}
+
+.highlight {
+  background: transparent;
+}
+
+.sourceCode {
+  background: transparent;
+}
+
+pre.sourceCode {
+  background: transparent;
+}
+
+code.sourceCode {
+  background: transparent;
+}
+
+.sourceCode span {
+  background: transparent !important;
+  color: #111 !important;
+}
+
+.sourceCode a {
+  background: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+}
+
+.sourceCode pre {
+  box-shadow: none !important;
+}
+
+figure {
+  text-align: center;
+}
+
+figure img {
+  width: 45% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  display: inline-block;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 1.25rem auto;
+  width: auto;
+  max-width: 100%;
+  border-top: 2px solid #111;
+  border-bottom: 2px solid #111;
+}
+
+table thead tr {
+  border-bottom: 1px solid #111;
+}
+
+table th,
+table td {
+  padding: 0.35rem 0.75rem;
+  border: 0;
+  background: transparent;
+}
+
+table th {
+  font-weight: 600;
+}
+
+table td:nth-child(2),
+table th:nth-child(2) {
+  text-align: right;
+}
+
+table td:nth-child(1),
+table th:nth-child(1),
+table th:nth-child(3) {
+  text-align: left;
+}
 
 /* ── Navigation ── */
 .site-header .wrapper {
@@ -124,4 +196,22 @@
   color: #666;
   font-style: italic;
   margin-bottom: 0.5rem;
+}
+
+.about-socials {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.about-socials a {
+  color: #888;
+  transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+}
+
+.about-socials a:hover {
+  color: #111;
 }
