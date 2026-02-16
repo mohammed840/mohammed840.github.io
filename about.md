@@ -22,13 +22,13 @@ permalink: /about/
   </div>
 </div>
 
-Hey, I'm Mohammed. I'm an AI/ML Research Engineer based in Dublin. I graduated from University College Dublin with a BSc in Computer Science with Mathematics, and since then I've been focused on building AI systems that actually work in production.
+Hey, I'm Mohammed. I'm an AI/ML Research Engineer based in Dublin. I graduated from University College Dublin with a BSc in Computer Science with Mathematics, and since then I've been focused on taking foundation models (7B to 30B parameters) and making them highly scalable and production ready.
 
 I'm drawn to spaces where there are **major gaps** between what exists and what's needed. Whether it's speech technology, LLM tooling, or domain specific AI, I like finding the problems that haven't been solved well yet and building real solutions for them.
 
 ## What I'm Building Now
 
-I'm the Founding Lead Researcher & Engineer at [redec.io](https://www.redec.io), where we're building a voice enabled patient education agent. It uses foundation models to simplify lab analysis, post clinical guidance, and patient follow ups across speech and text. We're piloting with 2 clinics, handling 150+ patient interactions weekly. I've been applying RL algorithms (PPO, GRPO) to fine tune the conversational policy and building evaluation frameworks for RLHF, RLVR, and preference tuning.
+I'm the Founding Lead Researcher & Engineer at [redec.io](https://www.redec.io), where we're building a voice enabled patient education agent powered by **medical foundation models**. We take 7B to 30B parameter models and optimize them for high scalability production deployment, handling lab analysis, post clinical guidance, and patient follow ups across speech and text. We're piloting with 2 clinics, handling 150+ patient interactions weekly. I've been applying RL algorithms (PPO, GRPO) to fine tune the conversational policy and building evaluation frameworks for RLHF, RLVR, and preference tuning.
 
 ## Things I've Worked On
 
@@ -40,7 +40,7 @@ At **IBM**, I worked on the **Watsonx** team as a Multimodal AI Engineer, buildi
 
 ## What I Care About
 
-I care about going from research to production, taking ideas and turning them into things that work at scale. I'm especially interested in **evaluation** (if you can't measure it, you can't improve it), **closing tooling gaps** in underserved domains, **RL for language** (RLHF, RLVR, PPO, GRPO, reward modeling), and **reasoning models** where RL training enables models to develop stronger chain of thought and problem solving capabilities.
+I care about going from research to production, taking **foundation models** and turning them into highly scalable, production ready systems. I'm especially interested in **evaluation** (if you can't measure it, you can't improve it), **closing tooling gaps** in underserved domains, **RL for language** (RLHF, RLVR, PPO, GRPO, reward modeling), and **reasoning models** where RL training enables models to develop stronger chain of thought and problem solving capabilities.
 
 ## Skills
 
