@@ -3,6 +3,8 @@ title: Papers
 permalink: /papers/
 ---
 
+# Papers
+
 {% assign papers_sorted = site.papers | sort: "date" | reverse %}
 
 {% for p in papers_sorted %}
@@ -35,6 +37,4 @@ permalink: /papers/
     </div>
   </div>
 </details>
-
----
 {% endfor %}
