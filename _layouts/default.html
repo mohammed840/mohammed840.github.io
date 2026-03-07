@@ -5,20 +5,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
-  <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}" />
+  <link rel="stylesheet" href="{{ " /assets/main.css" | relative_url }}" />
   {% include head-custom.html %}
 </head>
 
 <body>
   <header class="site-header" role="banner">
     <div class="wrapper">
-      <a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title }}</a>
+      <a class="site-title" rel="author" href="{{ " /" | relative_url }}">{{ site.title }}</a>
       <nav class="site-nav">
         <a class="nav-link{% if page.permalink == '/about/' %} active{% endif %}"
           href="{{ '/about/' | relative_url }}">About</a>
         <a class="nav-link{% if page.permalink == '/papers/' %} active{% endif %}"
           href="{{ '/papers/' | relative_url }}">Papers</a>
-        <a class="nav-link" href="https://www.mohammedalshehri.blog" target="_blank">Blogs</a>
+        <a class="nav-link{% if page.permalink == '/blogs/' %} active{% endif %}"
+          href="{{ '/blogs/' | relative_url }}">Blogs</a>
       </nav>
     </div>
   </header>

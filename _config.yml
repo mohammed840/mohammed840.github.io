@@ -10,12 +10,20 @@ collections:
   papers:
     output: true
     permalink: /papers/:name/
+  blogs:
+    output: true
+    permalink: /blogs/:name/
 defaults:
   - scope:
       path: ""
       type: papers
     values:
       layout: paper
+  - scope:
+      path: ""
+      type: blogs
+    values:
+      layout: blog
   - scope:
       path: ""
     values:
