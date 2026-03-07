@@ -1,342 +1,174 @@
 ---
-title: "Training a Deep Q-Network to Master Uno: A Comprehensive Study in Reinforcement Learning for Imperfect Information Games"
+title: "Teaching an LLM to Coach Itself: Multi-Agent Math Tutoring with Reinforcement Learning"
 date: 2026-03-07
 author: "Mohammed Alshehri"
-description: "We train a DQN agent for two-player Uno using a fixed-dimensional state encoding and masked action encoding, and evaluate it against LLM opponents."
+description: "Training a Solver-Coach-Reviser system on Hendrycks MATH using Tinker RL and Qwen3-8B."
 ---
 
-**Keywords:** reinforcement learning · DQN · imperfect information · card games · evaluation · large language models
+## **Introduction**
 
----
+What if a language model could not only solve math problems, but also review its own work, spot its mistakes, and fix them?
 
-## **Introduction and Motivation**
+That's exactly what we set out to build. In this project we trained a **multi-agent math coaching system** where a single LLM plays three distinct roles:
 
-### **The challenge of imperfect information games**
+1. **Solver** — attempts the problem step-by-step and produces a final answer.
+2. **Coach** — reviews the Solver's work, identifies the first mistake, classifies the error type (arithmetic, algebra, logic, etc.), and gives a targeted fix instruction.
+3. **Reviser** — takes the Coach's feedback and produces a corrected solution.
 
-Card games are a standard benchmark for decision-making under uncertainty. Unlike perfect-information games (e.g., Chess, Go), Uno introduces:
+The entire pipeline is trained end-to-end with reinforcement learning using **verifiable rewards (RLVR)**. The reward signal is simple and unambiguous: does the final revised answer match the ground-truth answer? Correct = 1, incorrect = 0, with a small +0.1 bonus when the Coach actually fixes a wrong first attempt.
 
-This work builds on deep reinforcement learning methods for control (Mnih et al. 2015) and subsequent improvements in stabilizing value-based learning (Hasselt et al. 2016).
+We used **Tinker RL** — a cloud-based RL training platform — to fine-tune **Qwen/Qwen3-8B** with LoRA adapters, trained on 500 problems from the **Hendrycks MATH** dataset over 200 gradient steps. The training used an importance-sampling loss with GRPO-style per-group advantage centering: for each problem we sampled multiple rollouts, centered the rewards within each group, and used the normalized advantages to weight the policy gradient.
 
-- **Imperfect information**: opponents' hands are hidden.
-- **Stochastic transitions**: shuffling and drawing induce randomness.
-- **Variable action spaces**: legal actions change with the top discard card and the hand.
-- **Delayed rewards**: local actions may have long-term consequences.
-
-### **Research objectives**
-
-We pursue four objectives:
-
-- Statistical characterization of baseline play.
-- Implementation and training of a DQN agent.
-- Comparative evaluation against random baselines and frontier LLMs.
-- Deployment of an interactive web interface for demonstration.
-
-### **Contributions**
-
-Our contributions include (i) a fixed-dimensional state encoding, (ii) tournament-based experience collection, (iii) empirical comparisons versus LLM-based opponents, and (iv) a deployable system design.
+This blog walks through our setup, the training process, and what the five key diagnostic plots tell us about what the model learned (and didn't learn).
 
 ---
 
-## **Problem Setting and Rules**
+## **The Setup**
 
-### **Two-player Uno variant**
+### **Model & Infrastructure**
 
-We study a two-player version of Uno. The game is played with a standard Uno deck and proceeds in alternating turns until one player plays their final card. Special action cards modify turn order or force draws; wild cards allow the acting player to declare the next active color. For baseline rule definitions we follow the official Uno instructions (Mattel n.d.). *Implementation note:* Uno has rule variants (e.g., stacking draw cards); therefore, any empirical results in this paper should be interpreted with respect to the specific rules implemented in our codebase.
+- **Base model:** Qwen/Qwen3-8B (single model, three role-specific prompts)
+- **Fine-tuning:** LoRA rank 32, training MLP + attention + unembed layers
+- **Platform:** Tinker RL (cloud GPU training with importance-sampling loss)
+- **Optimizer:** Adam, learning rate 1e-5, no weight decay
 
-### **Learning problem formulation**
+### **Data**
 
-We model the environment as a partially observable sequential decision problem: the agent observes its private hand and public information (e.g., discard top card) but not the opponent's hand (Kaelbling et al. 1998). We train the agent using episodic win/loss feedback as the primary learning signal.
+- **Training set:** 500 problems sampled from Hendrycks MATH (all levels, all types)
+- **Eval set:** 5 problems (lightweight periodic eval during training)
+- **Dataset:** Hendrycks MATH — a benchmark of 12,500 competition-level math problems spanning algebra, geometry, number theory, counting & probability, and more
 
----
+### **Training Loop**
 
-## **Related Work**
+Each of the 200 training steps works like this:
 
-Deep reinforcement learning for control with value-based methods has been widely studied, including the original DQN formulation (Mnih et al. 2015) and Double DQN (Hasselt et al. 2016). Multiple stabilisation and performance extensions have been proposed, including dueling networks (Wang et al. 2016), prioritised experience replay (Schaul et al. 2016), and combined variants such as Rainbow (Hessel et al. 2018). For card-game research and benchmarking, RLCard provides a general-purpose toolkit (Zha et al. 2019).
+1. Sample 4 problems from the training set.
+2. Roll out 2 independent episodes per problem (group_size=2), each episode running the full **Solver → Coach → Reviser** pipeline.
+3. Compute rewards: compare the Reviser's final answer to ground truth.
+4. Compute GRPO advantages: within each group of 2 rollouts on the same problem, center and normalize the rewards.
+5. Build training data: construct token-level Datum objects with prompt masking (zero advantage/logprob on prompt tokens, actual values on response tokens).
+6. Forward-backward + optimizer step via Tinker's `importance_sampling` loss.
+7. Log per-step metrics (reward, accuracy before/after, tokens used, KL divergence proxy).
 
-A course report by Brown, Jasson and Swarnakar (Brown et al. 2020) also explores Uno with DQN and DeepSARSA in an RLCard-based environment, focusing on multi-player games (3–5 players) and tournament-style experience collection.
+### **The Three Prompts**
 
----
-
-## **Game Statistics from Large-Scale Simulations**
-
-### **Experimental setup**
-
-We simulated 100,000 games under uniformly random legal play. For each episode we recorded total turns to termination, the starting player, and per-player counts of cards played and drawn.
-
-### **Game length distribution**
-
-![Turns-per-game distribution from 100,000 simulated Uno games under uniformly random legal play.](/assets/assets-/turns_distribution.png)
-
-The pronounced right tail indicates that while many games finish quickly, a non-negligible fraction of episodes are substantially longer, which motivates reporting both central tendency and tail statistics.
-
-**Summary statistics (random baseline):**
-
-| Statistic | Value |
-|:---|:---|
-| Mean | 46.5 turns |
-| Median | 37.0 turns |
-| Mode | 13 turns |
-| Standard deviation | 33.8 turns |
-| Minimum | 7 turns |
-| Maximum | 418 turns |
-
-### **Percentile analysis**
-
-![Turns-per-game percentiles from 100,000 random simulations.](/assets/assets-/percentile_analysis.png)
-
-| Percentile | Turns | Interpretation |
-|:---|---:|:---|
-| 25th | 23 | 25% of games complete by this point |
-| 50th (median) | 37 | Half of games complete |
-| 75th | 60 | Three quarters of games complete |
-| 90th | 90 | Only 10% exceed this length |
-| 95th | 113 | Long games (5% tail) |
-| 99th | 167 | Extreme tail (1%) |
-
-### **Cumulative distribution function**
-
-![Cumulative distribution function (CDF) of turns per game from 100,000 simulations.](/assets/assets-/turns_cdf.png)
-
-### **First-player advantage**
-
-![Game-length summary and first-player advantage analysis (random baseline).](/assets/assets-/game_statistics.png)
-
-We observe a modest first-player advantage: first player wins 51.07% of games (51,068 / 100,000).
+The **Solver** gets a straightforward instruction to solve step-by-step and output `FINAL: <answer>`. The **Coach** is asked to return structured JSON identifying the error type, the first wrong step, and a minimal fix instruction. The **Reviser** receives the original problem, the Solver's attempt, and the Coach's JSON feedback, then produces a corrected solution.
 
 ---
 
-## **Deep Q-Network (DQN) Architecture**
+## **The Results: Five Diagnostic Plots**
 
-### **Overview and design rationale**
-
-Deep Q-Networks (DQN) learn a parametric approximation to the optimal action-value function and are well suited to environments with (i) large or continuous observation spaces and (ii) discrete actions (Mnih et al. 2015). In our setting, the observation is a fixed-length 420-dimensional feature vector, while the action set is a 61-way discrete encoding with dynamic legality constraints.
-
-Two practical challenges are central in Uno: (a) *stochasticity and partial observability* (hidden opponent hand and random draws), and (b) *variable legal actions*. To address (b), we explicitly apply an *action mask* at decision time so that the policy never selects illegal actions.
-
-### **Theoretical foundation**
-
-DQN builds on the Bellman optimality equation for Markov decision processes. Given a transition tuple, the *one-step TD target* used by DQN relies on parameters of a slowly-updated *target network* that stabilises learning (Mnih et al. 2015).
-
-We minimise the squared TD error over samples drawn from a replay buffer.
-
-#### Double DQN target (reduced overestimation)
-
-In standard DQN, the maximisation in the TD target can introduce positive bias ("overestimation"). We therefore use the Double DQN decomposition, selecting the greedy action under the online network but evaluating it with the target network (Hasselt et al. 2016).
-
-### **Experience replay and target network**
-
-DQN uses two key stabilisation mechanisms (Mnih et al. 2015):
-
-- **Experience replay.** Transitions are stored in a replay buffer and mini-batches are sampled uniformly during training. This breaks short-term temporal correlations and improves sample efficiency.
-- **Target network.** A separate network with parameters is updated periodically from the online network parameters, reducing non-stationarity of TD targets.
-
-### **State representation**
-
-We encode the game state as a 420-dimensional feature vector structured as 7 planes of 60 features each (4 colors × 15 card types). This representation is designed to be (i) fixed-dimensional, (ii) permutation-invariant with respect to hand order, and (iii) directly aligned with Uno's public and private information.
-
-![Distribution of the 420 state features across information categories.](/assets/assets-/state_encoding_breakdown.png)
-
-**Detailed encoding scheme:**
-
-| Planes | Features | Description |
-|:---|---:|:---|
-| 0–2 | 180 | Own hand card-count buckets (0, 1, 2+ copies) |
-| 3–5 | 180 | Estimated opponent card counts (0, 1, 2+) |
-| 6 | 60 | Current discard pile top card (one-hot) |
-| **Total** | **420** | **Complete state representation** |
-
-### **Action space and legality masking**
-
-![Breakdown of the 61-action space.](/assets/assets-/action_space_breakdown.png)
-
-The action space consists of 61 discrete actions representing all possible moves; illegal actions are masked during action selection.
-
-| Action range | Count | Description |
-|:---|---:|:---|
-| 0–39 | 40 | Number cards (0–9 × 4 colors) |
-| 40–43 | 4 | Skip (4 colors) |
-| 44–47 | 4 | Reverse (4 colors) |
-| 48–51 | 4 | Draw Two (4 colors) |
-| 52–55 | 4 | Wild (declare 4 colors) |
-| 56–59 | 4 | Wild Draw Four (declare 4 colors) |
-| 60 | 1 | Draw from deck |
-
-### **Network architecture**
-
-Our Q-network maps 420 input features to 61 Q-values using a fully-connected multilayer perceptron. This choice is appropriate because the observation is already a compact, hand-crafted vector rather than an image.
-
-> **Architecture summary.** Input: 420 → Hidden: 512 (ReLU, Dropout 0.1) → Hidden: 512 (ReLU, Dropout 0.1) → Output: 61 (linear). Optimizer: Adam with learning rate 10⁻⁴.
-
-### **Relation to common DQN extensions**
-
-Several extensions to DQN can further improve stability and performance, including dueling networks (Wang et al. 2016), prioritised experience replay (Schaul et al. 2016), and combined "Rainbow" variants (Hessel et al. 2018). We retain a relatively simple architecture to keep the Uno pipeline reproducible, and focus our improvements on state encoding, action masking, and tournament-style experience collection.
+After training completed, we generated five plots to diagnose what happened during the 200-step run. Let's walk through each one.
 
 ---
 
-## **Training Methodology**
+### **1. Reward Curve Over Training Steps**
 
-### **Tournament-based experience collection**
+![Reward Curve](https://static.wixstatic.com/media/ffcc74_943abe9949e246c9bc8da4a08abb47f2~mv2.png/v1/fill/w_740,h_444,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_943abe9949e246c9bc8da4a08abb47f2~mv2.png)
 
-Each training iteration aggregates experience over a tournament of N complete games, improving stability and diversifying trajectories.
+This is the headline metric — the mean reward per training step, shown as both the raw per-step values (light blue) and a rolling mean with a window of 20 steps (dark blue).
 
----
+**What we see:** The reward is noisy (expected with batch_size=4 and group_size=2 — only 8 episodes per step), oscillating between 0.0 and 0.8. The rolling mean hovers in the 0.10–0.30 range throughout training. There's an initial spike around step 0–5 (likely easy problems in the first batches), a dip around steps 60–75, a recovery peaking near step 90–100, and then a gradual settling around 0.15–0.20 for the remainder.
 
-## **Experiments and Reproducibility**
-
-### **Experimental protocol**
-
-All experimental results are conditional on the ruleset and experimental protocol implemented in the accompanying codebase. In our implementation, training uses fixed random-policy opponents in a two-player setting (the learning agent is always player 0), and the reward is terminal only (+1 for win, −1 for loss, 0 otherwise).
-
-### **Metrics and reporting**
-
-We report (i) win rate and average reward for tournament-style evaluation, and (ii) summary statistics of game length (turns per game) under random play.
-
-### **Reproducibility checklist**
-
-- **Random seeds.** Training and evaluation set seeds for NumPy and PyTorch; the environment is also initialised with a seed parameter.
-- **Artifacts.** Each run stores `config.json`, per-iteration tournament logs, and plots.
-- **LLM evaluation.** OpenRouter opponents are specified by model slugs (e.g., `google/gemini-3-flash-preview`, `openai/gpt-5.2`, `anthropic/claude-opus-4.5`) and queried with `max_tokens=50` and `temperature=0.1`.
-
-### **Hyperparameter configuration**
-
-![Exploration rate decay and temporal-difference learning components.](/assets/assets-/training_hyperparameters.png)
-
-| Hyperparameter | Value | Rationale |
-|:---|---:|:---|
-| Learning rate (α) | 10⁻⁴ | Stable learning without oscillation |
-| Discount factor (γ) | 0.95 | Appropriate for ~40-turn games |
-| Initial epsilon (ε₀) | 0.95 | High initial exploration |
-| Epsilon decay (κ) | 0.995 | Gradual transition to exploitation |
-| Minimum epsilon (ε_min) | 0.01 | Maintain exploration |
-| Batch size | 256 | Efficient GPU utilization |
-| Replay buffer size | 100,000 | Experience diversity |
-| Target update frequency | 100 | Stabilize TD targets |
-| Games per iteration | 100 | Tournament size |
-
-### **Training dynamics**
-
-![Average reward over training iterations.](/assets/assets-/fig2_dqn_avg_reward_over_iters.png)
-
-The training progression exhibits three phases: (i) rapid learning in early iterations (1–50), (ii) strategy refinement (50–200), and (iii) convergence after approximately 200 iterations.
+**Interpretation:** The model is learning *something* — the reward doesn't collapse to zero — but the overall accuracy remains low. This is not surprising for competition-level math with an 8B model and only 200 steps of LoRA training. The high variance suggests the model's performance is heavily problem-dependent: it can solve some problems but struggles with others. The lack of a clear upward trend after step 100 suggests the model may be near the ceiling of what this training budget can achieve, or that the learning rate / batch size needs tuning for more stable improvement.
 
 ---
 
-## **Evaluation: RL Agent vs. Large Language Models**
+### **2. Accuracy Before vs After Coach**
 
-### **Experimental design**
+![Accuracy Curves](https://static.wixstatic.com/media/ffcc74_c04e16b9a5764af7a3e1c7e5d8d9924f~mv2.png/v1/fill/w_740,h_444,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_c04e16b9a5764af7a3e1c7e5d8d9924f~mv2.png)
 
-We evaluate the trained agent in head-to-head tournaments against multiple LLM opponents accessed via an API, focusing on win-rate as the primary metric.
+This plot compares two rolling-mean accuracy curves over training: the **orange line** is the Solver's first-pass accuracy (before the Coach intervenes), and the **green line** is the accuracy after the full Coach → Reviser pipeline.
 
-#### Protocol
+**What we see:** Both curves track each other closely, generally in the 0.10–0.25 range. The "Before Coach" (Solver-only) accuracy and the "After Coach" (Revised) accuracy are nearly overlapping throughout training, with the Solver-only curve sometimes slightly *above* the revised curve.
 
-For each opponent configuration, we run 100 games. The learning agent is player 0 and the starting player is determined by the environment reset. The LLM opponents are accessed through OpenRouter using model identifiers `google/gemini-3-flash-preview`, `openai/gpt-5.2`, and `anthropic/claude-opus-4.5`, queried with `temperature=0.1` and `max_tokens=50`.
+**Interpretation:** This is the most revealing plot. The Coach is **not consistently improving** the Solver's answers. In an ideal scenario, the green line should be clearly above the orange line — meaning the Coach catches mistakes and the Reviser fixes them. Instead, the two are interleaved, which means:
 
-### **Tournament results**
+- The Coach sometimes gives bad advice that causes the Reviser to change a correct answer to an incorrect one.
+- The Coach may fail to identify the actual error, leading the Reviser to make unhelpful changes.
+- With only 200 training steps, the model hasn't learned to reliably distinguish correct from incorrect reasoning.
 
-![Tournament win rates between the trained DQN agent and selected LLM opponents.](/assets/assets-/rl_vs_llm_tournament.png)
-
-| Opponent | RL wins | LLM wins | RL win rate |
-|:---|:---:|:---:|:---:|
-| Gemini 3 Flash | 80 | 20 | 80% |
-| GPT 5.2 | 80 | 20 | 80% |
-| Opus 4.5 | 20 | 80 | 20% |
-
-### **Qualitative analysis of LLM behavior**
-
-Careful observation of gameplay revealed systematic differences in decision-making.
-
-#### Gemini 3 Flash and GPT 5.2
-
-In qualitative inspection of gameplay, these models often selected immediately playable cards without clear evidence of longer-horizon hand management. This observation is anecdotal and may be sensitive to the prompt template and sampling configuration.
-
-#### Opus 4.5
-
-In contrast, Opus 4.5 displayed behaviors consistent with longer-horizon tactics, including deliberate hand management (preserving wild cards for flexibility), proactive color control (shifting to colors held in greater quantity), occasional defensive play (drawing instead of playing the last matching card), and actions consistent with anticipating inferred opponent constraints.
-
-### **Interpretation: hypothesis on longer-horizon decision making**
-
-We hypothesize that the observed advantage of Opus 4.5 in our setting may reflect differences in longer-horizon decision making (e.g., preserving flexibility, controlling colors, or implicitly tracking opponent constraints). This interpretation is qualitative and requires further controlled study.
+> This is a key finding: the multi-agent coaching loop is a harder task than single-pass solving, and the 8B model at this training budget hasn't cracked it yet.
 
 ---
 
-## **Discussion and Future Work**
+### **3. Fix Rate by Error Type Over Training**
 
-### **Summary of findings**
+![Fix Rate by Error Type](https://static.wixstatic.com/media/ffcc74_35f93fa7d5e848fe8f97b24733795074~mv2.png/v1/fill/w_740,h_444,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_35f93fa7d5e848fe8f97b24733795074~mv2.png)
 
-Overall, we find that DQN is viable for Uno in the sense that the agent learns competitive strategies without hand-crafted rules. We also find that performance varies substantially across LLM-based opponents under our evaluation protocol, so opponent choice strongly affects observed win rates.
+This plot breaks down the Coach's effectiveness by error type. Each colored line shows the rolling fix rate (fraction of times the Coach's intervention led to a correct revised answer) for a specific error category.
 
-### **Limitations**
+**What we see:**
 
-LLM evaluations are API-dependent and therefore difficult to reproduce at scale. In addition, we restrict attention to a two-player variant (excluding multi-player dynamics), and self-play training may reduce robustness to diverse opponent policies.
+- **Formatting errors** (pink) have the highest fix rate, reaching nearly 1.0 between steps 75–140, then dropping sharply around step 150. This makes sense — formatting errors (e.g., wrong answer format) are the easiest to identify and fix.
+- **Arithmetic errors** (orange) start with a fix rate around 0.25–0.33 early on, then decline to ~0.10 by mid-training.
+- **Algebra errors** (teal) hover around 0.05–0.15 for most of training.
+- **Simplification and other errors** (gray) are volatile, spiking early then declining.
+- **Logic, misread, geometry, and counting errors** remain near 0.0 throughout — the Coach essentially never successfully fixes these.
 
-### **Future work**
+**Interpretation:** The model learns to fix **surface-level errors** (formatting) but struggles with **deeper mathematical reasoning errors**. This aligns with what we'd expect: identifying that an answer is in the wrong format is much easier than spotting a subtle algebraic manipulation error. The drop in formatting fix rate after step 150 is interesting — it could indicate the policy drifting (the Coach starts misclassifying errors or giving less precise instructions as training progresses).
 
-Promising directions include integrating explicit planning (e.g., Monte Carlo tree search) with learned value functions, population-based training against diverse opponents, extension to multi-agent (3–4 player) settings, and improved opponent modeling.
+---
+
+### **4. Efficiency — Accuracy vs Tokens per Episode**
+
+![Efficiency](https://static.wixstatic.com/media/ffcc74_d7feaa48b4e6479cb13a85567142dc74~mv2.png/v1/fill/w_740,h_444,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_d7feaa48b4e6479cb13a85567142dc74~mv2.png)
+
+This scatter plot shows the relationship between tokens consumed per episode (x-axis) and after-Coach accuracy (y-axis). Each light purple dot is one training step; the dark purple line is a rolling trend.
+
+**What we see:** Most episodes consume between 1,050 and 1,280 tokens. The accuracy values are spread across the full range (0.0 to 0.75), with no clear correlation between token usage and accuracy. The rolling trend line clusters in the lower-right region (high tokens, low accuracy), showing that as training progresses, the model tends to use more tokens without gaining accuracy.
+
+**Interpretation:** The model is **not becoming more token-efficient** over training. In fact, the trend suggests mild *verbosity creep* — the Solver, Coach, and Reviser are generating longer outputs as training progresses, but this extra length doesn't translate to better answers. This is a common failure mode in RL-trained language models: the policy learns to generate longer responses (perhaps hedging or adding unnecessary steps) without improving correctness. A token penalty in the reward function or a max-token constraint could help address this.
+
+---
+
+### **5. KL Divergence Over Training Steps**
+
+![KL Divergence](https://static.wixstatic.com/media/ffcc74_c04e16b9a5764af7a3e1c7e5d8d9924f~mv2.png/v1/fill/w_740,h_444,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_c04e16b9a5764af7a3e1c7e5d8d9924f~mv2.png)
+
+This plot tracks the importance-sampling (IS) loss as a proxy for KL divergence between the current policy and the reference (base) policy. The light orange line is the raw per-step IS loss; the dark orange line is the rolling mean (window=20).
+
+**What we see:** The IS loss is highly volatile, swinging between roughly −1,000 and +600. The rolling mean starts deeply negative (around −600 at step 0), rises toward 0 by step 40–50, stabilizes around −50 to −100 for the middle portion of training, and then dips slightly more negative toward the end.
+
+**Interpretation:** The large magnitude and high variance of the IS loss indicate significant policy divergence from the base model. The negative values suggest the current policy assigns lower probability to the sampled trajectories than the reference policy did — meaning the model is actively moving away from its base behavior. The stabilization in the middle of training is a good sign (the policy isn't diverging catastrophically), but the late-training dip suggests the policy may be starting to overfit or drift again. In a longer run, adding explicit KL regularization (a KL penalty term in the reward) would help keep the policy closer to the base model and prevent mode collapse.
+
+---
+
+## **Key Takeaways**
+
+### **What Worked**
+
+1. **The pipeline runs end-to-end.** The Solver → Coach → Reviser loop, GRPO advantage computation, Tinker integration, and JSONL logging all function correctly. This is a solid foundation for scaling up.
+2. **The model learns something.** Rewards don't collapse to zero; the model maintains ~15–20% accuracy on competition-level math, which is non-trivial for an 8B model with minimal training.
+3. **Formatting errors get fixed.** The Coach reliably identifies and fixes formatting issues, showing the model can learn the easier aspects of self-correction.
+4. **Training is stable.** Despite the noisy rewards, the KL divergence doesn't explode, and the model doesn't degenerate into gibberish. The importance-sampling loss keeps things in check.
+
+### **What Didn't Work (Yet)**
+
+1. **The Coach doesn't reliably improve answers.** The before-vs-after accuracy curves overlap, meaning the coaching loop is roughly break-even. The Coach sometimes *hurts* performance by giving bad advice.
+2. **Deep mathematical errors remain unfixed.** Logic, geometry, counting, and misread errors have near-zero fix rates. The 8B model at this training budget can't learn to diagnose these.
+3. **Token efficiency degrades.** The model gets wordier without getting smarter — a classic RL failure mode.
+4. **200 steps isn't enough.** With batch_size=4 and group_size=2, we only see 800 unique problem-rollout pairs during training. Competition math likely needs orders of magnitude more training signal.
+
+### **What We'd Do Next**
+
+- **Scale up:** More training steps (1,000+), larger batch sizes, and a larger eval set for more reliable metrics.
+- **Larger model:** Try Qwen3-32B or 72B — the coaching task may require more capacity.
+- **KL regularization:** Add an explicit KL penalty to the reward to prevent policy drift.
+- **Token penalty:** Penalize excessive token usage to encourage concise reasoning.
+- **Curriculum learning:** Start with easier problems (Level 1–2) and gradually increase difficulty.
+- **Separate Coach training:** Consider training the Coach role separately with supervised examples of good error identification before RL fine-tuning.
 
 ---
 
 ## **Conclusion**
 
-We presented a complete pipeline for training, evaluating, and deploying a DQN agent for Uno. Our systematic approach—from 100,000-game statistical analysis through tournament-based training to LLM tournament evaluation—yields practical artifacts and insights.
+We built a multi-agent math coaching system where a single Qwen3-8B model plays Solver, Coach, and Reviser, trained end-to-end with Tinker RL on the Hendrycks MATH dataset. Over 200 training steps with LoRA fine-tuning, the model learned to maintain baseline math-solving ability and fix surface-level formatting errors, but the Coach role didn't reliably improve deeper mathematical reasoning.
 
-We observe large differences in win rates across the evaluated LLM opponents under our protocol. Because LLM evaluation is API-dependent and model endpoints may change over time, these results should be interpreted as conditional on the exact access configuration, and they motivate further controlled experiments and hybrid approaches that combine reinforcement learning with planning.
+The five diagnostic plots paint a clear picture: the reward signal is noisy but non-zero, the coaching loop is roughly break-even, fix rates are error-type-dependent, token efficiency degrades over training, and the policy diverges moderately from the base model. These are all expected behaviors for a first 200-step run and provide clear directions for improvement.
 
----
-
-## **Reproducibility**
-
-### **Environment setup**
-
-Source code and instructions are available in the [accompanying repository](https://github.com/mohammed840/policy-uno).
-
-```bash
-# Clone repository
-git clone https://github.com/mohammed840/policy-uno.git
-cd policy-uno
-
-# Install dependencies
-pip install -e .
-
-# Set API key for LLM evaluation (optional)
-export OPENROUTER_API_KEY=your_key_here
-```
-
-### **Training and evaluation commands**
-
-```bash
-# Run game statistics simulation (random baseline)
-python -m rl.game_statistics --games 100000 --seed 42
-
-# Train DQN
-python -m rl.dqn_train --iters 1000 --games_per_iter 100 --seed 42
-
-# Evaluate a saved run
-python -m rl.eval --run_id <run_id> --games 1000 --seed 42
-
-# Generate plots for a run
-python -m rl.plots --run_id <run_id>
-```
-
-### **Web server**
-
-```bash
-# Start the web application
-python3 web/server.py
-
-# Access at http://localhost:5000
-```
+The most important insight is that **self-correction in math is hard** — even for a model that can solve some problems on its first pass, learning to reliably *critique and fix* its own work requires substantially more training signal and possibly more model capacity. But the infrastructure is in place, the pipeline works, and the diagnostic tools give us clear visibility into what's happening. The next step is to scale up and iterate.
 
 ---
 
-**References**
-
-- Brown, Olivia, Diego Jasson, and Ankush Swarnakar. 2020. *Winning Uno with Reinforcement Learning*. Course report, Stanford University.
-- Hasselt, Hado van, Arthur Guez, and David Silver. 2016. "Deep Reinforcement Learning with Double Q-Learning." *AAAI*.
-- Hessel, Matteo et al. 2018. "Rainbow: Combining Improvements in Deep Reinforcement Learning." *AAAI*.
-- Kaelbling, Leslie Pack, Michael L Littman, and Anthony R Cassandra. 1998. "Planning and Acting in Partially Observable Stochastic Domains." *Artificial Intelligence*.
-- Mnih, Volodymyr et al. 2015. "Human-Level Control Through Deep Reinforcement Learning." *Nature*.
-- Schaul, Tom et al. 2016. "Prioritized Experience Replay." *arXiv*.
-- Schulman, John et al. 2017. "Proximal Policy Optimization Algorithms." *arXiv*.
-- Silver, David et al. 2017. "Mastering the Game of Go Without Human Knowledge." *Nature*.
-- Wang, Ziyu et al. 2016. "Dueling Network Architectures for Deep Reinforcement Learning." *arXiv*.
-- Zha, Daochen et al. 2019. "RLCard: A Toolkit for Reinforcement Learning in Card Games." *arXiv*.
+*Built with [Tinker RL](https://tinker.thinkingmachines.ai) · Model: Qwen/Qwen3-8B · Dataset: Hendrycks MATH · Training: 200 steps, LoRA rank 32, importance-sampling loss with GRPO advantages*
