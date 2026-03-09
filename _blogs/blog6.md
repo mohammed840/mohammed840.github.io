@@ -1,6 +1,6 @@
 ---
 title: "2025: The Year I Bet on Myself"
-date: 2025-12-31
+date: 2026-01-01
 author: "Mohammed Alshehri"
 description: "A personal reflection on leaving IBM, building startups from zero, and the lessons learned from a full year of betting on yourself as a founder."
 ---
