@@ -7,7 +7,7 @@ description: "An in-depth analysis of the AI race between Google DeepMind, OpenA
 
 ## Research Imperatives and the Struggle for Algorithmic Dominance
 
-https://static.wixstatic.com/media/ffcc74_25d54cd4bcb9479ca8bf209d4066d281~mv2.jpg/v1/fill/w_856,h_586,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_25d54cd4bcb9479ca8bf209d4066d281~mv2.jpg
+![Research Imperatives and the Struggle for Algorithmic Dominance](https://static.wixstatic.com/media/ffcc74_25d54cd4bcb9479ca8bf209d4066d281~mv2.jpg/v1/fill/w_856,h_586,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_25d54cd4bcb9479ca8bf209d4066d281~mv2.jpg)
 
 # Rethinking the Question of AI Supremacy
 
