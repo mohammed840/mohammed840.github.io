@@ -87,8 +87,11 @@ abstract: "We present Privacy Guard, a reinforcement learning framework for priv
 <h3 id="reinforcement-learning-for-llm-agents">2.1 Reinforcement Learning for LLM Agents</h3>
 <p>The application of reinforcement learning to language model fine-tuning has a long history rooted in sequence-level reward signals. Early work (Ranzato et al., 2016; Sutton et al., 2000) used REINFORCE to optimise non-differentiable sequence-level metrics such as BLEU and ROUGE. Reinforcement learning from human feedback (RLHF; Christiano et al., 2017; Ziegler et al., 2019) scaled this approach to learned reward models from human preference comparisons, enabling alignment to nuanced human values across diverse tasks. Bai et al. (2022) further developed RLHF with Constitutional AI, introducing AI-generated feedback as a scalable alternative to human annotation.</p>
 <p>The extension of RL to <em>agentic</em> multi-step settings — where the LLM takes sequential actions rather than emitting a single response — has accelerated significantly with the development of capable foundation models. ReAct (Yao et al., 2022) interleaves reasoning traces and actions in single-step tool-use tasks, demonstrating that explicit reasoning improves decision quality. WebGPT (Nakano et al., 2021) trains a web-browsing agent using human feedback on retrieved passages; ALFWorld (Shridhar et al., 2020) trains language agents in text-based game environments; Voyager (Wang et al., 2023) uses LLM-generated code as skills for an open-ended Minecraft agent. More directly relevant is the line of work on structured tool-use: Toolformer (Schick et al., 2023), AnyTool (Du et al., 2024), and various code-generation RL approaches (Chen et al., 2021; Li et al., 2022) train LLMs to produce structured, parseable outputs as part of sequential workflows.</p>
-<p>Group Relative Policy Optimisation (GRPO; Shao et al., 2024) is the training algorithm we employ. GRPO eliminates the need for a learned value network (as in PPO; Schulman et al., 2017) by normalising rewards within a group of rollouts generated for the same prompt. Formally, for a group of <span class="math inline">\(G\)</span> rollouts ${o_1, , o_G$} with rewards <span class="math inline">\(\{r_1, \ldots, r_G\$}, the normalised advantage is:\)</span><span class="math inline">\(\hat{A\)</span>$_i = }<br />
-This reduces variance and stabilises training without the additional computational cost and instability of a separate value head. GRPO has been applied to mathematical reasoning (DeepSeekMath; Shao et al., 2024), code generation, and increasingly to agentic tasks.</p>
+<p>Group Relative Policy Optimisation (GRPO; Shao et al., 2024) is the training algorithm we employ. GRPO eliminates the need for a learned value network (as in PPO; Schulman et al., 2017) by normalising rewards within a group of rollouts generated for the same prompt. Formally, for a group of <span class="math inline">\(G\)</span> rollouts <span class="math inline">\(\{o_1, \ldots, o_G\}\)</span> with rewards <span class="math inline">\(\{r_1, \ldots, r_G\}\)</span>, the normalised advantage is:</p>
+<p><span class="math display">\[
+\hat{A}_i = \frac{r_i - \text{mean}(\{r_j\}_{j=1}^G)}{\text{std}(\{r_j\}_{j=1}^G)}
+\]</span></p>
+<p>This reduces variance and stabilises training without the additional computational cost and instability of a separate value head. GRPO has been applied to mathematical reasoning (DeepSeekMath; Shao et al., 2024), code generation, and increasingly to agentic tasks.</p>
 <p>Our setting extends prior LLM agent RL work in three critical ways: (i) actions are <em>strongly-typed structured objects</em> (JSON with required fields and enum constraints), not free-form language or API call strings; (ii) the agent operates under an <em>explicit resource budget</em> that mechanically limits future action space in a way that depends on the full action history; and (iii) the reward function decomposes into <em>coupled</em> task-success and resource-efficiency components, creating a genuine multi-objective optimisation problem with a structured tradeoff.</p>
 <h3 id="privacy-preservation-in-iot-and-smart-home-systems">2.2 Privacy Preservation in IoT and Smart-Home Systems</h3>
 <p>Privacy in IoT sensing has received substantial attention across multiple research communities, though from very different angles. The <em>data-layer</em> paradigm (Dwork &amp; Roth, 2014) adds carefully calibrated noise to sensor readings before processing, providing differential privacy guarantees. Federated learning (McMahan et al., 2017; Bonawitz et al., 2019) distributes model training across devices, avoiding centralised data collection. Secure aggregation (Bonawitz et al., 2017) and homomorphic encryption (Gentry, 2009) allow computation on encrypted sensor data. These approaches share a fundamental assumption: data is collected, and privacy is managed <em>in the processing pipeline</em>. Our approach makes a different assumption — that the right question is not “how do we protect data after collecting it” but “how do we collect as little data as possible while still achieving the task”. This is the <em>sensing policy layer</em>, and it has received comparatively little systematic study.</p>
@@ -107,20 +110,22 @@ This reduces variance and stabilises training without the additional computation
 <hr />
 <h2 id="problem-formulation-and-environment">3. Problem Formulation and Environment</h2>
 <h3 id="problem-formulation">3.1 Problem Formulation</h3>
-<p>We formulate smart-home privacy-budgeted sensing as a finite-horizon <strong>Partially Observable Markov Decision Process (POMDP)</strong> <span class="math inline">\(\mathcal{M\)</span> = (, , , , , T, B)} where:</p>
+<p>We formulate smart-home privacy-budgeted sensing as a finite-horizon <strong>Partially Observable Markov Decision Process (POMDP)</strong> <span class="math inline">\(\mathcal{M} = (\mathcal{S}, \mathcal{O}, \mathcal{A}, \mathcal{T}, \mathcal{R}, T, B)\)</span> where:</p>
 <ul>
-<li><span class="math inline">\(\mathcal{S\)</span>}: hidden state space encoding ground-truth room occupancy, intruder presence/location, door states, audio events, and time of day</li>
-<li><span class="math inline">\(\mathcal{O\)</span>}: observation space of natural-language strings <span class="math inline">\(o_t = \phi(s_t, \epsilon_t)\)</span>, where <span class="math inline">\(\epsilon_t\)</span> represents sensor noise and event stochasticity</li>
-<li><span class="math inline">\(\mathcal{A\)</span>}: discrete action space over (camera_room, camera_level, mic_level, alert) — 108 discrete combinations</li>
-<li><span class="math inline">\(\mathcal{T\)</span>:   }: deterministic state transition given the scenario’s event schedule</li>
-<li><span class="math inline">\(\mathcal{R\)</span>}: episode-end scalar reward (Section 3.5)</li>
+<li><span class="math inline">\(\mathcal{S}\)</span>: hidden state space encoding ground-truth room occupancy, intruder presence/location, door states, audio events, and time of day</li>
+<li><span class="math inline">\(\mathcal{O}\)</span>: observation space of natural-language strings <span class="math inline">\(o_t = \phi(s_t, \epsilon_t)\)</span>, where <span class="math inline">\(\epsilon_t\)</span> represents sensor noise and event stochasticity</li>
+<li><span class="math inline">\(\mathcal{A}\)</span>: discrete action space over (camera_room, camera_level, mic_level, alert) — 108 discrete combinations</li>
+<li><span class="math inline">\(\mathcal{T}: \mathcal{S} \times \mathcal{A} \rightarrow \mathcal{S}\)</span>: deterministic state transition given the scenario’s event schedule</li>
+<li><span class="math inline">\(\mathcal{R}\)</span>: episode-end scalar reward (Section 3.5)</li>
 <li><span class="math inline">\(T\)</span>: episode length (20, 40, or 60 steps in our experiments)</li>
 <li><span class="math inline">\(B\)</span>: initial privacy budget (default <span class="math inline">\(B = 5T\)</span>, scaled proportionally to episode length)</li>
 </ul>
 <p>The POMDP framing is essential: the agent cannot observe whether an intruder is physically present. It must infer threat level from noisy, ambiguous observations — PIR intensities that could reflect a person or a pet, audio events that could be a break-in or a falling object, door states that could indicate legitimate occupant activity or forced entry. This partial observability is the principal source of task difficulty and motivates the use of an LLM agent with pre-trained priors over household normalcy.</p>
-<p>The <strong>privacy budget</strong> <span class="math inline">\(b_t\)</span> decreases monotonically with activations:<br />
-<span class="math display">\[b_{t+1\]</span> = b_t - c(a_t), b_0 = B}<br />
-where <span class="math inline">\(c(a)\)</span> is the cost function defined in Section 3.4. Hard enforcement applies: when <span class="math inline">\(b_t \leq 0\)</span>, the environment overrides the agent’s output with ALL-OFF regardless of what was generated. This creates genuine <em>intertemporal commitment</em> — early budget expenditure directly reduces the agent’s ability to respond to events later in the episode.</p>
+<p>The <strong>privacy budget</strong> <span class="math inline">\(b_t\)</span> decreases monotonically with activations:</p>
+<p><span class="math display">\[
+b_{t+1} = b_t - c(a_t), \quad b_0 = B
+\]</span></p>
+<p>where <span class="math inline">\(c(a)\)</span> is the cost function defined in Section 3.4. Hard enforcement applies: when <span class="math inline">\(b_t \leq 0\)</span>, the environment overrides the agent’s output with ALL-OFF regardless of what was generated. This creates genuine <em>intertemporal commitment</em> — early budget expenditure directly reduces the agent’s ability to respond to events later in the episode.</p>
 <p>The <strong>policy</strong> <span class="math inline">\(\pi_\theta\)</span> is parameterised by the language model weights <span class="math inline">\(\theta\)</span>. At each timestep, the model receives the full conversation context (system prompt, all prior observations, and all prior actions) as input and generates <span class="math inline">\(a_t\)</span> autoregressively. A key constraint is the context window: with 64K total tokens and 512 tokens per turn, the model can attend to the full context of a 20-step episode, but longer episodes (40, 60 steps) begin to approach the effective window limit, making observation truncation a realistic concern in Phase 6.</p>
 <h3 id="smart-home-simulation">3.2 Smart-Home Simulation</h3>
 <p>The smart home comprises four rooms: living room, kitchen, hallway, and bedroom. At each timestep the simulation generates a natural-language observation encoding:</p>
@@ -216,15 +221,21 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <p>The maximum cost per timestep is 6 units (Camera HIGH + Mic HIGH). With <span class="math inline">\(B = 100\)</span> for a 20-step episode, a maximally greedy agent exhausts the budget in <span class="math inline">\(\lfloor 100/6 \rfloor \approx 16\)</span> steps. Budget enforcement is hard: when <span class="math inline">\(b \leq 0\)</span>, all sensors are forced to OFF regardless of agent output.</p>
 <h3 id="reward-function">3.5 Reward Function</h3>
 <p>The agent receives a single scalar reward at episode end:</p>
-<p><span class="math display">\[R = w_d \cdot R_\text{detection\]</span> + w_p R_ + w_f R_}</p>
+<p><span class="math display">\[
+R = w_d \cdot R_\text{detection} + w_p \cdot R_\text{privacy} + w_f \cdot R_\text{format}
+\]</span></p>
 <p>with weights <span class="math inline">\(w_d = 0.6\)</span>, <span class="math inline">\(w_p = 0.3\)</span>, <span class="math inline">\(w_f = 0.1\)</span>.</p>
-<p><strong>Detection reward</strong> <span class="math inline">\(R_d \in [0, 1]\)</span>: measures episode-level recall of intrusion events, weighted by alert escalation. Let <span class="math inline">\(\mathcal{I\)</span>} be the set of timesteps at which intrusion events are active:</p>
-<p>\[ R_d = \frac{1}{|\mathcal{I}|} \sum_{t \in \mathcal{I}} \text{score}(a_t) - \lambda_{\text{fp}} \cdot N_{\text{fp}} \]</p>
-<p>where $ if alert=ESCALATE and camera=HIGH; <span class="math inline">\(0.5\)</span> if alert∈{NOTIFY, ESCALATE} and camera≠OFF; <span class="math inline">\(0.0\)</span> otherwise; and $_ penalises each false alarm (alert≠NONE at non-intrusion timesteps).</p>
+<p><strong>Detection reward</strong> <span class="math inline">\(R_d \in [0, 1]\)</span>: measures episode-level recall of intrusion events, weighted by alert escalation. Let <span class="math inline">\(\mathcal{I}\)</span> be the set of timesteps at which intrusion events are active:</p>
+<p><span class="math display">\[
+R_d = \frac{1}{|\mathcal{I}|} \sum_{t \in \mathcal{I}} \text{score}(a_t) - \lambda_{\text{fp}} \cdot N_\text{fp}
+\]</span></p>
+<p>where <span class="math inline">\(\text{score}(a_t) = 1.0\)</span> if alert=ESCALATE and camera=HIGH; <span class="math inline">\(0.5\)</span> if alert∈{NOTIFY, ESCALATE} and camera≠OFF; <span class="math inline">\(0.0\)</span> otherwise; and <span class="math inline">\(\lambda_\text{fp} = 0.1\)</span> penalises each false alarm (alert≠NONE at non-intrusion timesteps).</p>
 <p><strong>Privacy reward</strong> <span class="math inline">\(R_p \in [0, 1]\)</span>: fraction of budget remaining at episode end:</p>
-<p><span class="math display">\[R_p = \frac{b_T\]</span>{B}}</p>
+<p><span class="math display">\[
+R_p = \frac{b_T}{B}
+\]</span></p>
 <p>This directly incentivises budget efficiency and, by extension, sensor restraint.</p>
-<p><strong>Format reward</strong> $R_f {0, 1$}: binary reward for producing a valid, parseable JSON action with all required fields and valid enum values.</p>
+<p><strong>Format reward</strong> <span class="math inline">\(R_f \in \{0, 1\}\)</span>: binary reward for producing a valid, parseable JSON action with all required fields and valid enum values.</p>
 <p>The weight vector <span class="math inline">\((0.6, 0.3, 0.1)\)</span> prioritises detection while maintaining a strong conservation incentive. The format reward prevents collapse to unparseable outputs during early training and becomes non-binding once format compliance is learned.</p>
 <hr />
 <h2 id="baselines">4. Baselines</h2>
@@ -698,11 +709,15 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <p>The budget-based privacy reward (<span class="math inline">\(R_p\)</span>) measures budget efficiency but does not directly quantify <em>information leakage</em> — what a passive observer could infer about occupant behaviour from the agent’s sensor activation sequence. We introduce two post-hoc metrics that characterise information exposure independently of the task reward.</p>
 <h3 id="identity-leakage-proxy">8.1 Identity Leakage Proxy</h3>
 <p>HIGH-resolution camera captures and HIGH-sensitivity microphone activations can capture biometric identifiers (face geometry, voiceprint). We define the identity leakage proxy as the fraction of timesteps free of high-resolution activations:</p>
-<p><span class="math display">\[L_\text{identity\]</span> = 1 - }</p>
+<p><span class="math display">\[
+L_\text{identity} = 1 - \frac{\#\{\text{timesteps where camera=HIGH or mic=HIGH}\}}{T}
+\]</span></p>
 <p>A value of 1.0 means no biometric capture occurred; 0.0 means every timestep was at maximum resolution.</p>
 <h3 id="reconstruction-risk-proxy">8.2 Reconstruction Risk Proxy</h3>
 <p>Even low-resolution sensor activations leave an <em>activity footprint</em> — a record of which rooms were observed at which times — that can be used to reconstruct occupant routines. We approximate reconstruction risk as the inverse of budget efficiency:</p>
-<p><span class="math display">\[L_\text{recon\]</span> = 1 - }</p>
+<p><span class="math display">\[
+L_\text{recon} = 1 - \frac{\text{budget consumed}}{B}
+\]</span></p>
 <p>A value of 1.0 means no sensors were activated (zero activity footprint); 0.0 means the full budget was consumed.</p>
 <h3 id="results-1">8.3 Results</h3>
 <p>These metrics are logged but not optimised during training. Their values emerge from the agent’s learned policy.</p>
@@ -717,8 +732,8 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <thead>
 <tr>
 <th>Policy</th>
-<th>Identity Safety $L_</th>
-<th>Reconstruction Safety $L_</th>
+<th>Identity Safety <span class="math inline">\(L_\text{identity}\)</span></th>
+<th>Reconstruction Safety <span class="math inline">\(L_\text{recon}\)</span></th>
 <th>Overall Reward</th>
 </tr>
 </thead>
@@ -765,7 +780,7 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <p><strong>Figure 8</strong>: <em>Privacy leakage heatmap across all experimental configurations. Rows are policies; columns are leakage dimensions. The trained agents achieve the darkest (best) cells across both dimensions, while Always-On achieves the worst on both.</em></p>
 <p><img src="/assets/assets-privacy-guard/leakage_heatmap.png" alt="Leakage heatmap" /></p>
 </blockquote>
-<p><strong>Key finding</strong>: Both trained agents achieve near-perfect leakage scores without any explicit leakage penalty in <span class="math inline">\(\mathcal{R\)</span>}. The Curriculum Medium agent (0.995 identity, 0.978 reconstruction) outperforms even the carefully designed Rule-Based policy (0.952, 0.880) — a policy explicitly designed to minimise unnecessary activation.</p>
+<p><strong>Key finding</strong>: Both trained agents achieve near-perfect leakage scores without any explicit leakage penalty in <span class="math inline">\(\mathcal{R}\)</span>. The Curriculum Medium agent (0.995 identity, 0.978 reconstruction) outperforms even the carefully designed Rule-Based policy (0.952, 0.880) — a policy explicitly designed to minimise unnecessary activation.</p>
 <p>The mechanism is instructive: the agent learned to use <em>LOW-resolution</em> sensors as a first-response, escalating to HIGH only when multiple independent signals corroborate an intrusion. This two-tier sensing strategy emerges from the interaction of the detection reward (which credits ESCALATE+HIGH most, but also credits NOTIFY+LOW/MED) with the privacy reward (which penalises any budget expenditure). The optimal policy under this reward structure naturally minimises HIGH activations — and thus minimises biometric exposure — as a side-effect of budget conservation.</p>
 <p>This result suggests that <strong>budget-constrained optimisation may be a sufficient proxy for information minimisation</strong> in sensing domains, without requiring an explicit privacy-aware reward term. The economic logic is simple: HIGH-resolution activations are expensive; an agent optimising for budget efficiency will naturally avoid them except when their detection value clearly justifies the cost.</p>
 <hr />
