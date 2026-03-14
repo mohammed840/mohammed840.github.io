@@ -33,7 +33,11 @@ permalink: /papers/
     </p>
 
     <div>
-      {{ p.content }}
+      {% if p.include_file == "papers/issue-paper-2.html" %}
+        {% include papers/issue-paper-2.html %}
+      {% else %}
+        {{ p.content }}
+      {% endif %}
     </div>
   </div>
 </details>
