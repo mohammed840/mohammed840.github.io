@@ -25,6 +25,7 @@
 .paper-content ol, .paper-content ul { padding-left: 1.5em; }
 .paper-content li { margin-bottom: 0.3em; }
 </style>
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';mermaid.initialize({startOnLoad:true,theme:'neutral'});</script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <div class="paper-content">
 <div class="paper-header">
@@ -44,24 +45,64 @@
 </div>
 <p>We present <strong>Privacy Guard</strong>, a reinforcement learning framework for <em>privacy-budgeted active sensing</em> in smart homes. The agent detects intrusions by selectively activating cameras and microphones under a finite privacy budget, balancing security with minimal surveillance. Using GRPO, we run 12 experiments varying architecture (4B dense vs. 30B MoE), reasoning mode (standard vs. chain-of-thought), curriculum difficulty, and episode length. The main result is that <strong>training distribution matters more than model scale</strong>: a 4B model trained on medium-difficulty scenarios for 100 steps reaches 0.912 peak reward and 86.4% detection, outperforming a larger 30B MoE and substantially exceeding rule-based baselines. Chain-of-thought fails in this token-constrained multi-turn setting (97% truncation). Longer-horizon tests show strong detection generalisation but weaker privacy-budget management, identifying temporal budget planning as the key remaining challenge.</p>
 <h1 id="introduction-and-motivation">Introduction and Motivation</h1>
-<p>The proliferation of internet-connected sensing devices in residential environments — from doorbell cameras and PIR motion detectors to always-listening voice assistants — has fundamentally altered the security-privacy calculus for modern households. On one hand, rich sensor data provides the raw material for reliable intrusion detection, fire monitoring, and assisted living applications. On the other, continuous, high-fidelity capture of in-home activity constitutes a form of pervasive surveillance that most occupants find deeply uncomfortable, and that regulators in the European Union (GDPR Articles 5 and 25), the United Kingdom (UK Data Protection Act 2018), and California (CCPA) seek to constrain through principles such as <em>data minimisation</em> and <em>purpose limitation</em>.</p>
-<p>Contemporary intrusion detection systems resolve this tension through one of two degenerate strategies. The first is <em>always-on</em> surveillance: cameras and microphones activate at maximum resolution continuously, maximising detection probability at the cost of constant, comprehensive monitoring of the occupant’s daily behaviour. The second is <em>event-triggered</em> activation: sensors fire reactively when a threshold (e.g., PIR intensity crossing 0.5) is exceeded, reducing average observation but introducing a fundamental latency problem — subtle or staged intrusions (stealth entry, lock-picking, slow prying) do not produce threshold-crossing events until the intrusion is already well underway.</p>
-<p>Neither strategy treats privacy as a <em>quantitative resource</em> subject to principled allocation. Yet the concept of a <em>privacy budget</em> — a finite quantity of surveillance capacity allocated per time period — maps naturally to both regulatory intent and to occupant intuition. A resident may understand and accept that their security system will occasionally capture a high-resolution recording of their hallway when the door opens at 2AM; they are much less accepting of a system that captures their kitchen, living room, and bedroom in high resolution throughout every waking hour. The question is not <em>whether</em> to activate sensors, but <em>when</em>, <em>where</em>, and <em>at what fidelity</em> — and this is precisely the structure of a sequential decision problem.</p>
-<p>We propose framing smart-home intrusion detection as a <strong>privacy-constrained sequential decision problem</strong> and solving it with reinforcement learning. An agent observes the smart home at each of <span class="math inline">\(T\)</span> timesteps, receiving a natural-language encoding of sensor readings and remaining privacy budget <span class="math inline">\(b\)</span>, and must produce a structured action specifying: which of four rooms to point the camera at, at what resolution (OFF / LOW / HIGH), at what microphone sensitivity (OFF / LOW / HIGH), and what alert level to raise (NONE / NOTIFY / ESCALATE). Each activation consumes units from the budget; when the budget is exhausted, all sensors are forced OFF. The agent’s objective is to maximise a weighted combination of detection recall, budget efficiency, and output format compliance.</p>
-<p>We implement this environment using the <code>verifiers</code> multi-turn RL framework (Prime Intellect) and train agents using Group Relative Policy Optimisation (GRPO; Shao et al., 2024). Our decision to use large language model (LLM) agents, rather than classical tabular or deep RL policies, is motivated by three considerations. First, natural-language observations are directly human-readable: a system designer or regulator can inspect the agent’s <code>reasoning</code> field at any timestep to understand why a sensor was activated. Second, LLMs carry strong pre-trained priors about situational context — they “know” that footsteps at 2AM in a quiet house are more suspicious than footsteps at noon on a weekday, without being explicitly programmed with this heuristic. Third, the structured JSON output format enables reliable automatic reward computation while preserving the flexibility of free-text intermediate reasoning.</p>
-<p>Our experimental programme spans 12 training runs across six phases, systematically varying: model architecture (4B dense vs. 30B Mixture-of-Experts), reasoning strategy (standard generation vs. chain-of-thought with <code>&lt;think&gt;</code> blocks), training scenario difficulty (easy/medium/hard curriculum filters), and episode length (20, 40, and 60 timesteps). The central empirical finding — that a 4B-dense model trained on medium-difficulty scenarios for 100 steps outperforms a 30B MoE trained for 200 steps — contradicts the default assumption that scale is the primary lever for task performance in LLM-based systems. It implies instead that, for structured-output resource-constrained multi-turn RL tasks, <em>training distribution calibration</em> is the dominant factor.</p>
-<p>A secondary finding — that chain-of-thought (CoT) reasoning catastrophically fails with a 97% output truncation rate in our 20-turn, 512-token-per-turn setting — identifies a overlooked structural incompatibility between reasoning prefixes and token-constrained multi-turn environments. And a tertiary finding — that the trained agent achieves near-perfect privacy leakage scores without any explicit leakage penalty — suggests that budget-constrained optimisation may be a practically sufficient proxy for information minimisation in sensing domains.</p>
-<p>The contributions of this paper are:</p>
-<ol type="1">
-<li>**<code>PrivacyGuardEnv**</code>: a multi-turn RL environment for privacy-budgeted active sensing, with 18 training scenarios across three difficulty tiers, 6 held-out test scenarios, and configurable episode length and privacy budget. The environment exposes a standard <code>load_environment()</code> interface and is publicly available (Section 3).</li>
-<li><strong>GRPO training pipeline</strong>: end-to-end training using GRPO on Prime Intellect infrastructure, producing a 131% improvement in detection recall and a 65% improvement in overall reward over the best hand-crafted baseline, with emergent privacy compliance (Section 5).</li>
-<li><strong>Systematic architecture ablation</strong>: controlled comparison of four model variants (dense/MoE × standard/CoT) revealing that scale provides negligible benefit and that CoT reasoning is structurally incompatible with token-constrained multi-turn RL (Section 6.1).</li>
-<li><strong>Curriculum learning result</strong>: static difficulty filtering to medium-difficulty scenarios achieves the best overall performance of all configurations at half the training compute, with an analysis of <em>why</em> medium difficulty provides the optimal learning signal (Section 6.2).</li>
-<li><strong>Phase 6 horizon scaling</strong>: two additional experiments revealing a clean dissociation between detection (horizon-invariant) and privacy management (horizon-sensitive), with an analysis of the mechanisms driving this dissociation (Section 7).</li>
-<li><strong>Post-hoc privacy leakage framework</strong>: two interpretable metrics — identity leakage proxy and reconstruction risk proxy — that quantify information exposure beyond the task reward, showing that trained agents achieve near-perfect scores on both as emergent properties (Section 8).</li>
-</ol>
-<p>The remainder of the paper is structured as follows. Section 2 reviews related work across four topic areas. Section 3 presents the problem formulation and environment design. Section 4 evaluates seven baseline policies. Section 5 presents the main GRPO training results. Section 6 contains the architecture and curriculum ablation. Section 7 reports Phase 6 episode-length scaling. Section 8 provides privacy leakage analysis. Section 9 discusses broader implications. Sections 10–12 cover limitations, future work, and conclusions.</p>
+<p>Your home camera is probably watching you right now. Not because you’re in danger — because nobody programmed it to know the difference.</p>
+<p>The proliferation of smart home sensors — doorbell cameras, PIR motion detectors, always-listening voice assistants — has made residential security powerful and pervasive at the same time. Rich sensor data enables reliable intrusion detection. But continuous, high-fidelity capture of in-home activity is also a form of surveillance that most people find deeply uncomfortable, and that regulators (GDPR Article 25, CCPA) explicitly constrain through <em>data minimisation</em> principles.</p>
 <hr />
+<h2 id="two-bad-bets">Two Bad Bets</h2>
+<p>Classic security systems resolve this tension through one of two degenerate strategies:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>What it does</th>
+<th>The problem</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Always-On</strong></td>
+<td>Cameras + mics at full resolution, always</td>
+<td>Perfectly surveils your entire life</td>
+</tr>
+<tr>
+<td><strong>Event-Triggered</strong></td>
+<td>Fires when PIR crosses a threshold</td>
+<td>Misses stealth intrusions by design</td>
+</tr>
+</tbody>
+</table>
+<p>Neither strategy treats privacy as a <em>finite resource to be allocated</em>. Yet that is exactly how occupants experience it. A resident may accept the system capturing a hallway recording at 2 AM when the door opens. They are far less accepting of a system that captures their kitchen, living room, and bedroom in high resolution throughout every waking hour.</p>
+<hr />
+<h2 id="a-better-frame-graph-search-over-time">A Better Frame: Graph Search Over Time</h2>
+<p>The real question isn’t <em>whether</em> to activate sensors — it’s <strong>when, where, and at what fidelity</strong>. That’s a sequential decision problem. At every timestep, an agent observes the home and must search through possible actions, reserving budget for the moments that actually matter:</p>
+<div class="mermaid">
+graph LR
+    A([Observe\nPIR · Door · Audio · Budget]) --> B{Threat level?}
+    B -- Low --> C[Sensors OFF\nSave budget]
+    B -- Ambiguous --> D[LOW-res camera\nCost: 1 unit]
+    B -- Confirmed --> E[HIGH-res + ESCALATE\nCost: 4–6 units]
+    C --> F([Next timestep])
+    D --> F
+    E --> F
+    F --> A
+</div>
+<p>This graph loops for every timestep in an episode. Budget spent on step 3 is unavailable at step 17 when a real threat arrives — creating genuine <strong>intertemporal commitment</strong>. No fixed-threshold rule set can navigate this. It requires <em>learning</em> which signals actually matter, and when spending is worth it.</p>
+<hr />
+<h2 id="the-gap-no-classical-policy-reaches">The Gap No Classical Policy Reaches</h2>
+<p>Before any training, we benchmarked six classical strategies — always-on, event-triggered, audio-gated, random, and two rule-based variants. None of them occupies the upper-right region of the detection-privacy tradeoff:</p>
+<figure>
+<img src="/assets/assets-privacy-guard/leakage_pareto_research.png" alt="The Pareto frontier of detection vs privacy for all baseline policies" />
+<figcaption aria-hidden="true">The Pareto frontier of detection vs privacy for all baseline policies</figcaption>
+</figure>
+<p><em>Triangles = classical baselines. Stars (⭐) = our GRPO-trained agents. The high-detection + high-privacy quadrant is structurally inaccessible to any fixed-rule policy — no threshold calibration can get you there.</em></p>
+<p>This gap is the core motivation. We propose <strong>privacy-constrained sequential sensing</strong> as a reinforcement learning problem, using an LLM agent that reads natural-language sensor observations and produces structured JSON actions under a hard budget constraint.</p>
+<hr />
+
 <h2 id="related-work">2. Related Work</h2>
 <h3 id="reinforcement-learning-for-llm-agents">2.1 Reinforcement Learning for LLM Agents</h3>
 <p>The application of reinforcement learning to language model fine-tuning has a long history rooted in sequence-level reward signals. Early work (Ranzato et al., 2016; Sutton et al., 2000) used REINFORCE to optimise non-differentiable sequence-level metrics such as BLEU and ROUGE. Reinforcement learning from human feedback (RLHF; Christiano et al., 2017; Ziegler et al., 2019) scaled this approach to learned reward models from human preference comparisons, enabling alignment to nuanced human values across diverse tasks. Bai et al. (2022) further developed RLHF with Constitutional AI, introducing AI-generated feedback as a scalable alternative to human annotation.</p>
