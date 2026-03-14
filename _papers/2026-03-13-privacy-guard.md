@@ -769,6 +769,210 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <p>The mechanism is instructive: the agent learned to use <em>LOW-resolution</em> sensors as a first-response, escalating to HIGH only when multiple independent signals corroborate an intrusion. This two-tier sensing strategy emerges from the interaction of the detection reward (which credits ESCALATE+HIGH most, but also credits NOTIFY+LOW/MED) with the privacy reward (which penalises any budget expenditure). The optimal policy under this reward structure naturally minimises HIGH activations — and thus minimises biometric exposure — as a side-effect of budget conservation.</p>
 <p>This result suggests that <strong>budget-constrained optimisation may be a sufficient proxy for information minimisation</strong> in sensing domains, without requiring an explicit privacy-aware reward term. The economic logic is simple: HIGH-resolution activations are expensive; an agent optimising for budget efficiency will naturally avoid them except when their detection value clearly justifies the cost.</p>
 <hr />
+<h1 id="appendix-e-interactive-3d-simulation-and-visualisation-framework">Appendix E: Interactive 3D Simulation and Visualisation Framework</h1>
+<blockquote>
+<p><strong>Note to reader</strong>: This appendix documents the interactive security-camera visualisation we built to replay, inspect, and present the trained agent’s real rollout behaviour. All screenshots below are genuine renders from the simulation replaying <code>rollouts_step190.json</code> — actual inference outputs from the Curriculum-Medium (step-190) checkpoint.</p>
+</blockquote>
+<hr />
+<h2 id="e.1-motivation">E.1 Motivation</h2>
+<p>Quantitative metrics — reward curves, detection scores, privacy efficiency — tell us <em>that</em> the trained agent performs well, but they do not tell us <em>how</em> it behaves moment to moment. The reasoning traces in Section 5.3 provide one window into the agent’s decision process; a real-time visual replay provides another that is richer, more intuitive, and more useful for communication with non-specialist audiences.</p>
+<p>We built a <strong>Security Camera Monitor</strong> simulation in Python/Pygame that:</p>
+<ol type="1">
+<li>Loads the raw rollout file (<code>rollouts_step190.json</code>) produced by the Prime Intellect training run</li>
+<li>Renders a four-room CCTV-style interface with perspective room interiors, furniture, and sensor-state overlays</li>
+<li>Allows frame-by-frame or auto-play navigation through all 8 evaluation episodes</li>
+<li>Faithfully represents every agent action — camera room/fidelity, microphone level, alert status, reasoning text — extracted directly from the real rollout data</li>
+</ol>
+<p>The result is a tool that serves three purposes: <strong>debugging</strong> (identifying which scenario steps caused reward drops), <strong>demonstration</strong> (communicating agent behaviour to stakeholders without requiring ML expertise), and <strong>documentation</strong> (generating the screenshots in this appendix).</p>
+<hr />
+<h2 id="e.2-interface-design">E.2 Interface Design</h2>
+<p>The monitor replicates the visual language of professional CCTV/DVR security systems, which is intentional: the agent’s task <em>is</em> to operate a security monitoring system, and making the visualisation look like one helps viewers immediately contextualise agent decisions.</p>
+<pre><code># Security Camera Monitor layout (1440 x 900 px)
+# +---------------------------+------------+
+# |  Main feed  (960 x 720)  |  Room 0    |
+# |                           |  Room 1    |
+# |                           |  Room 2    |
+# |                           |  Room 3    |
+# +---------------------------+------------+
+# |  Status bar  (1440 x 180)              |
+# +----------------------------------------+</code></pre>
+<p><strong>Left panel (960×720 px)</strong> — the currently active camera feed, rendered in perspective with:</p>
+<ul>
+<li>Room-specific wall, floor, and ceiling colours</li>
+<li>Furnished room interiors (sofa/TV/bookshelf − living room; counter/sink/table − kitchen; corridor/door − hallway; bed/wardrobe/window − bedroom)</li>
+<li><strong>CRT scanlines</strong> on every active feed</li>
+<li><strong>Colour tint</strong>: yellow for LOW fidelity, red for HIGH fidelity</li>
+<li><strong>Motion detection boxes</strong> (animated red corner brackets) when PIR fires in the active room</li>
+<li><strong>Alert banner</strong> (NOTIFY / RECORD / ESCALATE) centred at top with pulse animation</li>
+<li><strong>Blinking REC dot</strong> when camera is active</li>
+<li>Timestamp, time-of-day label, microphone waveform</li>
+</ul>
+<p><strong>Right panel (480 px wide, 4 stacked)</strong> — thumbnail feeds for all four rooms:</p>
+<ul>
+<li><strong>NO SIGNAL</strong> static when camera is OFF</li>
+<li>Dim live view when camera is online but not the active feed</li>
+<li>Yellow border highlight on the active thumbnail</li>
+</ul>
+<p><strong>Bottom bar (180 px)</strong> — agent status:</p>
+<ul>
+<li>Privacy budget bar (green → orange → red as budget depletes)</li>
+<li>Episode metrics (Overall, Detection, Privacy Efficiency)</li>
+<li>Full agent reasoning text (extracted from <code>reasoning</code> field in rollout)</li>
+<li>Step-progress dots</li>
+</ul>
+<hr />
+<h2 id="e.3-simulation-screenshots">E.3 Simulation Screenshots</h2>
+<p>The following eight screenshots capture the key behaviours exhibited by the Curriculum-Medium step-190 agent across the evaluation episodes.</p>
+<hr />
+<h3 id="figure-e.1-all-cameras-offline-passive-calibration-phase">Figure E.1 — All Cameras Offline (Passive Calibration Phase)</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/01_cameras_offline.png" alt="All cameras offline" />
+<figcaption aria-hidden="true">All cameras offline</figcaption>
+</figure>
+<p><strong>What we see</strong>: The main feed shows <code>ALL CAMERAS OFFLINE</code> with grey static. All four room thumbnails display <code>NO SIGNAL</code>. The privacy budget bar is full green at 100/100 units. Time of day: 0.70 (evening).</p>
+<p><strong>What this means</strong>: At episode start, the agent reads all PIR sensors as clear (0.0 across all rooms) and correctly keeps every sensor deactivated. This is the <strong>passive calibration phase</strong> described in Section 5.3 — the agent establishes a baseline of household normalcy before spending any budget. The reasoning panel confirms this is deliberate: <em>“No motion detected. All sensors nominal for evening. No action required. Preserving budget.”</em></p>
+<hr />
+<h3 id="figure-e.2-low-fidelity-camera-living-room-triangulation-phase">Figure E.2 — LOW-Fidelity Camera: Living Room (Triangulation Phase)</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/02_living_room_camera_low.png" alt="Low fidelity camera" />
+<figcaption aria-hidden="true">Low fidelity camera</figcaption>
+</figure>
+<p><strong>What we see</strong>: The living room camera feed is active. The <strong>yellow CRT tint</strong> and scanlines mark LOW-fidelity mode (cost: 1 privacy unit). The sofa, coffee table, TV, and bookshelf are visible in perspective. A <code>RECORD</code> badge blinks in the top-right.</p>
+<p><strong>What this means</strong>: After detecting ambiguous PIR activity, the agent has activated a LOW-fidelity camera to observe before committing to an expensive HIGH-resolution capture. This is the <strong>triangulation phase</strong> — the agent is gathering evidence cheaply. The yellow tint visually distinguishes this from the more committed HIGH (red tint) mode.</p>
+<hr />
+<h3 id="figure-e.3-escalate-high-camera-intrusion-confirmed">Figure E.3 — ESCALATE + HIGH Camera: Intrusion Confirmed</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/03_escalate_high_camera.png" alt="Escalate HIGH" />
+<figcaption aria-hidden="true">Escalate HIGH</figcaption>
+</figure>
+<p><strong>What we see</strong>: The main feed displays a room interior in <strong>red CRT tint</strong> (HIGH fidelity). Red <code>⚠ ESCALATE</code> alert banner at the top. Red corner brackets (motion-detection boxes) overlay the room. The <code>● HIGH</code> indicator blinks in the top-right. Three of the four thumbnails show <code>NO SIGNAL</code>.</p>
+<p><strong>What this means</strong>: Multiple corroborating signals have been detected across timesteps. The agent has committed to <strong>full surveillance mode</strong> — HIGH camera fidelity plus ESCALATE alert. This is the most expensive action (4 privacy units/timestep) and is used sparingly. In the <code>multi_room_intrusion</code> episode (reward=0.991, detection=1.00), this commitment is correctly timed and correctly sustained.</p>
+<hr />
+<h3 id="figure-e.4-hallway-camera-door-sensor-triggered">Figure E.4 — Hallway Camera: Door Sensor Triggered</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/04_hallway_door_triggered.png" alt="Door triggered" />
+<figcaption aria-hidden="true">Door triggered</figcaption>
+</figure>
+<p><strong>What we see</strong>: The hallway camera feed shows the corridor interior — dark floor carpet, ceiling light fixtures, and the front door visible at the far end. The <code>🚪 DOOR SENSOR TRIGGERED</code> banner is displayed. The door frame glows with an orange pulse.</p>
+<p><strong>What this means</strong>: In the <code>cooking_then_break_in</code> scenario, the front-door sensor fires during a period when PIR readings were ambiguous (cooking activity in the kitchen). The agent immediately activates the hallway camera to monitor the entry point. This is a critical decision: the agent must distinguish a forced entry from a legitimate late-night return.</p>
+<hr />
+<h3 id="figure-e.5-kitchen-camera-pet-motion-false-alarm-correctly-avoided">Figure E.5 — Kitchen Camera: Pet Motion (False Alarm Correctly Avoided)</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/05_kitchen_pet_motion.png" alt="Kitchen pet motion" />
+<figcaption aria-hidden="true">Kitchen pet motion</figcaption>
+</figure>
+<p><strong>What we see</strong>: Kitchen camera feed with <strong>yellow LOW-fidelity tint</strong>. The kitchen interior is visible — counter, sink, overhead pendant light, table. PIR intensity 0.3 is indicated. <strong>No alert banner is shown.</strong></p>
+<p><strong>What this means</strong>: From the <code>pet_only</code> scenario. Kitchen PIR detects 0.3 intensity — consistent with a pet. The agent activates LOW camera to observe, but correctly <strong>raises no alert</strong>. The agent has learned to distinguish low-intensity single-room motion (pet) from sustained multi-room elevated motion (intrusion). Avoiding a false ESCALATE here preserves the privacy budget and prevents alert fatigue.</p>
+<hr />
+<h3 id="figure-e.6-bedroom-camera-tracking-suspicious-footsteps">Figure E.6 — Bedroom Camera: Tracking Suspicious Footsteps</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/06_bedroom_camera_high.png" alt="Bedroom HIGH" />
+<figcaption aria-hidden="true">Bedroom HIGH</figcaption>
+</figure>
+<p><strong>What we see</strong>: Bedroom camera at <strong>HIGH fidelity</strong> (red CRT tint). The bedroom interior shows the bed with pillows, bedside tables with lamps, window with curtains, and wardrobe. <code>⚠ NOTIFY</code> alert banner is shown — not yet ESCALATE.</p>
+<p><strong>What this means</strong>: In the <code>unknown_footsteps</code> scenario, the agent detects motion patterns moving toward the bedroom and responds with HIGH camera + NOTIFY. The NOTIFY — rather than ESCALATE — reflects appropriate uncertainty: signals are suspicious but not yet definitive. The agent is gathering HIGH-quality evidence before committing to escalation.</p>
+<hr />
+<h3 id="figure-e.7-privacy-budget-pressure-orange-warning-state">Figure E.7 — Privacy Budget Pressure (Orange Warning State)</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/07_budget_pressure.png" alt="Budget pressure" />
+<figcaption aria-hidden="true">Budget pressure</figcaption>
+</figure>
+<p><strong>What we see</strong>: The bottom status bar shows the privacy budget bar in <strong>orange</strong> (budget below 30% threshold). Episode is <code>multi_room_intrusion</code>. Multiple completed step-progress dots indicate mid-episode.</p>
+<p><strong>What this means</strong>: After sustaining HIGH-fidelity capture across multiple intrusion timesteps, the privacy budget is partially depleted. The agent’s reasoning panel shows explicit budget-counting: *“Budget: 44/100. Steps remaining:  This emergent arithmetic reasoning — not explicitly trained — demonstrates learned temporal resource planning.</p>
+<hr />
+<h3 id="figure-e.8-full-monitor-overview-best-episode-multi">Figure E.8 — Full Monitor Overview: Best Episode (multi</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/08_full_monitor_multi_intrusion.png" alt="Full monitor" />
+<figcaption aria-hidden="true">Full monitor</figcaption>
+</figure>
+<p><strong>What we see</strong>: The complete 1440×900 security monitor interface. Left: large main camera feed with alert overlays. Right: four stacked thumbnail feeds — one lit (active camera), three showing <code>NO SIGNAL</code>. Bottom: privacy budget (green), episode metrics (Overall: 0.991, Detection: 1.00, Privacy Eff.: 1.00), agent reasoning, step-progress dots.</p>
+<p><strong>What this means</strong>: This is the canonical view during Episode 4 (<code>multi_room_intrusion</code>) — the highest-reward episode in the evaluation set. All three metric bars are nearly full. The agent has achieved simultaneous maximum detection and near-perfect privacy efficiency in a multi-room adversarial scenario. Only one camera is active at any given timestep, illustrating the selective activation strategy underlying the 95% budget retention figure.</p>
+<hr />
+<h2 id="e.4-implementation-notes">E.4 Implementation Notes</h2>
+<h3 id="data-pipeline">Data Pipeline</h3>
+<p>The simulation loads <code>rollouts_step190.json</code> — a raw JSON file produced by the Prime Intellect GRPO harness. It parses both the <code>prompt</code> field (user-turn observations) and <code>completion</code> field (assistant-turn actions), interleaving them by message role to reconstruct the chronological episode timeline. Robust <code>strict=False</code> JSON parsing was required to handle literal newlines embedded in multi-turn message strings.</p>
+<h3 id="room-perspective-rendering">Room Perspective Rendering</h3>
+<p>Each room is rendered using a fixed vanishing-point perspective system simulating a security camera mounted in the upper portion of a room wall (approximately 52% horizontal, 36% vertical of the frame):</p>
+<pre class="python"><code>VP_X, VP_Y = 0.52, 0.36   # vanishing point as fraction of frame
+
+def project(x, y, depth):
+    &quot;&quot;&quot;Project floor-plane point toward vanishing point.&quot;&quot;&quot;
+    vx = int(VP_X * W + (x - VP_X * W) * depth)
+    vy = int(VP_Y * H + (y - VP_Y * H) * depth)
+    return vx, vy</code></pre>
+<p>Floor-plane objects (furniture, carpet strips) are drawn as trapezoids projected toward this vanishing point. Vertical surfaces (walls, headboards, shelving) are drawn at the correct depth scale. Night/day tinting is applied uniformly using the <code>time_of_day</code> field extracted from each timestep’s observation.</p>
+<h3 id="sensor-state-visual-mapping">Sensor State → Visual Mapping</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Sensor State</th>
+<th>Visual Representation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Camera OFF</td>
+<td>Grey static (<code>NO SIGNAL</code>)</td>
+</tr>
+<tr>
+<td>Camera LOW</td>
+<td>Yellow CRT tint + scanlines</td>
+</tr>
+<tr>
+<td>Camera HIGH</td>
+<td>Red CRT tint + scanlines + vignette</td>
+</tr>
+<tr>
+<td>PIR motion</td>
+<td>Orange ambient glow + red MOTION corner brackets</td>
+</tr>
+<tr>
+<td>Alert NOTIFY</td>
+<td>Blue banner at top of main feed</td>
+</tr>
+<tr>
+<td>Alert RECORD</td>
+<td>Amber banner</td>
+</tr>
+<tr>
+<td>Alert ESCALATE</td>
+<td>Red banner + pulsing glow ring around banner</td>
+</tr>
+<tr>
+<td>Door triggered</td>
+<td>Orange <code>🚪 DOOR SENSOR TRIGGERED</code> banner</td>
+</tr>
+<tr>
+<td>Night (TOD &lt; 0.3)</td>
+<td>All rooms darkened; windows show dark sky</td>
+</tr>
+<tr>
+<td>Day (TOD &gt; 0.6)</td>
+<td>Full brightness; kitchen window shows bright daylight</td>
+</tr>
+</tbody>
+</table>
+<h3 id="running-the-simulation">Running the Simulation</h3>
+<pre class="bash"><code>cd privacy_guard
+python sim3d.py
+# Loads privacy_guard/results/rollouts_step190.json automatically
+# Controls: SPACE/-&gt; next step  &lt;- prev  A auto-play
+#           N/P next/prev episode  0-7 jump  +/- speed  S screenshot  Q quit</code></pre>
+<p>The simulation loads <code>privacy_guard/results/rollouts_step190.json</code> automatically. Controls: <code>SPACE</code>/<code>→</code> − next timestep; <code>←</code> − previous; <code>A</code> − auto-play; <code>N</code>/<code>P</code> − next/previous episode; <code>0</code>–<code>7</code> − jump to episode; <code>+</code>/<code>–</code> − adjust speed; <code>S</code> − save screenshot; <code>Q</code> − quit.</p>
+<hr />
+<h2 id="e.5-key-observations-from-visual-inspection">E.5 Key Observations from Visual Inspection</h2>
+<p>Reviewing all 8 evaluation episodes frame by frame through the simulation reveals several qualitative patterns that extend the quantitative findings of the main paper:</p>
+<p><strong>1. Consistent three-phase structure across episodes.</strong> Virtually every episode — regardless of scenario — exhibits the Calibrate → Triangulate → Commit structure described in Section 5.3. The passive opening phase spans 2–5 timesteps; LOW-camera triangulation is typically 2–4 timesteps; HIGH-camera commitment is sustained until episode end. This regularity suggests the three-phase strategy is a robust emergent policy, not an artefact of specific scenarios.</p>
+<p><strong>2. Room targeting follows intrusion trajectories.</strong> In <code>multi_room_intrusion</code>, the agent correctly tracks the intruder as they move between rooms — updating camera targets to follow the active PIR signal. This spatial tracking capability is not directly encoded in the reward function (which scores alert level, not camera room) and implies the agent has learned spatial reasoning about intrusion paths from the training distribution.</p>
+<p><strong>3. Pet-only episodes show clean non-response.</strong> In all three <code>pet_only</code> evaluation episodes, the agent correctly avoids ESCALATE despite sustained PIR motion. Visual inspection confirms the agent uses LOW camera to observe, reads the low-intensity single-room motion pattern, and withholds escalation. This discriminative capability is a key functional achievement: the deployed system would not generate false alarms for routine household activity.</p>
+<p><strong>4. Budget conservation is visually salient.</strong> The main camera feed is dark (NO SIGNAL) for 12–16 consecutive timesteps per episode before the first activation. This directly reflects the 95% average budget retention figure in Table 5 — the agent is almost always inactive, preserving full capacity for the timesteps that matter.</p>
+<p><strong>5. Hallway is the preferred initial monitoring point.</strong> Across scenarios, the agent disproportionately activates the hallway camera when first responding to ambiguous signals. This is physically reasonable: the hallway is the natural transit corridor for any intruder entering from the front door, and monitoring it provides early warning regardless of the intruder’s intended destination. The agent appears to have learned this spatial topology implicitly from the scenario distribution.</p>
+<hr />
+<p>*Source: <code>privacy_*guard/sim3d.py</code>. Screenshots: <code>privacy_guard/capture_screenshots.py}. All figures generated from Curriculum-Medium step-190 rollout data with no manual adjustment or post-processing.</code></p>
 <h2 id="discussion">9. Discussion</h2>
 <h3 id="training-distribution-as-the-primary-design-lever">9.1 Training Distribution as the Primary Design Lever</h3>
 <p>The central empirical finding — curriculum medium beats architecturally larger models at half the compute — challenges a common assumption in applied LLM research: that model scale is the primary lever for task performance. Our results suggest that for a specific and increasingly common class of tasks (structured-output, resource-constrained, multi-turn sequential RL), the <em>quality and calibration of the training distribution</em> matters more than parameter count.</p>
@@ -1030,209 +1234,5 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 |   camera_room, camera_level, mic_level, alert, reasoning |
 +==========================================================+</code></pre>
 <hr />
-<h1 id="appendix-e-interactive-3d-simulation-and-visualisation-framework">Appendix E: Interactive 3D Simulation and Visualisation Framework</h1>
-<blockquote>
-<p><strong>Note to reader</strong>: This appendix documents the interactive security-camera visualisation we built to replay, inspect, and present the trained agent’s real rollout behaviour. All screenshots below are genuine renders from the simulation replaying <code>rollouts_step190.json</code> — actual inference outputs from the Curriculum-Medium (step-190) checkpoint.</p>
-</blockquote>
-<hr />
-<h2 id="e.1-motivation">E.1 Motivation</h2>
-<p>Quantitative metrics — reward curves, detection scores, privacy efficiency — tell us <em>that</em> the trained agent performs well, but they do not tell us <em>how</em> it behaves moment to moment. The reasoning traces in Section 5.3 provide one window into the agent’s decision process; a real-time visual replay provides another that is richer, more intuitive, and more useful for communication with non-specialist audiences.</p>
-<p>We built a <strong>Security Camera Monitor</strong> simulation in Python/Pygame that:</p>
-<ol type="1">
-<li>Loads the raw rollout file (<code>rollouts_step190.json</code>) produced by the Prime Intellect training run</li>
-<li>Renders a four-room CCTV-style interface with perspective room interiors, furniture, and sensor-state overlays</li>
-<li>Allows frame-by-frame or auto-play navigation through all 8 evaluation episodes</li>
-<li>Faithfully represents every agent action — camera room/fidelity, microphone level, alert status, reasoning text — extracted directly from the real rollout data</li>
-</ol>
-<p>The result is a tool that serves three purposes: <strong>debugging</strong> (identifying which scenario steps caused reward drops), <strong>demonstration</strong> (communicating agent behaviour to stakeholders without requiring ML expertise), and <strong>documentation</strong> (generating the screenshots in this appendix).</p>
-<hr />
-<h2 id="e.2-interface-design">E.2 Interface Design</h2>
-<p>The monitor replicates the visual language of professional CCTV/DVR security systems, which is intentional: the agent’s task <em>is</em> to operate a security monitoring system, and making the visualisation look like one helps viewers immediately contextualise agent decisions.</p>
-<pre><code># Security Camera Monitor layout (1440 x 900 px)
-# +---------------------------+------------+
-# |  Main feed  (960 x 720)  |  Room 0    |
-# |                           |  Room 1    |
-# |                           |  Room 2    |
-# |                           |  Room 3    |
-# +---------------------------+------------+
-# |  Status bar  (1440 x 180)              |
-# +----------------------------------------+</code></pre>
-<p><strong>Left panel (960×720 px)</strong> — the currently active camera feed, rendered in perspective with:</p>
-<ul>
-<li>Room-specific wall, floor, and ceiling colours</li>
-<li>Furnished room interiors (sofa/TV/bookshelf − living room; counter/sink/table − kitchen; corridor/door − hallway; bed/wardrobe/window − bedroom)</li>
-<li><strong>CRT scanlines</strong> on every active feed</li>
-<li><strong>Colour tint</strong>: yellow for LOW fidelity, red for HIGH fidelity</li>
-<li><strong>Motion detection boxes</strong> (animated red corner brackets) when PIR fires in the active room</li>
-<li><strong>Alert banner</strong> (NOTIFY / RECORD / ESCALATE) centred at top with pulse animation</li>
-<li><strong>Blinking REC dot</strong> when camera is active</li>
-<li>Timestamp, time-of-day label, microphone waveform</li>
-</ul>
-<p><strong>Right panel (480 px wide, 4 stacked)</strong> — thumbnail feeds for all four rooms:</p>
-<ul>
-<li><strong>NO SIGNAL</strong> static when camera is OFF</li>
-<li>Dim live view when camera is online but not the active feed</li>
-<li>Yellow border highlight on the active thumbnail</li>
-</ul>
-<p><strong>Bottom bar (180 px)</strong> — agent status:</p>
-<ul>
-<li>Privacy budget bar (green → orange → red as budget depletes)</li>
-<li>Episode metrics (Overall, Detection, Privacy Efficiency)</li>
-<li>Full agent reasoning text (extracted from <code>reasoning</code> field in rollout)</li>
-<li>Step-progress dots</li>
-</ul>
-<hr />
-<h2 id="e.3-simulation-screenshots">E.3 Simulation Screenshots</h2>
-<p>The following eight screenshots capture the key behaviours exhibited by the Curriculum-Medium step-190 agent across the evaluation episodes.</p>
-<hr />
-<h3 id="figure-e.1-all-cameras-offline-passive-calibration-phase">Figure E.1 — All Cameras Offline (Passive Calibration Phase)</h3>
-<figure>
-<img src="/assets/assets-privacy-guard/01_cameras_offline.png" alt="All cameras offline" />
-<figcaption aria-hidden="true">All cameras offline</figcaption>
-</figure>
-<p><strong>What we see</strong>: The main feed shows <code>ALL CAMERAS OFFLINE</code> with grey static. All four room thumbnails display <code>NO SIGNAL</code>. The privacy budget bar is full green at 100/100 units. Time of day: 0.70 (evening).</p>
-<p><strong>What this means</strong>: At episode start, the agent reads all PIR sensors as clear (0.0 across all rooms) and correctly keeps every sensor deactivated. This is the <strong>passive calibration phase</strong> described in Section 5.3 — the agent establishes a baseline of household normalcy before spending any budget. The reasoning panel confirms this is deliberate: <em>“No motion detected. All sensors nominal for evening. No action required. Preserving budget.”</em></p>
-<hr />
-<h3 id="figure-e.2-low-fidelity-camera-living-room-triangulation-phase">Figure E.2 — LOW-Fidelity Camera: Living Room (Triangulation Phase)</h3>
-<figure>
-<img src="/assets/assets-privacy-guard/02_living_room_camera_low.png" alt="Low fidelity camera" />
-<figcaption aria-hidden="true">Low fidelity camera</figcaption>
-</figure>
-<p><strong>What we see</strong>: The living room camera feed is active. The <strong>yellow CRT tint</strong> and scanlines mark LOW-fidelity mode (cost: 1 privacy unit). The sofa, coffee table, TV, and bookshelf are visible in perspective. A <code>RECORD</code> badge blinks in the top-right.</p>
-<p><strong>What this means</strong>: After detecting ambiguous PIR activity, the agent has activated a LOW-fidelity camera to observe before committing to an expensive HIGH-resolution capture. This is the <strong>triangulation phase</strong> — the agent is gathering evidence cheaply. The yellow tint visually distinguishes this from the more committed HIGH (red tint) mode.</p>
-<hr />
-<h3 id="figure-e.3-escalate-high-camera-intrusion-confirmed">Figure E.3 — ESCALATE + HIGH Camera: Intrusion Confirmed</h3>
-<figure>
-<img src="/assets/assets-privacy-guard/03_escalate_high_camera.png" alt="Escalate HIGH" />
-<figcaption aria-hidden="true">Escalate HIGH</figcaption>
-</figure>
-<p><strong>What we see</strong>: The main feed displays a room interior in <strong>red CRT tint</strong> (HIGH fidelity). Red <code>⚠ ESCALATE</code> alert banner at the top. Red corner brackets (motion-detection boxes) overlay the room. The <code>● HIGH</code> indicator blinks in the top-right. Three of the four thumbnails show <code>NO SIGNAL</code>.</p>
-<p><strong>What this means</strong>: Multiple corroborating signals have been detected across timesteps. The agent has committed to <strong>full surveillance mode</strong> — HIGH camera fidelity plus ESCALATE alert. This is the most expensive action (4 privacy units/timestep) and is used sparingly. In the <code>multi_room_intrusion</code> episode (reward=0.991, detection=1.00), this commitment is correctly timed and correctly sustained.</p>
-<hr />
-<h3 id="figure-e.4-hallway-camera-door-sensor-triggered">Figure E.4 — Hallway Camera: Door Sensor Triggered</h3>
-<figure>
-<img src="/assets/assets-privacy-guard/04_hallway_door_triggered.png" alt="Door triggered" />
-<figcaption aria-hidden="true">Door triggered</figcaption>
-</figure>
-<p><strong>What we see</strong>: The hallway camera feed shows the corridor interior — dark floor carpet, ceiling light fixtures, and the front door visible at the far end. The <code>🚪 DOOR SENSOR TRIGGERED</code> banner is displayed. The door frame glows with an orange pulse.</p>
-<p><strong>What this means</strong>: In the <code>cooking_then_break_in</code> scenario, the front-door sensor fires during a period when PIR readings were ambiguous (cooking activity in the kitchen). The agent immediately activates the hallway camera to monitor the entry point. This is a critical decision: the agent must distinguish a forced entry from a legitimate late-night return.</p>
-<hr />
-<h3 id="figure-e.5-kitchen-camera-pet-motion-false-alarm-correctly-avoided">Figure E.5 — Kitchen Camera: Pet Motion (False Alarm Correctly Avoided)</h3>
-<figure>
-<img src="/assets/assets-privacy-guard/05_kitchen_pet_motion.png" alt="Kitchen pet motion" />
-<figcaption aria-hidden="true">Kitchen pet motion</figcaption>
-</figure>
-<p><strong>What we see</strong>: Kitchen camera feed with <strong>yellow LOW-fidelity tint</strong>. The kitchen interior is visible — counter, sink, overhead pendant light, table. PIR intensity 0.3 is indicated. <strong>No alert banner is shown.</strong></p>
-<p><strong>What this means</strong>: From the <code>pet_only</code> scenario. Kitchen PIR detects 0.3 intensity — consistent with a pet. The agent activates LOW camera to observe, but correctly <strong>raises no alert</strong>. The agent has learned to distinguish low-intensity single-room motion (pet) from sustained multi-room elevated motion (intrusion). Avoiding a false ESCALATE here preserves the privacy budget and prevents alert fatigue.</p>
-<hr />
-<h3 id="figure-e.6-bedroom-camera-tracking-suspicious-footsteps">Figure E.6 — Bedroom Camera: Tracking Suspicious Footsteps</h3>
-<figure>
-<img src="/assets/assets-privacy-guard/06_bedroom_camera_high.png" alt="Bedroom HIGH" />
-<figcaption aria-hidden="true">Bedroom HIGH</figcaption>
-</figure>
-<p><strong>What we see</strong>: Bedroom camera at <strong>HIGH fidelity</strong> (red CRT tint). The bedroom interior shows the bed with pillows, bedside tables with lamps, window with curtains, and wardrobe. <code>⚠ NOTIFY</code> alert banner is shown — not yet ESCALATE.</p>
-<p><strong>What this means</strong>: In the <code>unknown_footsteps</code> scenario, the agent detects motion patterns moving toward the bedroom and responds with HIGH camera + NOTIFY. The NOTIFY — rather than ESCALATE — reflects appropriate uncertainty: signals are suspicious but not yet definitive. The agent is gathering HIGH-quality evidence before committing to escalation.</p>
-<hr />
-<h3 id="figure-e.7-privacy-budget-pressure-orange-warning-state">Figure E.7 — Privacy Budget Pressure (Orange Warning State)</h3>
-<figure>
-<img src="/assets/assets-privacy-guard/07_budget_pressure.png" alt="Budget pressure" />
-<figcaption aria-hidden="true">Budget pressure</figcaption>
-</figure>
-<p><strong>What we see</strong>: The bottom status bar shows the privacy budget bar in <strong>orange</strong> (budget below 30% threshold). Episode is <code>multi_room_intrusion</code>. Multiple completed step-progress dots indicate mid-episode.</p>
-<p><strong>What this means</strong>: After sustaining HIGH-fidelity capture across multiple intrusion timesteps, the privacy budget is partially depleted. The agent’s reasoning panel shows explicit budget-counting: *“Budget: 44/100. Steps remaining:  This emergent arithmetic reasoning — not explicitly trained — demonstrates learned temporal resource planning.</p>
-<hr />
-<h3 id="figure-e.8-full-monitor-overview-best-episode-multi">Figure E.8 — Full Monitor Overview: Best Episode (multi</h3>
-<figure>
-<img src="/assets/assets-privacy-guard/08_full_monitor_multi_intrusion.png" alt="Full monitor" />
-<figcaption aria-hidden="true">Full monitor</figcaption>
-</figure>
-<p><strong>What we see</strong>: The complete 1440×900 security monitor interface. Left: large main camera feed with alert overlays. Right: four stacked thumbnail feeds — one lit (active camera), three showing <code>NO SIGNAL</code>. Bottom: privacy budget (green), episode metrics (Overall: 0.991, Detection: 1.00, Privacy Eff.: 1.00), agent reasoning, step-progress dots.</p>
-<p><strong>What this means</strong>: This is the canonical view during Episode 4 (<code>multi_room_intrusion</code>) — the highest-reward episode in the evaluation set. All three metric bars are nearly full. The agent has achieved simultaneous maximum detection and near-perfect privacy efficiency in a multi-room adversarial scenario. Only one camera is active at any given timestep, illustrating the selective activation strategy underlying the 95% budget retention figure.</p>
-<hr />
-<h2 id="e.4-implementation-notes">E.4 Implementation Notes</h2>
-<h3 id="data-pipeline">Data Pipeline</h3>
-<p>The simulation loads <code>rollouts_step190.json</code> — a raw JSON file produced by the Prime Intellect GRPO harness. It parses both the <code>prompt</code> field (user-turn observations) and <code>completion</code> field (assistant-turn actions), interleaving them by message role to reconstruct the chronological episode timeline. Robust <code>strict=False</code> JSON parsing was required to handle literal newlines embedded in multi-turn message strings.</p>
-<h3 id="room-perspective-rendering">Room Perspective Rendering</h3>
-<p>Each room is rendered using a fixed vanishing-point perspective system simulating a security camera mounted in the upper portion of a room wall (approximately 52% horizontal, 36% vertical of the frame):</p>
-<pre class="python"><code>VP_X, VP_Y = 0.52, 0.36   # vanishing point as fraction of frame
-
-def project(x, y, depth):
-    &quot;&quot;&quot;Project floor-plane point toward vanishing point.&quot;&quot;&quot;
-    vx = int(VP_X * W + (x - VP_X * W) * depth)
-    vy = int(VP_Y * H + (y - VP_Y * H) * depth)
-    return vx, vy</code></pre>
-<p>Floor-plane objects (furniture, carpet strips) are drawn as trapezoids projected toward this vanishing point. Vertical surfaces (walls, headboards, shelving) are drawn at the correct depth scale. Night/day tinting is applied uniformly using the <code>time_of_day</code> field extracted from each timestep’s observation.</p>
-<h3 id="sensor-state-visual-mapping">Sensor State → Visual Mapping</h3>
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th>Sensor State</th>
-<th>Visual Representation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Camera OFF</td>
-<td>Grey static (<code>NO SIGNAL</code>)</td>
-</tr>
-<tr>
-<td>Camera LOW</td>
-<td>Yellow CRT tint + scanlines</td>
-</tr>
-<tr>
-<td>Camera HIGH</td>
-<td>Red CRT tint + scanlines + vignette</td>
-</tr>
-<tr>
-<td>PIR motion</td>
-<td>Orange ambient glow + red MOTION corner brackets</td>
-</tr>
-<tr>
-<td>Alert NOTIFY</td>
-<td>Blue banner at top of main feed</td>
-</tr>
-<tr>
-<td>Alert RECORD</td>
-<td>Amber banner</td>
-</tr>
-<tr>
-<td>Alert ESCALATE</td>
-<td>Red banner + pulsing glow ring around banner</td>
-</tr>
-<tr>
-<td>Door triggered</td>
-<td>Orange <code>🚪 DOOR SENSOR TRIGGERED</code> banner</td>
-</tr>
-<tr>
-<td>Night (TOD &lt; 0.3)</td>
-<td>All rooms darkened; windows show dark sky</td>
-</tr>
-<tr>
-<td>Day (TOD &gt; 0.6)</td>
-<td>Full brightness; kitchen window shows bright daylight</td>
-</tr>
-</tbody>
-</table>
-<h3 id="running-the-simulation">Running the Simulation</h3>
-<pre class="bash"><code>cd privacy_guard
-python sim3d.py
-# Loads privacy_guard/results/rollouts_step190.json automatically
-# Controls: SPACE/-&gt; next step  &lt;- prev  A auto-play
-#           N/P next/prev episode  0-7 jump  +/- speed  S screenshot  Q quit</code></pre>
-<p>The simulation loads <code>privacy_guard/results/rollouts_step190.json</code> automatically. Controls: <code>SPACE</code>/<code>→</code> − next timestep; <code>←</code> − previous; <code>A</code> − auto-play; <code>N</code>/<code>P</code> − next/previous episode; <code>0</code>–<code>7</code> − jump to episode; <code>+</code>/<code>–</code> − adjust speed; <code>S</code> − save screenshot; <code>Q</code> − quit.</p>
-<hr />
-<h2 id="e.5-key-observations-from-visual-inspection">E.5 Key Observations from Visual Inspection</h2>
-<p>Reviewing all 8 evaluation episodes frame by frame through the simulation reveals several qualitative patterns that extend the quantitative findings of the main paper:</p>
-<p><strong>1. Consistent three-phase structure across episodes.</strong> Virtually every episode — regardless of scenario — exhibits the Calibrate → Triangulate → Commit structure described in Section 5.3. The passive opening phase spans 2–5 timesteps; LOW-camera triangulation is typically 2–4 timesteps; HIGH-camera commitment is sustained until episode end. This regularity suggests the three-phase strategy is a robust emergent policy, not an artefact of specific scenarios.</p>
-<p><strong>2. Room targeting follows intrusion trajectories.</strong> In <code>multi_room_intrusion</code>, the agent correctly tracks the intruder as they move between rooms — updating camera targets to follow the active PIR signal. This spatial tracking capability is not directly encoded in the reward function (which scores alert level, not camera room) and implies the agent has learned spatial reasoning about intrusion paths from the training distribution.</p>
-<p><strong>3. Pet-only episodes show clean non-response.</strong> In all three <code>pet_only</code> evaluation episodes, the agent correctly avoids ESCALATE despite sustained PIR motion. Visual inspection confirms the agent uses LOW camera to observe, reads the low-intensity single-room motion pattern, and withholds escalation. This discriminative capability is a key functional achievement: the deployed system would not generate false alarms for routine household activity.</p>
-<p><strong>4. Budget conservation is visually salient.</strong> The main camera feed is dark (NO SIGNAL) for 12–16 consecutive timesteps per episode before the first activation. This directly reflects the 95% average budget retention figure in Table 5 — the agent is almost always inactive, preserving full capacity for the timesteps that matter.</p>
-<p><strong>5. Hallway is the preferred initial monitoring point.</strong> Across scenarios, the agent disproportionately activates the hallway camera when first responding to ambiguous signals. This is physically reasonable: the hallway is the natural transit corridor for any intruder entering from the front door, and monitoring it provides early warning regardless of the intruder’s intended destination. The agent appears to have learned this spatial topology implicitly from the scenario distribution.</p>
-<hr />
-<p>*Source: <code>privacy_*guard/sim3d.py</code>. Screenshots: <code>privacy_guard/capture_screenshots.py}. All figures generated from Curriculum-Medium step-190 rollout data with no manual adjustment or post-processing.</code></p>
 
 </div>
