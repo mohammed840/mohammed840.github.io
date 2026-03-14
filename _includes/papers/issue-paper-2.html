@@ -5,7 +5,12 @@
 .paper-content h3 { font-size: 1.05rem; margin-top: 1.4rem; color: #333; }
 .paper-header { margin-bottom: 1.5rem; }
 .paper-header h1 { border: none; font-size: 1.6rem; line-height: 1.3; }
-.paper-header .author { font-size: 1rem; color: #555; margin-top: 0.4rem; }
+.paper-header .author { font-size: 1rem; color: #555; margin-top: 0.4rem; margin-bottom: 0; }
+.paper-header .paper-links { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.75rem; flex-wrap: wrap; }
+.paper-header .paper-links a { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.8rem; border-radius: 4px; font-size: 0.88rem; font-family: -apple-system, sans-serif; text-decoration: none; border: 1px solid #ccc; color: #333; background: #f6f6f6; transition: background 0.15s; }
+.paper-header .paper-links a:hover { background: #e8e8e8; }
+.paper-header .paper-links a.pdf-link { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+.paper-header .paper-links a.pdf-link:hover { background: #2d2d4a; }
 .paper-header .abstract-label { font-size: 1rem; font-weight: bold; margin-top: 1.2rem; margin-bottom: 0.3rem; }
 .paper-content table { border-collapse: collapse; width: 100%; font-size: 0.84rem; margin: 1.2rem 0; overflow-x: auto; display: block; }
 .paper-content th, .paper-content td { border: 1px solid #ccc; padding: 5px 10px; text-align: left; vertical-align: top; }
@@ -15,6 +20,7 @@
 .paper-content img { max-width: 100%; display: block; margin: 1.2em auto; border-radius: 4px; border: 1px solid #e0e0e0; }
 .paper-content code { background: #f4f4f4; padding: 1px 5px; border-radius: 3px; font-size: 0.87em; font-family: "SF Mono", "Fira Code", monospace; }
 .paper-content pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.84em; }
+.paper-content pre code { background: none; padding: 0; }
 .paper-content hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
 .paper-content ol, .paper-content ul { padding-left: 1.5em; }
 .paper-content li { margin-bottom: 0.3em; }
@@ -24,6 +30,16 @@
 <div class="paper-header">
 <h1>Privacy Guard: Learning Privacy-Budgeted Active Sensing Policies via Reinforcement Learning in Smart Home Environments</h1>
 <p class="author"><strong>Mohammed Alshehri</strong> &mdash; March 2026</p>
+<div class="paper-links">
+  <a href="/assets/privacy-guard.pdf" class="pdf-link" target="_blank">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+    Paper
+  </a>
+  <a href="https://github.com/mohammed840/privacy-guard" target="_blank">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+    Code
+  </a>
+</div>
 <p class="abstract-label">Abstract</p>
 </div>
 <p>We present <strong>Privacy Guard</strong>, a reinforcement learning framework for <em>privacy-budgeted active sensing</em> in smart homes. The agent detects intrusions by selectively activating cameras and microphones under a finite privacy budget, balancing security with minimal surveillance. Using GRPO, we run 12 experiments varying architecture (4B dense vs. 30B MoE), reasoning mode (standard vs. chain-of-thought), curriculum difficulty, and episode length. The main result is that <strong>training distribution matters more than model scale</strong>: a 4B model trained on medium-difficulty scenarios for 100 steps reaches 0.912 peak reward and 86.4% detection, outperforming a larger 30B MoE and substantially exceeding rule-based baselines. Chain-of-thought fails in this token-constrained multi-turn setting (97% truncation). Longer-horizon tests show strong detection generalisation but weaker privacy-budget management, identifying temporal budget planning as the key remaining challenge.</p>
@@ -95,12 +111,41 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <li><strong>Privacy budget remaining</strong>: explicit numerical display</li>
 </ul>
 <p>A representative observation at timestep 7 of 20:</p>
-<pre><code>[code listing — see paper source]</code></pre>
+<pre><code>+==========================================================+
+| SMART HOME SECURITY MONITOR - TIMESTEP 7 of 20          |
+|                                                          |
+| Privacy Budget: 11.0 / 25.0 remaining (44%)             |
+|                                                          |
+| Time of Day: 02:14 (late night)                         |
+|                                                          |
++==========================================================+
+| MOTION SENSORS (PIR):                                    |
+|                                                          |
+|   Living Room : 0.00  ..........                        |
+|   Kitchen     : 0.00  ..........                        |
+|   Hallway     : 0.82  ########.. &lt;- elevated            |
+|   Bedroom     : 0.10  #.........                        |
+|                                                          |
++==========================================================+
+| DOORS: front_door = OPEN (opened 2 steps ago)           |
+|                                                          |
+| AUDIO: faint scraping sound detected in hallway         |
+|                                                          |
++==========================================================+
+| Respond with a JSON action. Fields required:             |
+|   camera_room, camera_level, mic_level, alert, reasoning |
++==========================================================+</code></pre>
 <p>Events (both intrusion and benign) are injected at scenario-defined timesteps. The 24 scenarios span three difficulty tiers (Table 1) and include 6 held-out test scenarios used only for evaluation.</p>
 <p><strong>Table 1: Scenario taxonomy across difficulty tiers.</strong></p>
 <h3 id="action-space">3.3 Action Space</h3>
 <p>At each timestep the agent produces a JSON object:</p>
-<pre class="json"><code>[code listing — see paper source]</code></pre>
+<pre class="json"><code>{
+  &quot;camera_room&quot;:  &quot;hallway | living_room | kitchen | bedroom&quot;,
+  &quot;camera_level&quot;: &quot;OFF | LOW | HIGH&quot;,
+  &quot;mic_level&quot;:    &quot;OFF | LOW | HIGH&quot;,
+  &quot;alert&quot;:        &quot;NONE | NOTIFY | ESCALATE&quot;,
+  &quot;reasoning&quot;:    &quot;&lt;free-text explanation - not scored&gt;&quot;
+</code></pre>
 <p>The <code>reasoning</code> field is never scored but appears in all training rollouts, providing a natural chain-of-thought trace that can be audited post-hoc.</p>
 <h3 id="privacy-budget">3.4 Privacy Budget</h3>
 <p>Each sensor activation incurs a cost deducted from the privacy budget <span class="math inline">\(b\)</span>:</p>
@@ -319,10 +364,63 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <p><strong>Table B1: Environment version changelog.</strong></p>
 <h2 id="appendix-c-reward-function-implementation">Appendix C: Reward Function Implementation</h2>
 <p>The detection reward implementation, accounting for intrusion timesteps, alert matching, and false-alarm penalties:</p>
-<pre class="python"><code>[code listing — see paper source]</code></pre>
+<pre class="python"><code>def detection_reward(trajectory: list[dict], scenario: Scenario) -&gt; float:
+    &quot;&quot;&quot;
+    Episode-level detection reward in [0, 1].
+    Gives full credit (1.0) for ESCALATE+HIGH at intrusion timesteps,
+    partial credit (0.5) for NOTIFY/ESCALATE with non-OFF camera,
+    and penalises false alarms on non-intrusion timesteps (-0.1 each).
+    &quot;&quot;&quot;
+    if not scenario.intrusion_timesteps:
+        # Benign scenario: reward is purely based on no false alarms
+        fp_count = sum(
+            1 for t, a in enumerate(trajectory)
+            if a.get(&quot;alert&quot;, &quot;NONE&quot;) != &quot;NONE&quot;
+        )
+        return max(0.0, 1.0 - 0.1 * fp_count)
+    score = 0.0
+    intrusion_set = set(scenario.intrusion_timesteps)
+    false_positive_penalty = 0.0
+    for t, action in enumerate(trajectory):
+        alert   = action.get(&quot;alert&quot;, &quot;NONE&quot;)
+        cam_lvl = action.get(&quot;camera_level&quot;, &quot;OFF&quot;)
+        if t in intrusion_set:
+            if alert == &quot;ESCALATE&quot; and cam_lvl == &quot;HIGH&quot;:
+                score += 1.0          # Full credit
+            elif alert in (&quot;NOTIFY&quot;, &quot;ESCALATE&quot;) and cam_lvl != &quot;OFF&quot;:
+                score += 0.5          # Partial credit
+            # No credit if alert=NONE or camera=OFF during intrusion
+        else:
+            if alert != &quot;NONE&quot;:
+                false_positive_penalty += 0.1   # Penalise false alarms
+    normalised = score / len(intrusion_set)
+    return max(0.0, normalised - false_positive_penalty)</code></pre>
 <h2 id="appendix-d-observation-format">Appendix D: Observation Format</h2>
 <p>A representative formatted observation string (timestep 7 of 20, budget-25 configuration):</p>
-<pre><code>[code listing — see paper source]</code></pre>
+<pre><code>+==========================================================+
+| SMART HOME SECURITY MONITOR - TIMESTEP 7 of 20          |
+|                                                          |
+| Privacy Budget: 11.0 / 25.0 remaining (44%)             |
+|                                                          |
+| Time of Day: 02:14 (late night)                         |
+|                                                          |
++==========================================================+
+| MOTION SENSORS (PIR):                                    |
+|                                                          |
+|   Living Room : 0.00  ..........                        |
+|   Kitchen     : 0.00  ..........                        |
+|   Hallway     : 0.82  ########.. &lt;- elevated            |
+|   Bedroom     : 0.10  #.........                        |
+|                                                          |
++==========================================================+
+| DOORS: front_door = OPEN (opened 2 steps ago)           |
+|                                                          |
+| AUDIO: faint scraping sound detected in hallway         |
+|                                                          |
++==========================================================+
+| Respond with a JSON action. Fields required:             |
+|   camera_room, camera_level, mic_level, alert, reasoning |
++==========================================================+</code></pre>
 <hr />
 <h1 id="appendix-e-interactive-3d-simulation-and-visualisation-framework">Appendix E: Interactive 3D Simulation and Visualisation Framework</h1>
 <blockquote>
@@ -342,7 +440,15 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <hr />
 <h2 id="e.2-interface-design">E.2 Interface Design</h2>
 <p>The monitor replicates the visual language of professional CCTV/DVR security systems, which is intentional: the agent’s task <em>is</em> to operate a security monitoring system, and making the visualisation look like one helps viewers immediately contextualise agent decisions.</p>
-<pre><code>[code listing — see paper source]</code></pre>
+<pre><code># Security Camera Monitor layout (1440 x 900 px)
+# +---------------------------+------------+
+# |  Main feed  (960 x 720)  |  Room 0    |
+# |                           |  Room 1    |
+# |                           |  Room 2    |
+# |                           |  Room 3    |
+# +---------------------------+------------+
+# |  Status bar  (1440 x 180)              |
+# +----------------------------------------+</code></pre>
 <p><strong>Left panel (960×720 px)</strong> — the currently active camera feed, rendered in perspective with:</p>
 <ul>
 <li>Room-specific wall, floor, and ceiling colours</li>
@@ -440,11 +546,21 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <p>The simulation loads <code>rollouts_step190.json</code> — a raw JSON file produced by the Prime Intellect GRPO harness. It parses both the <code>prompt</code> field (user-turn observations) and <code>completion</code> field (assistant-turn actions), interleaving them by message role to reconstruct the chronological episode timeline. Robust <code>strict=False</code> JSON parsing was required to handle literal newlines embedded in multi-turn message strings.</p>
 <h3 id="room-perspective-rendering">Room Perspective Rendering</h3>
 <p>Each room is rendered using a fixed vanishing-point perspective system simulating a security camera mounted in the upper portion of a room wall (approximately 52% horizontal, 36% vertical of the frame):</p>
-<pre class="python"><code>[code listing — see paper source]</code></pre>
+<pre class="python"><code>VP_X, VP_Y = 0.52, 0.36   # vanishing point as fraction of frame
+
+def project(x, y, depth):
+    &quot;&quot;&quot;Project floor-plane point toward vanishing point.&quot;&quot;&quot;
+    vx = int(VP_X * W + (x - VP_X * W) * depth)
+    vy = int(VP_Y * H + (y - VP_Y * H) * depth)
+    return vx, vy</code></pre>
 <p>Floor-plane objects (furniture, carpet strips) are drawn as trapezoids projected toward this vanishing point. Vertical surfaces (walls, headboards, shelving) are drawn at the correct depth scale. Night/day tinting is applied uniformly using the <code>time_of_day</code> field extracted from each timestep’s observation.</p>
 <h3 id="sensor-state-visual-mapping">Sensor State → Visual Mapping</h3>
 <h3 id="running-the-simulation">Running the Simulation</h3>
-<pre class="bash"><code>[code listing — see paper source]</code></pre>
+<pre class="bash"><code>cd privacy_guard
+python sim3d.py
+# Loads privacy_guard/results/rollouts_step190.json automatically
+# Controls: SPACE/-&gt; next step  &lt;- prev  A auto-play
+#           N/P next/prev episode  0-7 jump  +/- speed  S screenshot  Q quit</code></pre>
 <p>The simulation loads <code>privacy_guard/results/rollouts_step190.json</code> automatically. Controls: <code>SPACE</code>/<code>→</code> − next timestep; <code>←</code> − previous; <code>A</code> − auto-play; <code>N</code>/<code>P</code> − next/previous episode; <code>0</code>–<code>7</code> − jump to episode; <code>+</code>/<code>–</code> − adjust speed; <code>S</code> − save screenshot; <code>Q</code> − quit.</p>
 <hr />
 <h2 id="e.5-key-observations-from-visual-inspection">E.5 Key Observations from Visual Inspection</h2>

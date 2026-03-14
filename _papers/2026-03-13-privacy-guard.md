@@ -3,6 +3,7 @@ title: "Privacy Guard: Learning Privacy-Budgeted Active Sensing Policies via Rei
 date: 2026-03-13
 authors: "Mohammed Alshehri"
 year: 2026
+pdf: "/assets/privacy-guard.pdf"
 code: "https://github.com/mohammed840/privacy-guard"
 tldr: "We train LLM agents using GRPO to perform privacy-budgeted active sensing in smart homes, achieving a 131% detection improvement over baselines while emergent budget-efficient behaviour produces near-perfect privacy compliance as a side-effect."
 highlights:
