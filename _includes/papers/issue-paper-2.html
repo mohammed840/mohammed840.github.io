@@ -18,11 +18,9 @@
 </style>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <div class="paper-content">
-{Privacy Guard: Learning Privacy-Budgeted Active Sensing Policies via Reinforcement Learning in Smart Home Environments
-}  {Mohammed Alshehri
-}  {March 13th, 2026
-}  {
-<p>}</p>
+<h1>Privacy Guard: Learning Privacy-Budgeted Active Sensing Policies via Reinforcement Learning in Smart Home Environments</h1>
+<p><strong>Mohammed Alshehri</strong> &mdash; March 2026</p>
+<h2>Abstract</h2>
 <p>We present <strong>Privacy Guard</strong>, a reinforcement learning framework for <em>privacy-budgeted active sensing</em> in smart homes. The agent detects intrusions by selectively activating cameras and microphones under a finite privacy budget, balancing security with minimal surveillance. Using GRPO, we run 12 experiments varying architecture (4B dense vs. 30B MoE), reasoning mode (standard vs. chain-of-thought), curriculum difficulty, and episode length. The main result is that <strong>training distribution matters more than model scale</strong>: a 4B model trained on medium-difficulty scenarios for 100 steps reaches 0.912 peak reward and 86.4% detection, outperforming a larger 30B MoE and substantially exceeding rule-based baselines. Chain-of-thought fails in this token-constrained multi-turn setting (97% truncation). Longer-horizon tests show strong detection generalisation but weaker privacy-budget management, identifying temporal budget planning as the key remaining challenge.</p>
 <h1 id="introduction-and-motivation">Introduction and Motivation</h1>
 <p>The proliferation of internet-connected sensing devices in residential environments — from doorbell cameras and PIR motion detectors to always-listening voice assistants — has fundamentally altered the security-privacy calculus for modern households. On one hand, rich sensor data provides the raw material for reliable intrusion detection, fire monitoring, and assisted living applications. On the other, continuous, high-fidelity capture of in-home activity constitutes a form of pervasive surveillance that most occupants find deeply uncomfortable, and that regulators in the European Union (GDPR Articles 5 and 25), the United Kingdom (UK Data Protection Act 2018), and California (CCPA) seek to constrain through principles such as <em>data minimisation</em> and <em>purpose limitation</em>.</p>
