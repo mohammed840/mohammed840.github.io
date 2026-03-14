@@ -35,6 +35,8 @@ permalink: /papers/
     <div>
       {% if p.include_file == "papers/issue-paper-2.html" %}
         {% include papers/issue-paper-2.html %}
+      {% elsif p.include_file == "papers/issue-paper-1.html" %}
+        {% include papers/issue-paper-1.html %}
       {% else %}
         {{ p.content }}
       {% endif %}
