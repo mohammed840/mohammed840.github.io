@@ -33,10 +33,10 @@ abstract: "We present Privacy Guard, a reinforcement learning framework for priv
 .paper-header .paper-links a.pdf-link { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
 .paper-header .paper-links a.pdf-link:hover { background: #2d2d4a; }
 .paper-header .abstract-label { font-size: 1rem; font-weight: bold; margin-top: 1.2rem; margin-bottom: 0.3rem; }
-.paper-content table { border-collapse: collapse; width: 100%; font-size: 0.84rem; margin: 1.2rem 0; overflow-x: auto; display: block; }
-.paper-content th, .paper-content td { border: 1px solid #ccc; padding: 5px 10px; text-align: left; vertical-align: top; }
-.paper-content thead tr { background: #f0f0f0; font-weight: bold; }
-.paper-content tr:nth-child(even) td { background: #fafafa; }
+.paper-content table { border-collapse: collapse; width: 100%; font-size: 0.84rem; margin: 1.4rem auto; border-top: 2px solid #111; border-bottom: 2px solid #111; }
+.paper-content th, .paper-content td { border: none; padding: 6px 14px; text-align: left; vertical-align: top; }
+.paper-content thead tr { border-bottom: 1px solid #555; font-weight: 600; background: none; }
+.paper-content tr:nth-child(even) td { background: none; }
 .paper-content blockquote { border-left: 3px solid #bbb; padding: 0.5em 1em; color: #555; margin: 1em 0; background: #f9f9f9; border-radius: 0 4px 4px 0; }
 .paper-content img { max-width: 100%; display: block; margin: 1.2em auto; border-radius: 4px; border: 1px solid #e0e0e0; }
 .paper-content code { background: #f4f4f4; padding: 1px 5px; border-radius: 3px; font-size: 0.87em; font-family: "SF Mono", "Fira Code", monospace; }
@@ -182,7 +182,9 @@ graph TD
 <h2 id="layer-3-grpo-group-relative-policy-optimisation">Layer 3 — GRPO: Group Relative Policy Optimisation</h2>
 <p>The algorithm we use is <strong>GRPO</strong> (Shao et al., 2024 — <a href="https://arxiv.org/abs/2402.03300">DeepSeekMath</a>). The key insight: instead of training a separate value network (expensive, unstable), normalise rewards <em>within a group</em> of rollouts on the same prompt.</p>
 <p>For a group of G rollouts with rewards {r₁ … rG}, the advantage for rollout i is:</p>
-<pre><code>Â_i = (r_i − mean(r₁…rG)) / std(r₁…rG)</code></pre>
+<p style="text-align:center;margin:1.2rem 0;">
+\[ \hat{A}_i = \frac{r_i - \bar{r}}{\mathrm{std}(r_1,\ldots,r_G)}, \qquad \bar{r} = \frac{1}{G}\sum_{j=1}^{G} r_j \]
+</p>
 <p>No critic network. No moving baseline. Just within-batch normalisation. This is what makes GRPO tractable for multi-turn agentic tasks where PPO’s value head would be computing over long, variable-length trajectories.</p>
 <p><strong>Where GRPO has been applied:</strong> - Mathematical reasoning → <a href="https://github.com/deepseek-ai/DeepSeek-Math">DeepSeekMath</a> - Code generation → <a href="https://github.com/deepseek-ai/DeepSeek-R1">DeepSeek-R1</a> - Agentic tool use → <a href="https://github.com/PrimeIntellect-ai/verifiers">verifiers (Prime Intellect)</a></p>
 <p><strong>Our use:</strong> GRPO over 20-turn smart home episodes, where the reward is computed once at the end of the episode and normalised within a batch of 8 rollouts per scenario.</p>
