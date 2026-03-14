@@ -1,3 +1,4 @@
+{% raw %}
 <style>
 .paper-table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
 .paper-table th, .paper-table td { border: 1px solid #ccc; padding: 4px 8px; }
@@ -142,7 +143,7 @@ MathJax = {
 <blockquote>
 <p><strong>Figure 1</strong>: <em>Pareto frontier of detection vs. privacy for all baseline policies (triangles) and trained agents (stars). The trained agents — particularly Curriculum Medium — occupy a qualitatively different region of the Pareto space inaccessible to fixed-threshold strategies.</em></p>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/leakage_pareto_research.png" | relative_url }}" alt="Pareto frontier" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/leakage_pareto_research.png" alt="Pareto frontier" style="max-width:100%"></p>
 <p><figcaption>Pareto frontier</figcaption></p>
 </figure></blockquote> 
 <hr>
@@ -157,7 +158,7 @@ MathJax = {
 <p>{8}{6}{dccccc}{{Metric}{Untrained LLM}{Rule-Based}{<strong>GRPO-Trained 4B</strong>}{Δ vs. Untrained}{Δ vs. Rule-Based}}{{Overall Reward}{0.419}{0.529}{<strong>0.871</strong>}{+107.9%}{+64.7%}}{{Detection <span class="math-inline">\(R_d\)</span>}{0.345}{0.345}{<strong>0.798</strong>}{+131.3%}{+131.3%}}{{Privacy <span class="math-inline">\(R_p\)</span>}{0.666}{0.812}{<strong>0.980</strong>}{+47.1%}{+20.7%}}{{Format <span class="math-inline">\(R_f\)</span>}{—}{—}{<strong>0.981</strong>}{—}{—}}{{Budget remaining}{~34%}{~81%}{<strong></strong>95%}{+61 pp}{+14 pp}}{{Identity safety}{0.610}{0.952}{<strong>0.994</strong>}{+63%}{+4.4%}}{{Reconstruction safety}{—}{0.880}{<strong>0.975</strong>}{—}{+10.8%}}}<blockquote></p>
 <p><strong>Figure 2</strong>: <em>Training curves for all Phase 5 experiments, showing reward, detection, privacy, and format metrics across training steps. Each curve is a per-metric 8-step moving average; faint lines are raw step values.</em></p>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/phase5_all_runs.png" | relative_url }}" alt="Phase 5 all runs" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/phase5_all_runs.png" alt="Phase 5 all runs" style="max-width:100%"></p>
 <p><figcaption>Phase 5 all runs</figcaption></p>
 </figure></blockquote> 
 <p>The trained agent achieves a 131% improvement in detection over both the untrained LLM and the best rule-based policy. Critically, the privacy reward (0.980) and low leakage metrics emerge <strong>without any explicit leakage penalty</strong> in the reward function — they arise as a consequence of learning to reserve budget for genuine events. This is discussed further in Section 8.</p>
@@ -186,7 +187,7 @@ MathJax = {
 <p>{5}{7}{ddccccc}{{Model}{Architecture}{Active Params}{Max Tokens}{Peak Reward}{Detection}{Truncation}}{{Qwen3-4B-Instruct}{Dense transformer}{4B}{512}{0.871}{0.798}{0%}}{{Qwen3-30B-A3B}{Mixture-of-Experts}{~3B active}{512}{0.875}{0.814}{0%}}{{Qwen3-4B-Thinking}{Dense + CoT (<code><think></code>)}{4B}{1024}{0.590}{0.451}{<strong>97</strong>}}{{Qwen3-30B-A3B-Thinking}{MoE + CoT}{~3B active}{1024}{0.666}{0.445}{6%}}}<blockquote></p>
 <p><strong>Figure 3</strong>: <em>Peak performance comparison across all Phase 5 experiments (bar chart). Stars indicate best-per-metric across all runs. The gold bar (Curriculum Medium) dominates all metrics except privacy, where Easy training achieves the highest score due to low intrusion density.</em></p>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/phase5_final_leaderboard.png" | relative_url }}" alt="Phase 5 final leaderboard" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/phase5_final_leaderboard.png" alt="Phase 5 final leaderboard" style="max-width:100%"></p>
 <p><figcaption>Phase 5 final leaderboard</figcaption></p>
 </figure></blockquote> 
 <p><strong>Finding 1 — Scale confers negligible benefit.</strong> The 30B MoE model uses Mixture-of-Experts with ~3B parameters active per forward pass — comparable in compute to the 4B dense model. The marginal reward gain (0.875 vs. 0.871) is within noise and comes at the cost of substantially higher variance: the 30B model's final-step reward dropped to 0.762, while the 4B model finished at 0.730 — a 14% gap in terminal performance. The task is <em>format-limited</em>, not <em>capacity-limited</em>: the bottleneck is producing reliable ~50-token JSON, not world-knowledge or deep chain reasoning. Scaling the model addresses the wrong bottleneck.</p>
@@ -204,7 +205,7 @@ MathJax = {
 <p>{5}{7}{dcccccc}{{Stage}{Scenarios}{Peak Reward}{Detection}{Privacy}{Format}{Budget Used}}{{Easy}{7 easy}{0.692}{0.500}{<strong>0.998</strong>}{0.926}{~0.1%}}{{<strong>Medium</strong>}{<strong>7 medium</strong>}{<strong>0.912</strong>}{<strong>0.864</strong>}{0.978}{<strong>0.997</strong>}{~2.2%}}{{Hard}{4 hard}{0.851}{0.817}{0.874}{0.988}{~12.6%}}{{Flat baseline}{All 18}{0.871}{0.798}{0.980}{0.981}{~5%}}}<blockquote></p>
 <p><strong>Figure 4</strong>: <em>Curriculum learning training dynamics across all three stages and the flat 4B baseline. Medium (gold) rapidly surpasses all other configurations on reward. Note how Easy (green) achieves near-perfect privacy (lower-left panel) while detection barely rises above 0.5.</em></p>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/phase5_curriculum.png" | relative_url }}" alt="Curriculum learning" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/phase5_curriculum.png" alt="Curriculum learning" style="max-width:100%"></p>
 <p><figcaption>Curriculum learning</figcaption></p>
 </figure></blockquote> 
 <p><strong>Curriculum Medium is the best configuration overall across all 9 experiments conducted</strong>, achieving 0.912 reward at half the compute (100 vs. 200 steps). We now analyse each stage.</p>
@@ -215,7 +216,7 @@ MathJax = {
 <blockquote>
 <p><strong>Figure 5</strong>: <em>Privacy vs. detection Pareto plot for all configurations including baselines. The curriculum Medium agent (gold star) reaches the highest joint (detection, privacy) performance. The Hard agent (red star) achieves best detection after Medium but at a privacy cost. The grey triangle on the y-axis (Always-On) represents perfect detection at zero privacy.</em></p>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/pareto_and_sweep.png" | relative_url }}" alt="Pareto analysis" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/pareto_and_sweep.png" alt="Pareto analysis" style="max-width:100%"></p>
 <p><figcaption>Pareto analysis</figcaption></p>
 </figure></blockquote> 
 <hr>
@@ -233,13 +234,13 @@ MathJax = {
 <p>{4}{7}{ccccccc}{{Episode Length}{Steps}{Peak Reward}{Detection}{Privacy}{Final Reward}{Truncated}}{{20-step (Phase 5 best)}{100}{<strong>0.912</strong>}{0.864}{<strong>0.978</strong>}{<strong>0.814</strong>}{0%}}{{40-step}{149}{0.875}{0.799}{<strong>0.986</strong>}{0.715}{0%}}{{60-step}{149}{0.858}{<strong>0.865</strong>}{0.798}{0.770}{0%}}}<blockquote></p>
 <p><strong>Figure 6</strong>: <em>Episode-length scaling training dynamics. Each row shows overall reward, detection, privacy, and format across training steps. The gold 20-step baseline (solid) achieves the best overall reward. The striking finding is in the detection panel (top right): 60-step (red dashed) ends at detection 0.865, nearly identical to 20-step, while privacy (bottom left) collapses to 0.798.</em></p>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/phase6_episode_scaling.png" | relative_url }}" alt="Phase 6 episode scaling curves" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/phase6_episode_scaling.png" alt="Phase 6 episode scaling curves" style="max-width:100%"></p>
 <p><figcaption>Phase 6 episode scaling curves</figcaption></p>
 </figure></blockquote> 
 <blockquote>
 <p><strong>Figure 7</strong>: <em>Bar chart comparison of peak metrics across episode lengths. The counter-intuitive finding is evident: detection is roughly invariant to episode length (all three bars nearly equal), while privacy correlates non-monotonically, with 40-step being best.</em></p>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/phase6_scaling_bars.png" | relative_url }}" alt="Phase 6 scaling bars" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/phase6_scaling_bars.png" alt="Phase 6 scaling bars" style="max-width:100%"></p>
 <p><figcaption>Phase 6 scaling bars</figcaption></p>
 </figure></blockquote> 
 <h3>7.3 Analysis: The Detection–Privacy Dissociation</h3>
@@ -267,7 +268,7 @@ MathJax = {
 <p>{7}{4}{dccc}{{Policy}{Identity Safety <span class="math-inline">\(L_identity\)</span>}{Reconstruction Safety <span class="math-inline">\(L_recon\)</span>}{Overall Reward}}{{Always-On}{0.000}{0.000}{0.245}}{{Rule-Based}{0.952}{0.880}{0.529}}{{Untrained LLM}{0.610}{—}{0.419}}{{<strong>GRPO-Trained 4B</strong>}{<strong>0.994</strong>}{<strong>0.975</strong>}{0.871}}{{<strong>Curriculum Medium</strong>}{<strong>0.995</strong>}{<strong>0.978</strong>}{<strong>0.912</strong>}}{{Curriculum Hard}{0.916}{0.874}{0.851}}}<blockquote></p>
 <p><strong>Figure 8</strong>: <em>Privacy leakage heatmap across all experimental configurations. Rows are policies; columns are leakage dimensions. The trained agents achieve the darkest (best) cells across both dimensions, while Always-On achieves the worst on both.</em></p>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/leakage_heatmap.png" | relative_url }}" alt="Leakage heatmap" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/leakage_heatmap.png" alt="Leakage heatmap" style="max-width:100%"></p>
 <p><figcaption>Leakage heatmap</figcaption></p>
 </figure></blockquote> 
 <p><strong>Key finding</strong>: Both trained agents achieve near-perfect leakage scores without any explicit leakage penalty in <span class="math-inline">\(R\)</span>. The Curriculum Medium agent (0.995 identity, 0.978 reconstruction) outperforms even the carefully designed Rule-Based policy (0.952, 0.880) — a policy explicitly designed to minimise unnecessary activation.</p>
@@ -318,7 +319,7 @@ MathJax = {
 <hr>
 <h3>Figure E.1 — All Cameras Offline (Passive Calibration Phase)</h3>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/01_cameras_offline.png" | relative_url }}" alt="All cameras offline" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/01_cameras_offline.png" alt="All cameras offline" style="max-width:100%"></p>
 <p><figcaption>All cameras offline</figcaption></p>
 </figure>
 <p><strong>What we see</strong>: The main feed shows <code>ALL CAMERAS OFFLINE</code> with grey static. All four room thumbnails display <code>NO SIGNAL</code>. The privacy budget bar is full green at 100/100 units. Time of day: 0.70 (evening).</p>
@@ -326,7 +327,7 @@ MathJax = {
 <hr>
 <h3>Figure E.2 — LOW-Fidelity Camera: Living Room (Triangulation Phase)</h3>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/02_living_room_camera_low.png" | relative_url }}" alt="Low fidelity camera" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/02_living_room_camera_low.png" alt="Low fidelity camera" style="max-width:100%"></p>
 <p><figcaption>Low fidelity camera</figcaption></p>
 </figure>
 <p><strong>What we see</strong>: The living room camera feed is active. The <strong>yellow CRT tint</strong> and scanlines mark LOW-fidelity mode (cost: 1 privacy unit). The sofa, coffee table, TV, and bookshelf are visible in perspective. A <code>RECORD</code> badge blinks in the top-right.</p>
@@ -334,7 +335,7 @@ MathJax = {
 <hr>
 <h3>Figure E.3 — ESCALATE + HIGH Camera: Intrusion Confirmed</h3>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/03_escalate_high_camera.png" | relative_url }}" alt="Escalate HIGH" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/03_escalate_high_camera.png" alt="Escalate HIGH" style="max-width:100%"></p>
 <p><figcaption>Escalate HIGH</figcaption></p>
 </figure>
 <p><strong>What we see</strong>: The main feed displays a room interior in <strong>red CRT tint</strong> (HIGH fidelity). Red <code>⚠ ESCALATE</code> alert banner at the top. Red corner brackets (motion-detection boxes) overlay the room. The <code>● HIGH</code> indicator blinks in the top-right. Three of the four thumbnails show <code>NO SIGNAL</code>.</p>
@@ -342,7 +343,7 @@ MathJax = {
 <hr>
 <h3>Figure E.4 — Hallway Camera: Door Sensor Triggered</h3>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/04_hallway_door_triggered.png" | relative_url }}" alt="Door triggered" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/04_hallway_door_triggered.png" alt="Door triggered" style="max-width:100%"></p>
 <p><figcaption>Door triggered</figcaption></p>
 </figure>
 <p><strong>What we see</strong>: The hallway camera feed shows the corridor interior — dark floor carpet, ceiling light fixtures, and the front door visible at the far end. The <code>🚪 DOOR SENSOR TRIGGERED</code> banner is displayed. The door frame glows with an orange pulse.</p>
@@ -350,7 +351,7 @@ MathJax = {
 <hr>
 <h3>Figure E.5 — Kitchen Camera: Pet Motion (False Alarm Correctly Avoided)</h3>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/05_kitchen_pet_motion.png" | relative_url }}" alt="Kitchen pet motion" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/05_kitchen_pet_motion.png" alt="Kitchen pet motion" style="max-width:100%"></p>
 <p><figcaption>Kitchen pet motion</figcaption></p>
 </figure>
 <p><strong>What we see</strong>: Kitchen camera feed with <strong>yellow LOW-fidelity tint</strong>. The kitchen interior is visible — counter, sink, overhead pendant light, table. PIR intensity 0.3 is indicated. <strong>No alert banner is shown.</strong></p>
@@ -358,7 +359,7 @@ MathJax = {
 <hr>
 <h3>Figure E.6 — Bedroom Camera: Tracking Suspicious Footsteps</h3>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/06_bedroom_camera_high.png" | relative_url }}" alt="Bedroom HIGH" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/06_bedroom_camera_high.png" alt="Bedroom HIGH" style="max-width:100%"></p>
 <p><figcaption>Bedroom HIGH</figcaption></p>
 </figure>
 <p><strong>What we see</strong>: Bedroom camera at <strong>HIGH fidelity</strong> (red CRT tint). The bedroom interior shows the bed with pillows, bedside tables with lamps, window with curtains, and wardrobe. <code>⚠ NOTIFY</code> alert banner is shown — not yet ESCALATE.</p>
@@ -366,7 +367,7 @@ MathJax = {
 <hr>
 <h3>Figure E.7 — Privacy Budget Pressure (Orange Warning State)</h3>
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/07_budget_pressure.png" | relative_url }}" alt="Budget pressure" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/07_budget_pressure.png" alt="Budget pressure" style="max-width:100%"></p>
 <p><figcaption>Budget pressure</figcaption></p>
 </figure>
 <p><strong>What we see</strong>: The bottom status bar shows the privacy budget bar in <strong>orange</strong> (budget below 30% threshold). Episode is <code>multi</code>room_intrusion. Multiple completed step-progress dots indicate mid-episode.</p>
@@ -374,7 +375,7 @@ MathJax = {
 <hr>
 <h3>Figure E.8 — Full Monitor Overview: Best Episode (multi</h3>room_intrusion)
 <figure>
-<p><img src="{{ "/assets/assets-privacy-guard/08_full_monitor_multi_intrusion.png" | relative_url }}" alt="Full monitor" style="max-width:100%"></p>
+<p><img src="/assets/assets-privacy-guard/08_full_monitor_multi_intrusion.png" alt="Full monitor" style="max-width:100%"></p>
 <p><figcaption>Full monitor</figcaption></p>
 </figure>
 <p><strong>What we see</strong>: The complete 1440×900 security monitor interface. Left: large main camera feed with alert overlays. Right: four stacked thumbnail feeds — one lit (active camera), three showing <code>NO SIGNAL</code>. Bottom: privacy budget (green), episode metrics (Overall: 0.991, Detection: 1.00, Privacy Eff.: 1.00), agent reasoning, step-progress dots.</p>
@@ -477,3 +478,5 @@ MathJax = {
 <pre><code class="language-">[code block]</code></pre>
 <hr>
 
+
+{% endraw %}
