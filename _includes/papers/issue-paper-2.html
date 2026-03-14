@@ -137,6 +137,7 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 +==========================================================+</code></pre>
 <p>Events (both intrusion and benign) are injected at scenario-defined timesteps. The 24 scenarios span three difficulty tiers (Table 1) and include 6 held-out test scenarios used only for evaluation.</p>
 <p><strong>Table 1: Scenario taxonomy across difficulty tiers.</strong></p>
+<p>[see PDF for table]</p>
 <h3 id="action-space">3.3 Action Space</h3>
 <p>At each timestep the agent produces a JSON object:</p>
 <pre class="json"><code>{
@@ -150,6 +151,47 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <h3 id="privacy-budget">3.4 Privacy Budget</h3>
 <p>Each sensor activation incurs a cost deducted from the privacy budget <span class="math inline">\(b\)</span>:</p>
 <p><strong>Table 2: Privacy cost schedule per timestep.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Sensor</th>
+<th>Level</th>
+<th>Cost (units/timestep)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Camera</td>
+<td>OFF</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Camera</td>
+<td>LOW</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Camera</td>
+<td>HIGH</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Microphone</td>
+<td>OFF</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Microphone</td>
+<td>LOW</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>Microphone</td>
+<td>HIGH</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
 <p>The maximum cost per timestep is 6 units (Camera HIGH + Mic HIGH). With <span class="math inline">\(B = 100\)</span> for a 20-step episode, a maximally greedy agent exhausts the budget in <span class="math inline">\(\lfloor 100/6 \rfloor \approx 16\)</span> steps. Budget enforcement is hard: when <span class="math inline">\(b \leq 0\)</span>, all sensors are forced to OFF regardless of agent output.</p>
 <h3 id="reward-function">3.5 Reward Function</h3>
 <p>The agent receives a single scalar reward at episode end:</p>
@@ -167,6 +209,75 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <h2 id="baselines">4. Baselines</h2>
 <p>Before any RL training, we establish six non-learning baselines that span the design space of classical sensor activation strategies.</p>
 <p><strong>Table 3: Baseline policy comparison.</strong></p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Strategy</th>
+<th>Detection <span class="math inline">\(R_d\)</span></th>
+<th>Privacy <span class="math inline">\(R_p\)</span></th>
+<th>Overall <span class="math inline">\(R\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Always-On</td>
+<td>Camera HIGH + Mic HIGH every step</td>
+<td>0.345</td>
+<td>0.009</td>
+<td>0.245</td>
+</tr>
+<tr>
+<td><strong>Rule-Based</strong></td>
+<td>PIR &gt; 0.5 or door opened → activate + NOTIFY</td>
+<td><strong>0.345</strong></td>
+<td><strong>0.812</strong></td>
+<td><strong>0.529</strong></td>
+</tr>
+<tr>
+<td>Random</td>
+<td>Uniform random action each timestep</td>
+<td>0.173</td>
+<td>0.498</td>
+<td>0.290</td>
+</tr>
+<tr>
+<td>Audio-Gate</td>
+<td>Activate only when audio anomaly detected</td>
+<td>0.183</td>
+<td>0.701</td>
+<td>0.383</td>
+</tr>
+<tr>
+<td>Video-Gate</td>
+<td>Activate only when PIR &gt; 0.5</td>
+<td>0.283</td>
+<td>0.454</td>
+<td>0.347</td>
+</tr>
+<tr>
+<td>Sensor-Fusion</td>
+<td>Weighted combination of PIR + audio &gt; threshold</td>
+<td>0.213</td>
+<td>0.595</td>
+<td>0.353</td>
+</tr>
+<tr>
+<td>Untrained LLM</td>
+<td>Qwen3-4B-Instruct, zero-shot</td>
+<td>0.345</td>
+<td>0.666</td>
+<td>0.419</td>
+</tr>
+</tbody>
+</table>
 <p>The <strong>Rule-Based</strong> policy is the strongest classical baseline (overall reward 0.529) and represents the state of the art for non-learning approaches in this environment. Despite its competitive privacy score (budget efficiency from staying off by default), it achieves only 0.345 detection — identical to Always-On — because its fixed threshold cannot discriminate genuine intrusions from benign events with similar sensor signatures (e.g., pet motion triggering PIR). The <strong>Untrained LLM</strong> achieves a higher reward (0.419) than all classical baselines except Rule-Based, suggesting strong zero-shot priors from pre-training — but still trails Rule-Based by 20.9%.</p>
 <p>The Pareto frontier of (detection, privacy) for all baselines is shown in Figure 1. No classical policy occupies the high-detection, high-privacy quadrant; this gap motivates the RL approach.</p>
 <blockquote>
@@ -178,10 +289,126 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <h3 id="grpo-training-setup">5.1 GRPO Training Setup</h3>
 <p>All experiments use the following shared configuration unless otherwise noted:</p>
 <p><strong>Table 4: Shared GRPO hyperparameters.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Hyperparameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base model</td>
+<td>Qwen3-4B-Instruct-2507</td>
+</tr>
+<tr>
+<td>Adaptation</td>
+<td>LoRA (all linear layers)</td>
+</tr>
+<tr>
+<td>Batch size</td>
+<td>128 rollouts</td>
+</tr>
+<tr>
+<td>Rollouts per example</td>
+<td>8</td>
+</tr>
+<tr>
+<td>Max tokens per turn</td>
+<td>512</td>
+</tr>
+<tr>
+<td>Training platform</td>
+<td>Prime Intellect</td>
+</tr>
+<tr>
+<td>Reward normalisation</td>
+<td>Group-relative (within batch)</td>
+</tr>
+</tbody>
+</table>
 <p>The training dataset contains ~180 examples generated from the scenario library (Section 3.2). With a batch size of 128 and 8 rollouts per example, each training step processes 1024 total trajectories.</p>
 <h3 id="main-training-results-1">5.2 Main Training Results</h3>
 <p>After 200 GRPO training steps on the full scenario distribution (all difficulty tiers), the 4B-Instruct agent achieves the results shown in Table 5 and Figure 2.</p>
 <p><strong>Table 5: Main GRPO training results vs. baselines.</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Untrained LLM</th>
+<th>Rule-Based</th>
+<th><strong>GRPO-Trained 4B</strong></th>
+<th>Δ vs. Untrained</th>
+<th>Δ vs. Rule-Based</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Overall Reward</td>
+<td>0.419</td>
+<td>0.529</td>
+<td><strong>0.871</strong></td>
+<td>+107.9%</td>
+<td>+64.7%</td>
+</tr>
+<tr>
+<td>Detection <span class="math inline">\(R_d\)</span></td>
+<td>0.345</td>
+<td>0.345</td>
+<td><strong>0.798</strong></td>
+<td>+131.3%</td>
+<td>+131.3%</td>
+</tr>
+<tr>
+<td>Privacy <span class="math inline">\(R_p\)</span></td>
+<td>0.666</td>
+<td>0.812</td>
+<td><strong>0.980</strong></td>
+<td>+47.1%</td>
+<td>+20.7%</td>
+</tr>
+<tr>
+<td>Format <span class="math inline">\(R_f\)</span></td>
+<td>—</td>
+<td>—</td>
+<td><strong>0.981</strong></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Budget remaining</td>
+<td>~34%</td>
+<td>~81%</td>
+<td><strong>~</strong>95%}</td>
+<td>+61 pp</td>
+<td>+14 pp</td>
+</tr>
+<tr>
+<td>Identity safety</td>
+<td>0.610</td>
+<td>0.952</td>
+<td><strong>0.994</strong></td>
+<td>+63%</td>
+<td>+4.4%</td>
+</tr>
+<tr>
+<td>Reconstruction safety</td>
+<td>—</td>
+<td>0.880</td>
+<td><strong>0.975</strong></td>
+<td>—</td>
+<td>+10.8%</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <p><strong>Figure 2</strong>: <em>Training curves for all Phase 5 experiments, showing reward, detection, privacy, and format metrics across training steps. Each curve is a per-metric 8-step moving average; faint lines are raw step values.</em></p>
 <p><img src="/assets/assets-privacy-guard/phase5_all_runs.png" alt="Phase 5 all runs" /></p>
@@ -214,6 +441,66 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <h3 id="model-architecture-comparison">6.1 Model Architecture Comparison</h3>
 <p>We test four model configurations on identical training conditions (200 steps, full scenario distribution, 512 max tokens):</p>
 <p><strong>Table 6: Model architecture comparison.</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>Model</th>
+<th>Architecture</th>
+<th>Active Params</th>
+<th>Max Tokens</th>
+<th>Peak Reward</th>
+<th>Detection</th>
+<th>Truncation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Qwen3-4B-Instruct</td>
+<td>Dense transformer</td>
+<td>4B</td>
+<td>512</td>
+<td>0.871</td>
+<td>0.798</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Qwen3-30B-A3B</td>
+<td>Mixture-of-Experts</td>
+<td>~3B active</td>
+<td>512</td>
+<td>0.875</td>
+<td>0.814</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Qwen3-4B-Thinking</td>
+<td>Dense + CoT (<code>&lt;think&gt;</code>)</td>
+<td>4B</td>
+<td>1024</td>
+<td>0.590</td>
+<td>0.451</td>
+<td>**97</td>
+</tr>
+<tr>
+<td>Qwen3-30B-A3B-Thinking</td>
+<td>MoE + CoT</td>
+<td>~3B active</td>
+<td>1024</td>
+<td>0.666</td>
+<td>0.445</td>
+<td>6%</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <p><strong>Figure 3</strong>: <em>Peak performance comparison across all Phase 5 experiments (bar chart). Stars indicate best-per-metric across all runs. The gold bar (Curriculum Medium) dominates all metrics except privacy, where Easy training achieves the highest score due to low intrusion density.</em></p>
 <p><img src="/assets/assets-privacy-guard/phase5_final_leaderboard.png" alt="Phase 5 final leaderboard" /></p>
@@ -230,6 +517,66 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 </ul>
 <p>Each run uses 100 training steps (half the flat baseline). Results are shown in Table 7 and Figure 4.</p>
 <p><strong>Table 7: Curriculum learning results across difficulty stages.</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Scenarios</th>
+<th>Peak Reward</th>
+<th>Detection</th>
+<th>Privacy</th>
+<th>Format</th>
+<th>Budget Used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Easy</td>
+<td>7 easy</td>
+<td>0.692</td>
+<td>0.500</td>
+<td><strong>0.998</strong></td>
+<td>0.926</td>
+<td>~0.1%</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td><strong>7 medium</strong></td>
+<td><strong>0.912</strong></td>
+<td><strong>0.864</strong></td>
+<td>0.978</td>
+<td><strong>0.997</strong></td>
+<td>~2.2%</td>
+</tr>
+<tr>
+<td>Hard</td>
+<td>4 hard</td>
+<td>0.851</td>
+<td>0.817</td>
+<td>0.874</td>
+<td>0.988</td>
+<td>~12.6%</td>
+</tr>
+<tr>
+<td>Flat baseline</td>
+<td>All 18</td>
+<td>0.871</td>
+<td>0.798</td>
+<td>0.980</td>
+<td>0.981</td>
+<td>~5%</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <p><strong>Figure 4</strong>: <em>Curriculum learning training dynamics across all three stages and the flat 4B baseline. Medium (gold) rapidly surpasses all other configurations on reward. Note how Easy (green) achieves near-perfect privacy (lower-left panel) while detection barely rises above 0.5.</em></p>
 <p><img src="/assets/assets-privacy-guard/phase5_curriculum.png" alt="Curriculum learning" /></p>
@@ -255,6 +602,57 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <p>The budget-per-turn ratio (5 units/turn) is held constant across all episode lengths, maintaining the same <em>structural pressure</em> on the agent regardless of horizon.</p>
 <h3 id="results">7.2 Results</h3>
 <p><strong>Table 8: Episode length scaling results (Phase 6).</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>Episode Length</th>
+<th>Steps</th>
+<th>Peak Reward</th>
+<th>Detection</th>
+<th>Privacy</th>
+<th>Final Reward</th>
+<th>Truncated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20-step (Phase 5 best)</td>
+<td>100</td>
+<td><strong>0.912</strong></td>
+<td>0.864</td>
+<td><strong>0.978</strong></td>
+<td><strong>0.814</strong></td>
+<td>0%</td>
+</tr>
+<tr>
+<td>40-step</td>
+<td>149</td>
+<td>0.875</td>
+<td>0.799</td>
+<td><strong>0.986</strong></td>
+<td>0.715</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>60-step</td>
+<td>149</td>
+<td>0.858</td>
+<td><strong>0.865</strong></td>
+<td>0.798</td>
+<td>0.770</td>
+<td>0%</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <p><strong>Figure 6</strong>: <em>Episode-length scaling training dynamics. Each row shows overall reward, detection, privacy, and format across training steps. The gold 20-step baseline (solid) achieves the best overall reward. The striking finding is in the detection panel (top right): 60-step (red dashed) ends at detection 0.865, nearly identical to 20-step, while privacy (bottom left) collapses to 0.798.</em></p>
 <p><img src="/assets/assets-privacy-guard/phase6_episode_scaling.png" alt="Phase 6 episode scaling curves" /></p>
@@ -288,6 +686,60 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <h3 id="results-1">8.3 Results</h3>
 <p>These metrics are logged but not optimised during training. Their values emerge from the agent’s learned policy.</p>
 <p><strong>Table 9: Privacy leakage analysis across policies.</strong></p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Identity Safety $L_</th>
+<th>Reconstruction Safety $L_</th>
+<th>Overall Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Always-On</td>
+<td>0.000</td>
+<td>0.000</td>
+<td>0.245</td>
+</tr>
+<tr>
+<td>Rule-Based</td>
+<td>0.952</td>
+<td>0.880</td>
+<td>0.529</td>
+</tr>
+<tr>
+<td>Untrained LLM</td>
+<td>0.610</td>
+<td>—</td>
+<td>0.419</td>
+</tr>
+<tr>
+<td><strong>GRPO-Trained 4B</strong></td>
+<td><strong>0.994</strong></td>
+<td><strong>0.975</strong></td>
+<td>0.871</td>
+</tr>
+<tr>
+<td><strong>Curriculum Medium</strong></td>
+<td><strong>0.995</strong></td>
+<td><strong>0.978</strong></td>
+<td><strong>0.912</strong></td>
+</tr>
+<tr>
+<td>Curriculum Hard</td>
+<td>0.916</td>
+<td>0.874</td>
+<td>0.851</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <p><strong>Figure 8</strong>: <em>Privacy leakage heatmap across all experimental configurations. Rows are policies; columns are leakage dimensions. The trained agents achieve the darkest (best) cells across both dimensions, while Always-On achieves the worst on both.</em></p>
 <p><img src="/assets/assets-privacy-guard/leakage_heatmap.png" alt="Leakage heatmap" /></p>
@@ -359,9 +811,144 @@ where <span class="math inline">\(c(a)\)</span> is the cost function defined in 
 <hr />
 <h2 id="appendix-a-complete-run-registry">Appendix A: Complete Run Registry</h2>
 <p><strong>Table A1: All 12 training runs with run IDs, configurations, and peak results.</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Experiment</th>
+<th>Run ID</th>
+<th>Steps</th>
+<th>Peak Reward</th>
+<th>Detection</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>4B-Instruct (flat, 200 steps)</td>
+<td><code>y7ui8l2nleltfxwsuxrsluoj</code></td>
+<td>200</td>
+<td>0.871</td>
+<td>0.798</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td>30B-MoE (flat, 200 steps)</td>
+<td><code>kt06z7fbh90mskcsz2fzcl8r</code></td>
+<td>200</td>
+<td>0.875</td>
+<td>0.814</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td>4B-Thinking / CoT (flat, 200 steps)</td>
+<td><code>v97o5aey0ec1d6j0cd5edabb</code></td>
+<td>199</td>
+<td>0.590</td>
+<td>0.451</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td>30B-MoE-Thinking (flat, 200 steps)</td>
+<td><code>ys0pp3znai4sus2dxyhnvs3m</code></td>
+<td>200</td>
+<td>0.666</td>
+<td>0.445</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Curriculum Easy (100 steps)</td>
+<td><code>nj7dukimjx8x8m75gyjowcpq</code></td>
+<td>100</td>
+<td>0.692</td>
+<td>0.500</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Curriculum Medium (100 steps) 🏆</strong></td>
+<td><code>rnx4hnv1adw8xtxmk5472fk7</code></td>
+<td>100</td>
+<td><strong>0.912</strong></td>
+<td><strong>0.864</strong></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Curriculum Hard (100 steps)</td>
+<td><code>g2b51abod0kwmqhjlvqjxqvs</code></td>
+<td>99</td>
+<td>0.851</td>
+<td>0.817</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>6</td>
+<td>40-step episodes (medium)</td>
+<td><code>y9nc2vem8wg3xyjv01ygktpz</code></td>
+<td>149</td>
+<td>0.875</td>
+<td>0.799</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>6</td>
+<td>60-step episodes (medium)</td>
+<td><code>sg5h0zv8uovx8h110obxlweh</code></td>
+<td>149</td>
+<td>0.858</td>
+<td>0.865</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
 <p>Note: Phase 4 (budget sweep) produced 6 additional training runs at privacy budgets of 25, 50, 75, 100, 150, and 200. These are not tabulated here as they are analysed separately in the budget sweep experiments.</p>
 <h2 id="appendix-b-environment-version-history">Appendix B: Environment Version History</h2>
 <p><strong>Table B1: Environment version changelog.</strong></p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Version</th>
+<th>Key Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.7.0</td>
+<td>Initial release — 18 training scenarios, 20-step episodes, basic PIR + door observations</td>
+</tr>
+<tr>
+<td>0.8.0</td>
+<td>Added 6 held-out test scenarios; added identity leakage and reconstruction risk proxy metrics</td>
+</tr>
+<tr>
+<td>0.9.0</td>
+<td>Added per-scenario difficulty tags (easy/medium/hard); thinking-model output parser (strips <code>&lt;think&gt;</code> blocks); <code>difficulty</code> curriculum parameter in <code>load_environment()</code></td>
+</tr>
+<tr>
+<td>1.0.0</td>
+<td>Added <code>max_turns</code> parameter for variable episode lengths; auto-scaled privacy budget (<span class="math inline">\(B = 5 \times T\)</span>); used by Phase 6 experiments</td>
+</tr>
+</tbody>
+</table>
 <h2 id="appendix-c-reward-function-implementation">Appendix C: Reward Function Implementation</h2>
 <p>The detection reward implementation, accounting for intrusion timesteps, alert matching, and false-alarm penalties:</p>
 <pre class="python"><code>def detection_reward(trajectory: list[dict], scenario: Scenario) -&gt; float:
@@ -555,6 +1142,60 @@ def project(x, y, depth):
     return vx, vy</code></pre>
 <p>Floor-plane objects (furniture, carpet strips) are drawn as trapezoids projected toward this vanishing point. Vertical surfaces (walls, headboards, shelving) are drawn at the correct depth scale. Night/day tinting is applied uniformly using the <code>time_of_day</code> field extracted from each timestep’s observation.</p>
 <h3 id="sensor-state-visual-mapping">Sensor State → Visual Mapping</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Sensor State</th>
+<th>Visual Representation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Camera OFF</td>
+<td>Grey static (<code>NO SIGNAL</code>)</td>
+</tr>
+<tr>
+<td>Camera LOW</td>
+<td>Yellow CRT tint + scanlines</td>
+</tr>
+<tr>
+<td>Camera HIGH</td>
+<td>Red CRT tint + scanlines + vignette</td>
+</tr>
+<tr>
+<td>PIR motion</td>
+<td>Orange ambient glow + red MOTION corner brackets</td>
+</tr>
+<tr>
+<td>Alert NOTIFY</td>
+<td>Blue banner at top of main feed</td>
+</tr>
+<tr>
+<td>Alert RECORD</td>
+<td>Amber banner</td>
+</tr>
+<tr>
+<td>Alert ESCALATE</td>
+<td>Red banner + pulsing glow ring around banner</td>
+</tr>
+<tr>
+<td>Door triggered</td>
+<td>Orange <code>🚪 DOOR SENSOR TRIGGERED</code> banner</td>
+</tr>
+<tr>
+<td>Night (TOD &lt; 0.3)</td>
+<td>All rooms darkened; windows show dark sky</td>
+</tr>
+<tr>
+<td>Day (TOD &gt; 0.6)</td>
+<td>Full brightness; kitchen window shows bright daylight</td>
+</tr>
+</tbody>
+</table>
 <h3 id="running-the-simulation">Running the Simulation</h3>
 <pre class="bash"><code>cd privacy_guard
 python sim3d.py
