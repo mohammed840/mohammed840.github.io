@@ -25,14 +25,14 @@ abstract: "We present Privacy Guard, a reinforcement learning framework for priv
 .paper-content h2 { font-size: 1.25rem; margin-top: 1.8rem; color: #222; }
 .paper-content h3 { font-size: 1.05rem; margin-top: 1.4rem; color: #333; }
 .paper-header { margin-bottom: 1.5rem; }
-.paper-header h1 { border: none; font-size: 1.6rem; line-height: 1.3; }
-.paper-header .author { font-size: 1rem; color: #555; margin-top: 0.4rem; margin-bottom: 0; }
-.paper-header .paper-links { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.75rem; flex-wrap: wrap; }
-.paper-header .paper-links a { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.8rem; border-radius: 4px; font-size: 0.88rem; font-family: -apple-system, sans-serif; text-decoration: none; border: 1px solid #ccc; color: #333; background: #f6f6f6; transition: background 0.15s; }
-.paper-header .paper-links a:hover { background: #e8e8e8; }
-.paper-header .paper-links a.pdf-link { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
-.paper-header .paper-links a.pdf-link:hover { background: #2d2d4a; }
-.paper-header .abstract-label { font-size: 1rem; font-weight: bold; margin-top: 1.2rem; margin-bottom: 0.3rem; }
+.paper-header h1 { border: none; font-size: 1.6rem; line-height: 1.3; font-family: inherit; }
+.paper-header .author { font-size: 1rem; color: #555; margin-top: 0.4rem; margin-bottom: 0; font-family: inherit; }
+.paper-header .paper-links { display: flex; gap: 1.2rem; align-items: center; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+.paper-header .paper-links a { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; font-family: inherit; text-decoration: none; color: #333; border: none; background: none; padding: 0; transition: color 0.15s; }
+.paper-header .paper-links a:hover { color: #000; text-decoration: underline; }
+.paper-header .paper-links a.pdf-link { color: #1a1a2e; font-weight: 600; }
+.paper-header .paper-links a.pdf-link:hover { color: #000; }
+.paper-header .abstract-label { font-size: 1rem; font-weight: bold; margin-top: 1.2rem; margin-bottom: 0.3rem; font-family: inherit; }
 .paper-content table { border-collapse: collapse; width: 100%; font-size: 0.84rem; margin: 1.4rem auto; border-top: 2px solid #111; border-bottom: 2px solid #111; }
 .paper-content th, .paper-content td { border: none; padding: 6px 14px; text-align: left; vertical-align: top; }
 .paper-content thead tr { border-bottom: 1px solid #555; font-weight: 600; background: none; }
