@@ -1173,7 +1173,7 @@ python sim3d.py
 <p>Yao, S., Zhao, J., Yu, D., et al. (2022). ReAct: Synergizing reasoning and acting in language models. <em>arXiv preprint arXiv:2210.03629</em>.</p>
 <hr />
 <h2 id="appendix-a-complete-run-registry">Appendix A: Complete Run Registry</h2>
-<p><strong>Table A1: All 12 training runs with run IDs, configurations, and peak results.</strong></p>
+<p><strong>Table A1: All 12 training runs, configurations, and peak results.</strong></p>
 <table style="width:100%;">
 <colgroup>
 <col style="width: 14%" />
@@ -1188,7 +1188,6 @@ python sim3d.py
 <tr>
 <th>Phase</th>
 <th>Experiment</th>
-<th>Run ID</th>
 <th>Steps</th>
 <th>Peak Reward</th>
 <th>Detection</th>
@@ -1199,7 +1198,6 @@ python sim3d.py
 <tr>
 <td>3</td>
 <td>4B-Instruct (flat, 200 steps)</td>
-<td><code>y7ui8l2nleltfxwsuxrsluoj</code></td>
 <td>200</td>
 <td>0.871</td>
 <td>0.798</td>
@@ -1208,7 +1206,6 @@ python sim3d.py
 <tr>
 <td>5</td>
 <td>30B-MoE (flat, 200 steps)</td>
-<td><code>kt06z7fbh90mskcsz2fzcl8r</code></td>
 <td>200</td>
 <td>0.875</td>
 <td>0.814</td>
@@ -1217,7 +1214,6 @@ python sim3d.py
 <tr>
 <td>5</td>
 <td>4B-Thinking / CoT (flat, 200 steps)</td>
-<td><code>v97o5aey0ec1d6j0cd5edabb</code></td>
 <td>199</td>
 <td>0.590</td>
 <td>0.451</td>
@@ -1226,7 +1222,6 @@ python sim3d.py
 <tr>
 <td>5</td>
 <td>30B-MoE-Thinking (flat, 200 steps)</td>
-<td><code>ys0pp3znai4sus2dxyhnvs3m</code></td>
 <td>200</td>
 <td>0.666</td>
 <td>0.445</td>
@@ -1235,7 +1230,6 @@ python sim3d.py
 <tr>
 <td>5</td>
 <td>Curriculum Easy (100 steps)</td>
-<td><code>nj7dukimjx8x8m75gyjowcpq</code></td>
 <td>100</td>
 <td>0.692</td>
 <td>0.500</td>
@@ -1244,7 +1238,6 @@ python sim3d.py
 <tr>
 <td>5</td>
 <td><strong>Curriculum Medium (100 steps) 🏆</strong></td>
-<td><code>rnx4hnv1adw8xtxmk5472fk7</code></td>
 <td>100</td>
 <td><strong>0.912</strong></td>
 <td><strong>0.864</strong></td>
@@ -1253,7 +1246,6 @@ python sim3d.py
 <tr>
 <td>5</td>
 <td>Curriculum Hard (100 steps)</td>
-<td><code>g2b51abod0kwmqhjlvqjxqvs</code></td>
 <td>99</td>
 <td>0.851</td>
 <td>0.817</td>
@@ -1262,7 +1254,6 @@ python sim3d.py
 <tr>
 <td>6</td>
 <td>40-step episodes (medium)</td>
-<td><code>y9nc2vem8wg3xyjv01ygktpz</code></td>
 <td>149</td>
 <td>0.875</td>
 <td>0.799</td>
@@ -1271,7 +1262,6 @@ python sim3d.py
 <tr>
 <td>6</td>
 <td>60-step episodes (medium)</td>
-<td><code>sg5h0zv8uovx8h110obxlweh</code></td>
 <td>149</td>
 <td>0.858</td>
 <td>0.865</td>
