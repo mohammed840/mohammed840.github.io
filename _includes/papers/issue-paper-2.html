@@ -104,30 +104,110 @@ graph LR
 <hr />
 
 <h2 id="related-work">2. Related Work</h2>
-<h3 id="reinforcement-learning-for-llm-agents">2.1 Reinforcement Learning for LLM Agents</h3>
-<p>The application of reinforcement learning to language model fine-tuning has a long history rooted in sequence-level reward signals. Early work (Ranzato et al., 2016; Sutton et al., 2000) used REINFORCE to optimise non-differentiable sequence-level metrics such as BLEU and ROUGE. Reinforcement learning from human feedback (RLHF; Christiano et al., 2017; Ziegler et al., 2019) scaled this approach to learned reward models from human preference comparisons, enabling alignment to nuanced human values across diverse tasks. Bai et al. (2022) further developed RLHF with Constitutional AI, introducing AI-generated feedback as a scalable alternative to human annotation.</p>
-<p>The extension of RL to <em>agentic</em> multi-step settings — where the LLM takes sequential actions rather than emitting a single response — has accelerated significantly with the development of capable foundation models. ReAct (Yao et al., 2022) interleaves reasoning traces and actions in single-step tool-use tasks, demonstrating that explicit reasoning improves decision quality. WebGPT (Nakano et al., 2021) trains a web-browsing agent using human feedback on retrieved passages; ALFWorld (Shridhar et al., 2020) trains language agents in text-based game environments; Voyager (Wang et al., 2023) uses LLM-generated code as skills for an open-ended Minecraft agent. More directly relevant is the line of work on structured tool-use: Toolformer (Schick et al., 2023), AnyTool (Du et al., 2024), and various code-generation RL approaches (Chen et al., 2021; Li et al., 2022) train LLMs to produce structured, parseable outputs as part of sequential workflows.</p>
-<p>Group Relative Policy Optimisation (GRPO; Shao et al., 2024) is the training algorithm we employ. GRPO eliminates the need for a learned value network (as in PPO; Schulman et al., 2017) by normalising rewards within a group of rollouts generated for the same prompt. Formally, for a group of <span class="math inline">\(G\)</span> rollouts <span class="math inline">\(\{o_1, \ldots, o_G\}\)</span> with rewards <span class="math inline">\(\{r_1, \ldots, r_G\}\)</span>, the normalised advantage is:</p>
-<p><span class="math display">\[
-\hat{A}_i = \frac{r_i - \text{mean}(\{r_j\}_{j=1}^G)}{\text{std}(\{r_j\}_{j=1}^G)}
-\]</span></p>
-<p>This reduces variance and stabilises training without the additional computational cost and instability of a separate value head. GRPO has been applied to mathematical reasoning (DeepSeekMath; Shao et al., 2024), code generation, and increasingly to agentic tasks.</p>
-<p>Our setting extends prior LLM agent RL work in three critical ways: (i) actions are <em>strongly-typed structured objects</em> (JSON with required fields and enum constraints), not free-form language or API call strings; (ii) the agent operates under an <em>explicit resource budget</em> that mechanically limits future action space in a way that depends on the full action history; and (iii) the reward function decomposes into <em>coupled</em> task-success and resource-efficiency components, creating a genuine multi-objective optimisation problem with a structured tradeoff.</p>
-<h3 id="privacy-preservation-in-iot-and-smart-home-systems">2.2 Privacy Preservation in IoT and Smart-Home Systems</h3>
-<p>Privacy in IoT sensing has received substantial attention across multiple research communities, though from very different angles. The <em>data-layer</em> paradigm (Dwork &amp; Roth, 2014) adds carefully calibrated noise to sensor readings before processing, providing differential privacy guarantees. Federated learning (McMahan et al., 2017; Bonawitz et al., 2019) distributes model training across devices, avoiding centralised data collection. Secure aggregation (Bonawitz et al., 2017) and homomorphic encryption (Gentry, 2009) allow computation on encrypted sensor data. These approaches share a fundamental assumption: data is collected, and privacy is managed <em>in the processing pipeline</em>. Our approach makes a different assumption — that the right question is not “how do we protect data after collecting it” but “how do we collect as little data as possible while still achieving the task”. This is the <em>sensing policy layer</em>, and it has received comparatively little systematic study.</p>
-<p>At the policy layer, classical approaches include: duty cycling (Nath et al., 2006), where sensors are activated on a fixed schedule to limit average observation; event-driven activation (Chen et al., 2010), where sensors fire only on threshold crossings; and hierarchical sensing (Paek et al., 2010), where cheap sensors (PIR) gate expensive ones (cameras). These methods use fixed rules and cannot adapt to the temporal structure of specific intrusion scenarios. Our approach learns an adaptive policy that integrates evidence across multiple modalities and timesteps, achieving significantly better detection while using far less budget than a fixed duty-cycling scheme.</p>
-<p>The closest prior work to ours is Nandakumar et al. (2020), who study budget-constrained occupancy detection in smart buildings. They formulate the problem as a constrained optimisation over sensor selection, using a classical integer programming approach with a fixed heuristic policy. Their work does not consider RL-based policy learning, does not use language models, and does not measure post-hoc information leakage. From the privacy measurement side, Apthorpe et al. (2017) and Copos et al. (2016) demonstrate that even encrypted smart-home traffic metadata reveals detailed occupant behaviour patterns — motivating our reconstruction risk metric, which captures similar concerns at the sensing-activation level.</p>
-<p>Our post-hoc privacy leakage metrics (Section 8) are inspired by, but distinct from, information-theoretic privacy measures such as mutual information between sensor activations and occupant activities (Shokri &amp; Shmatikov, 2015) and <span class="math inline">\(k\)</span>-anonymity for trajectory data (Sweeney, 2002). Our metrics are designed to be computationally tractable and directly interpretable from activation logs, without requiring ground-truth activity labels.</p>
-<h3 id="curriculum-learning-and-training-data-design-for-rl">2.3 Curriculum Learning and Training Data Design for RL</h3>
-<p>Curriculum learning — the practice of organising training examples by increasing difficulty — was formalised by Bengio et al. (2009), who demonstrated improved sample efficiency in supervised learning when examples were sequenced from easy to hard. The intuition is that easy examples establish stable representations and basic skills, upon which more complex patterns can be built; presenting all difficulties simultaneously dilutes the gradient signal with noise from hard examples that the model cannot yet handle.</p>
-<p>In reinforcement learning, the curriculum challenge is amplified: unlike supervised learning, where the training distribution is fixed, RL must explore a policy space that may not produce useful rewards at all from a random initialisation. This <em>reward sparsity</em> problem motivates several lines of curriculum research. <em>Reverse curriculum generation</em> (Florensa et al., 2017) initialises episodes from states near the goal and gradually expands the starting distribution further from the goal, ensuring the agent always encounters achievable tasks. <em>Self-paced deep RL</em> (Graves et al., 2017) maintains a classroom of tasks and selects tasks where the agent’s learning progress is maximised — prioritising tasks at the agent’s competence frontier. POET (Wang et al., 2019) co-evolves environments and agents, ensuring that environment difficulty tracks agent capability. Automatic Curriculum Learning (ACL; Portelas et al., 2020) provides a comprehensive survey and taxonomy.</p>
-<p>More recently, curriculum design has been applied to LLM training. In mathematical reasoning, problems are sequenced by difficulty in DeepSeekMath (Shao et al., 2024). In code generation, test case difficulty is used to select training examples (Le et al., 2022). Our work adds to this line of evidence from a different domain: security sensing under resource constraints. Crucially, we use a <em>static difficulty filter</em> rather than a dynamic curriculum — we simply restrict the training dataset to scenarios of a chosen difficulty tier and train the agent from scratch on this distribution. This is simpler than ACL or POET, yet produces the strongest overall results in our experiments. This finding suggests that static curriculum design may often be sufficient and warrants further investigation as a baseline before implementing complex dynamic curriculum systems.</p>
-<p>We note that our curriculum stages are trained <em>independently</em> (each from the Qwen3-4B-Instruct base model) rather than <em>sequentially</em> (Easy → Medium → Hard fine-tuning). This design choice is deliberate: we aim to evaluate the quality of the <em>training distribution</em> itself, not the transfer benefit of sequential fine-tuning. The sequential curriculum remains an open question for future work (Section 11).</p>
-<h3 id="multi-turn-structured-output-rl-and-token-constrained-environments">2.4 Multi-Turn Structured-Output RL and Token-Constrained Environments</h3>
-<p>Producing reliable structured output — JSON objects, SQL queries, executable code, API calls — from language models is a persistent challenge. Supervised approaches include SFT on demonstrations (Wei et al., 2022), constrained decoding with formal grammars (Poesia et al., 2022; Geng et al., 2023), and output parsing with error feedback loops (Peng et al., 2023). RL-based approaches have been applied to code generation (CodeRL; Le et al., 2022), SQL synthesis (Guo et al., 2019), and API tool use (Schick et al., 2023; Du et al., 2024). These works primarily operate in single-turn settings: the model produces one output, the environment evaluates it, and training proceeds.</p>
-<p>Our setting requires valid structured output at <em>every timestep</em> of a multi-turn episode — a substantially harder requirement. A single malformed JSON output at timestep <span class="math inline">\(t\)</span> affects the agent’s reward at episode end (via the format reward) and, more importantly, may propagate errors by presenting the environment with an uninterpretable action. In our implementation, malformed actions are treated as all-OFF (no sensors, no alert), which provides a natural penalty without crashing the environment. Nonetheless, the format reward ensures that the agent learns early to produce parseable JSON consistently — format compliance rises above 0.95 within the first 30 training steps in most configurations.</p>
-<p>The interaction between chain-of-thought (CoT) reasoning and token constraints in multi-turn settings has not, to our knowledge, been studied explicitly in the RL literature. The Qwen3-Thinking variant (Qwen Team, 2024) and similar models (DeepSeek-R1; DeepSeek Team, 2025; OpenAI o1; OpenAI, 2024) prepend extended reasoning traces before generating final outputs. This is highly beneficial in single-turn reasoning tasks where the total token budget is the only constraint. In multi-turn settings, however, the effective token budget is <em>shared across all turns</em>: reasoning tokens at turn <span class="math inline">\(t\)</span> consume capacity that would otherwise be available for observations from turns <span class="math inline">\(t+1, t+2, \ldots\)</span> The severity of this effect scales with episode length and reasoning verbosity. Our result — 97% truncation with Qwen3-4B-Thinking in a 20-turn, 512-token-per-turn environment — is among the sharpest demonstrations of this failure mode in the existing literature and represents a practical warning for practitioners deploying reasoning models in agentic, resource-constrained settings.</p>
+<p>The idea of using reinforcement learning to shape language model behaviour is not new. But the <em>setting</em> has shifted dramatically — from single-turn preference alignment to multi-turn agentic control with structured outputs and hard resource constraints. Here’s the lineage, with real papers and code.</p>
 <hr />
+<h2 id="layer-1-training-llms-with-reward-signals">Layer 1 — Training LLMs With Reward Signals</h2>
+<p>The field started with applying RL to sequence-level metrics that aren’t differentiable. Early REINFORCE work (Ranzato et al., 2016) used policy gradients to optimise BLEU scores directly. <strong>RLHF</strong> (Christiano et al., 2017) scaled this by learning a <em>reward model</em> from human preference comparisons, then running PPO against it — the approach that produced InstructGPT and modern aligned assistants.</p>
+<div class="mermaid">
+graph TD
+    A[Human preferences] --> B[Reward model]
+    B --> C[PPO policy gradient]
+    C --> D[Aligned LLM]
+    D -->|generates| E[New outputs]
+    E -->|feedback| A
+</div>
+<p><strong>Key papers:</strong> - <a href="https://arxiv.org/abs/1706.03741">RLHF — Christiano et al. 2017</a> - <a href="https://arxiv.org/abs/2203.02155">InstructGPT — Ouyang et al. 2022</a> - <a href="https://arxiv.org/abs/2212.08073">Constitutional AI — Bai et al. 2022</a></p>
+<hr />
+<h2 id="layer-2-from-single-turn-to-agentic-multi-step">Layer 2 — From Single-Turn to Agentic Multi-Step</h2>
+<p>RLHF trains on single model outputs. Agentic RL trains on <em>trajectories</em> — sequences of observations, actions, and rewards across many steps. Three projects defined this space:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Project</th>
+<th>What it does</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ReAct</strong></td>
+<td>Interleaves reasoning traces + tool calls</td>
+<td><a href="https://github.com/ysymyth/ReAct">github.com/ysymyth/ReAct</a></td>
+</tr>
+<tr>
+<td><strong>Voyager</strong></td>
+<td>LLM generates reusable code skills in Minecraft</td>
+<td><a href="https://github.com/MineDojo/Voyager">github.com/MineDojo/Voyager</a></td>
+</tr>
+<tr>
+<td><strong>ALFWorld</strong></td>
+<td>Language agents in text-based household environments</td>
+<td><a href="https://github.com/alfworld/alfworld">github.com/alfworld/alfworld</a></td>
+</tr>
+<tr>
+<td><strong>WebGPT</strong></td>
+<td>Web-browsing agent trained with human feedback</td>
+<td><a href="https://openai.com/research/webgpt">openai.com/research/webgpt</a></td>
+</tr>
+</tbody>
+</table>
+<p>The common theme: the agent reasons, acts, and gets feedback from an environment — not from a human rater scoring a single completion.</p>
+<hr />
+<h2 id="layer-3-grpo-group-relative-policy-optimisation">Layer 3 — GRPO: Group Relative Policy Optimisation</h2>
+<p>The algorithm we use is <strong>GRPO</strong> (Shao et al., 2024 — <a href="https://arxiv.org/abs/2402.03300">DeepSeekMath</a>). The key insight: instead of training a separate value network (expensive, unstable), normalise rewards <em>within a group</em> of rollouts on the same prompt.</p>
+<p>For a group of G rollouts with rewards {r₁ … rG}, the advantage for rollout i is:</p>
+<pre><code>Â_i = (r_i − mean(r₁…rG)) / std(r₁…rG)</code></pre>
+<p>No critic network. No moving baseline. Just within-batch normalisation. This is what makes GRPO tractable for multi-turn agentic tasks where PPO’s value head would be computing over long, variable-length trajectories.</p>
+<p><strong>Where GRPO has been applied:</strong> - Mathematical reasoning → <a href="https://github.com/deepseek-ai/DeepSeek-Math">DeepSeekMath</a> - Code generation → <a href="https://github.com/deepseek-ai/DeepSeek-R1">DeepSeek-R1</a> - Agentic tool use → <a href="https://github.com/PrimeIntellect-ai/verifiers">verifiers (Prime Intellect)</a></p>
+<p><strong>Our use:</strong> GRPO over 20-turn smart home episodes, where the reward is computed once at the end of the episode and normalised within a batch of 8 rollouts per scenario.</p>
+<hr />
+<h2 id="how-privacy-guard-extends-prior-work">How Privacy Guard Extends Prior Work</h2>
+<p>Prior LLM agent RL work uses free-form language or loosely structured API strings as outputs. We add three constraints that make the problem qualitatively harder:</p>
+<div class="mermaid">
+graph LR
+    A[Prior work\nFree-text actions\nNo resource limit\nSingle objective] -->|We add| B[Structured JSON\nHard budget constraint\nCoupled detection + privacy reward]
+    B --> C[Privacy Guard]
+</div>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Prior agentic RL</th>
+<th>Privacy Guard</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Action type</td>
+<td>Free-form / API strings</td>
+<td>Strongly-typed JSON</td>
+</tr>
+<tr>
+<td>Resource constraint</td>
+<td>None</td>
+<td>Hard budget; runs out mid-episode</td>
+</tr>
+<tr>
+<td>Reward structure</td>
+<td>Single objective</td>
+<td>Coupled: detection × privacy × format</td>
+</tr>
+</tbody>
+</table>
+<p>The result: standard reward hacking strategies (just ESCALATE every turn) immediately backfire — they exhaust the budget and produce zero privacy reward. The agent <em>must</em> learn frugality as a precondition for detection.</p>
+<hr />
+<p><em>Next: <a href="/papers/2026-03-13-privacy-guard">Problem Formulation and Environment</a> — the full POMDP setup, scenario taxonomy, and action space.</em></p>
+
 <h2 id="problem-formulation-and-environment">3. Problem Formulation and Environment</h2>
 <h3 id="problem-formulation">3.1 Problem Formulation</h3>
 <p>We formulate smart-home privacy-budgeted sensing as a finite-horizon <strong>Partially Observable Markov Decision Process (POMDP)</strong> <span class="math inline">\(\mathcal{M} = (\mathcal{S}, \mathcal{O}, \mathcal{A}, \mathcal{T}, \mathcal{R}, T, B)\)</span> where:</p>
