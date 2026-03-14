@@ -1,26 +1,31 @@
 <style>
-.paper-content { font-family: Georgia, serif; line-height: 1.7; color: #222; max-width: 100%; }
-.paper-content h1 { font-size: 1.6rem; margin-top: 2rem; border-bottom: 2px solid #e0e0e0; padding-bottom: 0.3rem; }
-.paper-content h2 { font-size: 1.3rem; margin-top: 1.8rem; color: #333; }
-.paper-content h3 { font-size: 1.1rem; margin-top: 1.4rem; color: #444; }
-.paper-content table { border-collapse: collapse; width: 100%; font-size: 0.85rem; margin: 1rem 0; overflow-x: auto; display: block; }
-.paper-content th, .paper-content td { border: 1px solid #ccc; padding: 5px 10px; text-align: left; }
-.paper-content thead tr { background: #f5f5f5; font-weight: bold; }
-.paper-content blockquote { border-left: 3px solid #aaa; padding-left: 1em; color: #555; margin: 1em 0; }
-.paper-content figure { margin: 1.5em 0; text-align: center; }
-.paper-content figure img { max-width: 100%; border: 1px solid #ddd; border-radius: 4px; }
-.paper-content figcaption { font-size: 0.82rem; color: #666; margin-top: 0.4em; font-style: italic; }
-.paper-content img { max-width: 100%; border-radius: 4px; }
-.paper-content code { background: #f4f4f4; padding: 1px 4px; border-radius: 3px; font-size: 0.88em; }
-.paper-content pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.85em; }
-.paper-content hr { border: none; border-top: 1px solid #ddd; margin: 2rem 0; }
-.math-display { overflow-x: auto; }
+.paper-content { font-family: Georgia, "Times New Roman", serif; line-height: 1.75; color: #1a1a1a; max-width: 100%; }
+.paper-content h1 { font-size: 1.55rem; margin-top: 2rem; border-bottom: 2px solid #ddd; padding-bottom: 0.4rem; }
+.paper-content h2 { font-size: 1.25rem; margin-top: 1.8rem; color: #222; }
+.paper-content h3 { font-size: 1.05rem; margin-top: 1.4rem; color: #333; }
+.paper-header { margin-bottom: 1.5rem; }
+.paper-header h1 { border: none; font-size: 1.6rem; line-height: 1.3; }
+.paper-header .author { font-size: 1rem; color: #555; margin-top: 0.4rem; }
+.paper-header .abstract-label { font-size: 1rem; font-weight: bold; margin-top: 1.2rem; margin-bottom: 0.3rem; }
+.paper-content table { border-collapse: collapse; width: 100%; font-size: 0.84rem; margin: 1.2rem 0; overflow-x: auto; display: block; }
+.paper-content th, .paper-content td { border: 1px solid #ccc; padding: 5px 10px; text-align: left; vertical-align: top; }
+.paper-content thead tr { background: #f0f0f0; font-weight: bold; }
+.paper-content tr:nth-child(even) td { background: #fafafa; }
+.paper-content blockquote { border-left: 3px solid #bbb; padding: 0.5em 1em; color: #555; margin: 1em 0; background: #f9f9f9; border-radius: 0 4px 4px 0; }
+.paper-content img { max-width: 100%; display: block; margin: 1.2em auto; border-radius: 4px; border: 1px solid #e0e0e0; }
+.paper-content code { background: #f4f4f4; padding: 1px 5px; border-radius: 3px; font-size: 0.87em; font-family: "SF Mono", "Fira Code", monospace; }
+.paper-content pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.84em; }
+.paper-content hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+.paper-content ol, .paper-content ul { padding-left: 1.5em; }
+.paper-content li { margin-bottom: 0.3em; }
 </style>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <div class="paper-content">
+<div class="paper-header">
 <h1>Privacy Guard: Learning Privacy-Budgeted Active Sensing Policies via Reinforcement Learning in Smart Home Environments</h1>
-<p><strong>Mohammed Alshehri</strong> &mdash; March 2026</p>
-<h2>Abstract</h2>
+<p class="author"><strong>Mohammed Alshehri</strong> &mdash; March 2026</p>
+<p class="abstract-label">Abstract</p>
+</div>
 <p>We present <strong>Privacy Guard</strong>, a reinforcement learning framework for <em>privacy-budgeted active sensing</em> in smart homes. The agent detects intrusions by selectively activating cameras and microphones under a finite privacy budget, balancing security with minimal surveillance. Using GRPO, we run 12 experiments varying architecture (4B dense vs. 30B MoE), reasoning mode (standard vs. chain-of-thought), curriculum difficulty, and episode length. The main result is that <strong>training distribution matters more than model scale</strong>: a 4B model trained on medium-difficulty scenarios for 100 steps reaches 0.912 peak reward and 86.4% detection, outperforming a larger 30B MoE and substantially exceeding rule-based baselines. Chain-of-thought fails in this token-constrained multi-turn setting (97% truncation). Longer-horizon tests show strong detection generalisation but weaker privacy-budget management, identifying temporal budget planning as the key remaining challenge.</p>
 <h1 id="introduction-and-motivation">Introduction and Motivation</h1>
 <p>The proliferation of internet-connected sensing devices in residential environments — from doorbell cameras and PIR motion detectors to always-listening voice assistants — has fundamentally altered the security-privacy calculus for modern households. On one hand, rich sensor data provides the raw material for reliable intrusion detection, fire monitoring, and assisted living applications. On the other, continuous, high-fidelity capture of in-home activity constitutes a form of pervasive surveillance that most occupants find deeply uncomfortable, and that regulators in the European Union (GDPR Articles 5 and 25), the United Kingdom (UK Data Protection Act 2018), and California (CCPA) seek to constrain through principles such as <em>data minimisation</em> and <em>purpose limitation</em>.</p>
@@ -45,7 +50,8 @@
 <h3 id="reinforcement-learning-for-llm-agents">2.1 Reinforcement Learning for LLM Agents</h3>
 <p>The application of reinforcement learning to language model fine-tuning has a long history rooted in sequence-level reward signals. Early work (Ranzato et al., 2016; Sutton et al., 2000) used REINFORCE to optimise non-differentiable sequence-level metrics such as BLEU and ROUGE. Reinforcement learning from human feedback (RLHF; Christiano et al., 2017; Ziegler et al., 2019) scaled this approach to learned reward models from human preference comparisons, enabling alignment to nuanced human values across diverse tasks. Bai et al. (2022) further developed RLHF with Constitutional AI, introducing AI-generated feedback as a scalable alternative to human annotation.</p>
 <p>The extension of RL to <em>agentic</em> multi-step settings — where the LLM takes sequential actions rather than emitting a single response — has accelerated significantly with the development of capable foundation models. ReAct (Yao et al., 2022) interleaves reasoning traces and actions in single-step tool-use tasks, demonstrating that explicit reasoning improves decision quality. WebGPT (Nakano et al., 2021) trains a web-browsing agent using human feedback on retrieved passages; ALFWorld (Shridhar et al., 2020) trains language agents in text-based game environments; Voyager (Wang et al., 2023) uses LLM-generated code as skills for an open-ended Minecraft agent. More directly relevant is the line of work on structured tool-use: Toolformer (Schick et al., 2023), AnyTool (Du et al., 2024), and various code-generation RL approaches (Chen et al., 2021; Li et al., 2022) train LLMs to produce structured, parseable outputs as part of sequential workflows.</p>
-<p>Group Relative Policy Optimisation (GRPO; Shao et al., 2024) is the training algorithm we employ. GRPO eliminates the need for a learned value network (as in PPO; Schulman et al., 2017) by normalising rewards within a group of rollouts generated for the same prompt. Formally, for a group of <span class="math inline">\(G\)</span> rollouts ${o_1, , o_G$} with rewards <span class="math inline">\(\{r_1, \ldots, r_G\$}, the normalised advantage is:\)</span><span class="math inline">\(\hat{A\)</span>$_i = } This reduces variance and stabilises training without the additional computational cost and instability of a separate value head. GRPO has been applied to mathematical reasoning (DeepSeekMath; Shao et al., 2024), code generation, and increasingly to agentic tasks.</p>
+<p>Group Relative Policy Optimisation (GRPO; Shao et al., 2024) is the training algorithm we employ. GRPO eliminates the need for a learned value network (as in PPO; Schulman et al., 2017) by normalising rewards within a group of rollouts generated for the same prompt. Formally, for a group of <span class="math inline">\(G\)</span> rollouts ${o_1, , o_G$} with rewards <span class="math inline">\(\{r_1, \ldots, r_G\$}, the normalised advantage is:\)</span><span class="math inline">\(\hat{A\)</span>$_i = }<br />
+This reduces variance and stabilises training without the additional computational cost and instability of a separate value head. GRPO has been applied to mathematical reasoning (DeepSeekMath; Shao et al., 2024), code generation, and increasingly to agentic tasks.</p>
 <p>Our setting extends prior LLM agent RL work in three critical ways: (i) actions are <em>strongly-typed structured objects</em> (JSON with required fields and enum constraints), not free-form language or API call strings; (ii) the agent operates under an <em>explicit resource budget</em> that mechanically limits future action space in a way that depends on the full action history; and (iii) the reward function decomposes into <em>coupled</em> task-success and resource-efficiency components, creating a genuine multi-objective optimisation problem with a structured tradeoff.</p>
 <h3 id="privacy-preservation-in-iot-and-smart-home-systems">2.2 Privacy Preservation in IoT and Smart-Home Systems</h3>
 <p>Privacy in IoT sensing has received substantial attention across multiple research communities, though from very different angles. The <em>data-layer</em> paradigm (Dwork &amp; Roth, 2014) adds carefully calibrated noise to sensor readings before processing, providing differential privacy guarantees. Federated learning (McMahan et al., 2017; Bonawitz et al., 2019) distributes model training across devices, avoiding centralised data collection. Secure aggregation (Bonawitz et al., 2017) and homomorphic encryption (Gentry, 2009) allow computation on encrypted sensor data. These approaches share a fundamental assumption: data is collected, and privacy is managed <em>in the processing pipeline</em>. Our approach makes a different assumption — that the right question is not “how do we protect data after collecting it” but “how do we collect as little data as possible while still achieving the task”. This is the <em>sensing policy layer</em>, and it has received comparatively little systematic study.</p>
@@ -75,7 +81,9 @@
 <li><span class="math inline">\(B\)</span>: initial privacy budget (default <span class="math inline">\(B = 5T\)</span>, scaled proportionally to episode length)</li>
 </ul>
 <p>The POMDP framing is essential: the agent cannot observe whether an intruder is physically present. It must infer threat level from noisy, ambiguous observations — PIR intensities that could reflect a person or a pet, audio events that could be a break-in or a falling object, door states that could indicate legitimate occupant activity or forced entry. This partial observability is the principal source of task difficulty and motivates the use of an LLM agent with pre-trained priors over household normalcy.</p>
-<p>The <strong>privacy budget</strong> <span class="math inline">\(b_t\)</span> decreases monotonically with activations: <span class="math display">\[b_{t+1\]</span> = b_t - c(a_t), b_0 = B} where <span class="math inline">\(c(a)\)</span> is the cost function defined in Section 3.4. Hard enforcement applies: when <span class="math inline">\(b_t \leq 0\)</span>, the environment overrides the agent’s output with ALL-OFF regardless of what was generated. This creates genuine <em>intertemporal commitment</em> — early budget expenditure directly reduces the agent’s ability to respond to events later in the episode.</p>
+<p>The <strong>privacy budget</strong> <span class="math inline">\(b_t\)</span> decreases monotonically with activations:<br />
+<span class="math display">\[b_{t+1\]</span> = b_t - c(a_t), b_0 = B}<br />
+where <span class="math inline">\(c(a)\)</span> is the cost function defined in Section 3.4. Hard enforcement applies: when <span class="math inline">\(b_t \leq 0\)</span>, the environment overrides the agent’s output with ALL-OFF regardless of what was generated. This creates genuine <em>intertemporal commitment</em> — early budget expenditure directly reduces the agent’s ability to respond to events later in the episode.</p>
 <p>The <strong>policy</strong> <span class="math inline">\(\pi_\theta\)</span> is parameterised by the language model weights <span class="math inline">\(\theta\)</span>. At each timestep, the model receives the full conversation context (system prompt, all prior observations, and all prior actions) as input and generates <span class="math inline">\(a_t\)</span> autoregressively. A key constraint is the context window: with 64K total tokens and 512 tokens per turn, the model can attend to the full context of a 20-step episode, but longer episodes (40, 60 steps) begin to approach the effective window limit, making observation truncation a realistic concern in Phase 6.</p>
 <h3 id="smart-home-simulation">3.2 Smart-Home Simulation</h3>
 <p>The smart home comprises four rooms: living room, kitchen, hallway, and bedroom. At each timestep the simulation generates a natural-language observation encoding:</p>
@@ -87,43 +95,16 @@
 <li><strong>Privacy budget remaining</strong>: explicit numerical display</li>
 </ul>
 <p>A representative observation at timestep 7 of 20:</p>
-<pre><code>[see paper source for code listing]</code></pre>
+<pre><code>[code listing — see paper source]</code></pre>
 <p>Events (both intrusion and benign) are injected at scenario-defined timesteps. The 24 scenarios span three difficulty tiers (Table 1) and include 6 held-out test scenarios used only for evaluation.</p>
 <p><strong>Table 1: Scenario taxonomy across difficulty tiers.</strong></p>
-<p>[table — see PDF]</p>
 <h3 id="action-space">3.3 Action Space</h3>
 <p>At each timestep the agent produces a JSON object:</p>
-<pre class="json"><code>[see paper source for code listing]</code></pre>
+<pre class="json"><code>[code listing — see paper source]</code></pre>
 <p>The <code>reasoning</code> field is never scored but appears in all training rollouts, providing a natural chain-of-thought trace that can be audited post-hoc.</p>
 <h3 id="privacy-budget">3.4 Privacy Budget</h3>
 <p>Each sensor activation incurs a cost deducted from the privacy budget <span class="math inline">\(b\)</span>:</p>
 <p><strong>Table 2: Privacy cost schedule per timestep.</strong></p>
-<table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr>
-<th>{Sensor}{Level}{Cost (units/timestep)}</th>
-<th>{Camera}{OFF}{0}</th>
-<th>{Camera}{LOW}{1}</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>{Camera}{HIGH}{4}</td>
-<td>{Microphone}{OFF}{0}</td>
-<td>{Microphone}{LOW}{0.5}</td>
-</tr>
-<tr>
-<td>{Microphone}{HIGH}{2}</td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <p>The maximum cost per timestep is 6 units (Camera HIGH + Mic HIGH). With <span class="math inline">\(B = 100\)</span> for a 20-step episode, a maximally greedy agent exhausts the budget in <span class="math inline">\(\lfloor 100/6 \rfloor \approx 16\)</span> steps. Budget enforcement is hard: when <span class="math inline">\(b \leq 0\)</span>, all sensors are forced to OFF regardless of agent output.</p>
 <h3 id="reward-function">3.5 Reward Function</h3>
 <p>The agent receives a single scalar reward at episode end:</p>
@@ -141,33 +122,6 @@
 <h2 id="baselines">4. Baselines</h2>
 <p>Before any RL training, we establish six non-learning baselines that span the design space of classical sensor activation strategies.</p>
 <p><strong>Table 3: Baseline policy comparison.</strong></p>
-<table>
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<thead>
-<tr>
-<th>{Policy}{Strategy}{Detection <span class="math inline">\(R_d\)</span>}{Privacy <span class="math inline">\(R_p\)</span>}{Overall <span class="math inline">\(R\)</span>}</th>
-<th>{Always-On}{Camera HIGH + Mic HIGH every step}{0.345}{0.009}{0.245}</th>
-<th>{<strong>Rule-Based</strong>}{PIR &gt; 0.5 or door opened → activate + NOTIFY}{<strong>0.345</strong>}{<strong>0.812</strong>}{<strong>0.529</strong>}</th>
-<th>{Random}{Uniform random action each timestep}{0.173}{0.498}{0.290}</th>
-<th>{Audio-Gate}{Activate only when audio anomaly detected}{0.183}{0.701}{0.383}</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>{Video-Gate}{Activate only when PIR &gt; 0.5}{0.283}{0.454}{0.347}</td>
-<td>{Sensor-Fusion}{Weighted combination of PIR + audio &gt; threshold}{0.213}{0.595}{0.353}</td>
-<td>{Untrained LLM}{Qwen3-4B-Instruct, zero-shot}{0.345}{0.666}{0.419}</td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <p>The <strong>Rule-Based</strong> policy is the strongest classical baseline (overall reward 0.529) and represents the state of the art for non-learning approaches in this environment. Despite its competitive privacy score (budget efficiency from staying off by default), it achieves only 0.345 detection — identical to Always-On — because its fixed threshold cannot discriminate genuine intrusions from benign events with similar sensor signatures (e.g., pet motion triggering PIR). The <strong>Untrained LLM</strong> achieves a higher reward (0.419) than all classical baselines except Rule-Based, suggesting strong zero-shot priors from pre-training — but still trails Rule-Based by 20.9%.</p>
 <p>The Pareto frontier of (detection, privacy) for all baselines is shown in Figure 1. No classical policy occupies the high-detection, high-privacy quadrant; this gap motivates the RL approach.</p>
 <blockquote>
@@ -179,66 +133,10 @@
 <h3 id="grpo-training-setup">5.1 GRPO Training Setup</h3>
 <p>All experiments use the following shared configuration unless otherwise noted:</p>
 <p><strong>Table 4: Shared GRPO hyperparameters.</strong></p>
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th>{Hyperparameter}{Value}</th>
-<th>{Base model}{Qwen3-4B-Instruct-2507}</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>{Adaptation}{LoRA (all linear layers)}</td>
-<td>{Batch size}{128 rollouts}</td>
-</tr>
-<tr>
-<td>{Rollouts per example}{8}</td>
-<td>{Max tokens per turn}{512}</td>
-</tr>
-<tr>
-<td>{Training platform}{Prime Intellect}</td>
-<td>{Reward normalisation}{Group-relative (within batch)}</td>
-</tr>
-</tbody>
-</table>
 <p>The training dataset contains ~180 examples generated from the scenario library (Section 3.2). With a batch size of 128 and 8 rollouts per example, each training step processes 1024 total trajectories.</p>
 <h3 id="main-training-results-1">5.2 Main Training Results</h3>
 <p>After 200 GRPO training steps on the full scenario distribution (all difficulty tiers), the 4B-Instruct agent achieves the results shown in Table 5 and Figure 2.</p>
 <p><strong>Table 5: Main GRPO training results vs. baselines.</strong></p>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-</colgroup>
-<thead>
-<tr>
-<th>{Metric}{Untrained LLM}{Rule-Based}{<strong>GRPO-Trained 4B</strong>}{Δ vs. Untrained}{Δ vs. Rule-Based}</th>
-<th>{Overall Reward}{0.419}{0.529}{<strong>0.871</strong>}{+107.9%}{+64.7%}</th>
-<th>{Detection <span class="math inline">\(R_d\)</span>}{0.345}{0.345}{<strong>0.798</strong>}{+131.3%}{+131.3%}</th>
-<th>{Privacy <span class="math inline">\(R_p\)</span>}{0.666}{0.812}{<strong>0.980</strong>}{+47.1%}{+20.7%}</th>
-<th>{Format <span class="math inline">\(R_f\)</span>}{—}{—}{<strong>0.981</strong>}{—}{—}</th>
-<th>{Budget remaining}{<sub>34%}{</sub>81%}{<strong>~</strong>95%}}{+61 pp}{+14 pp}</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>{Identity safety}{0.610}{0.952}{<strong>0.994</strong>}{+63%}{+4.4%}</td>
-<td>{Reconstruction safety}{—}{0.880}{<strong>0.975</strong>}{—}{+10.8%}</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <blockquote>
 <p><strong>Figure 2</strong>: <em>Training curves for all Phase 5 experiments, showing reward, detection, privacy, and format metrics across training steps. Each curve is a per-metric 8-step moving average; faint lines are raw step values.</em></p>
 <p><img src="/assets/assets-privacy-guard/phase5_all_runs.png" alt="Phase 5 all runs" /></p>
@@ -271,30 +169,6 @@
 <h3 id="model-architecture-comparison">6.1 Model Architecture Comparison</h3>
 <p>We test four model configurations on identical training conditions (200 steps, full scenario distribution, 512 max tokens):</p>
 <p><strong>Table 6: Model architecture comparison.</strong></p>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-</colgroup>
-<thead>
-<tr>
-<th>{Model}{Architecture}{Active Params}{Max Tokens}{Peak Reward}{Detection}{Truncation}</th>
-<th>{Qwen3-4B-Instruct}{Dense transformer}{4B}{512}{0.871}{0.798}{0%}</th>
-<th>{Qwen3-30B-A3B}{Mixture-of-Experts}{~3B active}{512}{0.875}{0.814}{0%}</th>
-<th>{Qwen3-4B-Thinking}{Dense + CoT (<code>&lt;think&gt;</code>)}{4B}{1024}{0.590}{0.451}{**97}</th>
-<th>{Qwen3-30B-A3B-Thinking}{MoE + CoT}{~3B active}{1024}{0.666}{0.445}{6%}</th>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
 <blockquote>
 <p><strong>Figure 3</strong>: <em>Peak performance comparison across all Phase 5 experiments (bar chart). Stars indicate best-per-metric across all runs. The gold bar (Curriculum Medium) dominates all metrics except privacy, where Easy training achieves the highest score due to low intrusion density.</em></p>
 <p><img src="/assets/assets-privacy-guard/phase5_final_leaderboard.png" alt="Phase 5 final leaderboard" /></p>
@@ -311,30 +185,6 @@
 </ul>
 <p>Each run uses 100 training steps (half the flat baseline). Results are shown in Table 7 and Figure 4.</p>
 <p><strong>Table 7: Curriculum learning results across difficulty stages.</strong></p>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-</colgroup>
-<thead>
-<tr>
-<th>{Stage}{Scenarios}{Peak Reward}{Detection}{Privacy}{Format}{Budget Used}</th>
-<th>{Easy}{7 easy}{0.692}{0.500}{<strong>0.998</strong>}{0.926}{~0.1%}</th>
-<th>{<strong>Medium</strong>}{<strong>7 medium</strong>}{<strong>0.912</strong>}{<strong>0.864</strong>}{0.978}{<strong>0.997</strong>}{~2.2%}</th>
-<th>{Hard}{4 hard}{0.851}{0.817}{0.874}{0.988}{~12.6%}</th>
-<th>{Flat baseline}{All 18}{0.871}{0.798}{0.980}{0.981}{~5%}</th>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
 <blockquote>
 <p><strong>Figure 4</strong>: <em>Curriculum learning training dynamics across all three stages and the flat 4B baseline. Medium (gold) rapidly surpasses all other configurations on reward. Note how Easy (green) achieves near-perfect privacy (lower-left panel) while detection barely rises above 0.5.</em></p>
 <p><img src="/assets/assets-privacy-guard/phase5_curriculum.png" alt="Curriculum learning" /></p>
@@ -360,30 +210,6 @@
 <p>The budget-per-turn ratio (5 units/turn) is held constant across all episode lengths, maintaining the same <em>structural pressure</em> on the agent regardless of horizon.</p>
 <h3 id="results">7.2 Results</h3>
 <p><strong>Table 8: Episode length scaling results (Phase 6).</strong></p>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-</colgroup>
-<thead>
-<tr>
-<th>{Episode Length}{Steps}{Peak Reward}{Detection}{Privacy}{Final Reward}{Truncated}</th>
-<th>{20-step (Phase 5 best)}{100}{<strong>0.912</strong>}{0.864}{<strong>0.978</strong>}{<strong>0.814</strong>}{0%}</th>
-<th>{40-step}{149}{0.875}{0.799}{<strong>0.986</strong>}{0.715}{0%}</th>
-<th>{60-step}{149}{0.858}{<strong>0.865</strong>}{0.798}{0.770}{0%}</th>
-<th></th>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
 <blockquote>
 <p><strong>Figure 6</strong>: <em>Episode-length scaling training dynamics. Each row shows overall reward, detection, privacy, and format across training steps. The gold 20-step baseline (solid) achieves the best overall reward. The striking finding is in the detection panel (top right): 60-step (red dashed) ends at detection 0.865, nearly identical to 20-step, while privacy (bottom left) collapses to 0.798.</em></p>
 <p><img src="/assets/assets-privacy-guard/phase6_episode_scaling.png" alt="Phase 6 episode scaling curves" /></p>
@@ -417,30 +243,6 @@
 <h3 id="results-1">8.3 Results</h3>
 <p>These metrics are logged but not optimised during training. Their values emerge from the agent’s learned policy.</p>
 <p><strong>Table 9: Privacy leakage analysis across policies.</strong></p>
-<table>
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-</colgroup>
-<thead>
-<tr>
-<th>{Policy}{Identity Safety $L_}{Reconstruction Safety $L_}{Overall Reward}</th>
-<th>{Always-On}{0.000}{0.000}{0.245}</th>
-<th>{Rule-Based}{0.952}{0.880}{0.529}</th>
-<th>{Untrained LLM}{0.610}{—}{0.419}</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>{<strong>GRPO-Trained 4B</strong>}{<strong>0.994</strong>}{<strong>0.975</strong>}{0.871}</td>
-<td>{<strong>Curriculum Medium</strong>}{<strong>0.995</strong>}{<strong>0.978</strong>}{<strong>0.912</strong>}</td>
-<td>{Curriculum Hard}{0.916}{0.874}{0.851}</td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <blockquote>
 <p><strong>Figure 8</strong>: <em>Privacy leakage heatmap across all experimental configurations. Rows are policies; columns are leakage dimensions. The trained agents achieve the darkest (best) cells across both dimensions, while Always-On achieves the worst on both.</em></p>
 <p><img src="/assets/assets-privacy-guard/leakage_heatmap.png" alt="Leakage heatmap" /></p>
@@ -512,70 +314,15 @@
 <hr />
 <h2 id="appendix-a-complete-run-registry">Appendix A: Complete Run Registry</h2>
 <p><strong>Table A1: All 12 training runs with run IDs, configurations, and peak results.</strong></p>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-</colgroup>
-<thead>
-<tr>
-<th>{Phase}{Experiment}{Run ID}{Steps}{Peak Reward}{Detection}{Status}</th>
-<th>{3}{4B-Instruct (flat, 200 steps)}{<code>y7ui8l2nleltfxwsuxrsluoj</code>}{200}{0.871}{0.798}{✅}</th>
-<th>{5}{30B-MoE (flat, 200 steps)}{<code>kt06z7fbh90mskcsz2fzcl8r</code>}{200}{0.875}{0.814}{✅}</th>
-<th>{5}{4B-Thinking / CoT (flat, 200 steps)}{<code>v97o5aey0ec1d6j0cd5edabb</code>}{199}{0.590}{0.451}{✅}</th>
-<th>{5}{30B-MoE-Thinking (flat, 200 steps)}{<code>ys0pp3znai4sus2dxyhnvs3m</code>}{200}{0.666}{0.445}{✅}</th>
-<th>{5}{Curriculum Easy (100 steps)}{<code>nj7dukimjx8x8m75gyjowcpq</code>}{100}{0.692}{0.500}{✅}</th>
-<th>{5}{<strong>Curriculum Medium (100 steps) 🏆</strong>}{<code>rnx4hnv1adw8xtxmk5472fk7</code>}{100}{<strong>0.912</strong>}{<strong>0.864</strong>}{✅}</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>{5}{Curriculum Hard (100 steps)}{<code>g2b51abod0kwmqhjlvqjxqvs</code>}{99}{0.851}{0.817}{✅}</td>
-<td>{6}{40-step episodes (medium)}{<code>y9nc2vem8wg3xyjv01ygktpz</code>}{149}{0.875}{0.799}{✅}</td>
-<td>{6}{60-step episodes (medium)}{<code>sg5h0zv8uovx8h110obxlweh</code>}{149}{0.858}{0.865}{✅}</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <p>Note: Phase 4 (budget sweep) produced 6 additional training runs at privacy budgets of 25, 50, 75, 100, 150, and 200. These are not tabulated here as they are analysed separately in the budget sweep experiments.</p>
 <h2 id="appendix-b-environment-version-history">Appendix B: Environment Version History</h2>
 <p><strong>Table B1: Environment version changelog.</strong></p>
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th>{Version}{Key Changes}</th>
-<th>{0.7.0}{Initial release — 18 training scenarios, 20-step episodes, basic PIR + door observations}</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>{0.8.0}{Added 6 held-out test scenarios; added identity leakage and reconstruction risk proxy metrics}</td>
-<td>{0.9.0}{Added per-scenario difficulty tags (easy/medium/hard); thinking-model output parser (strips <code>&lt;think&gt;</code> blocks); <code>difficulty</code> curriculum parameter in <code>load_environment()}</code></td>
-</tr>
-<tr>
-<td>{1.0.0}{Added <code>max_turns</code> parameter for variable episode lengths; auto-scaled privacy budget (<span class="math inline">\(B = 5 \times T\)</span>); used by Phase 6 experiments}</td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <h2 id="appendix-c-reward-function-implementation">Appendix C: Reward Function Implementation</h2>
 <p>The detection reward implementation, accounting for intrusion timesteps, alert matching, and false-alarm penalties:</p>
-<pre class="python"><code>[see paper source for code listing]</code></pre>
+<pre class="python"><code>[code listing — see paper source]</code></pre>
 <h2 id="appendix-d-observation-format">Appendix D: Observation Format</h2>
 <p>A representative formatted observation string (timestep 7 of 20, budget-25 configuration):</p>
-<pre><code>[see paper source for code listing]</code></pre>
+<pre><code>[code listing — see paper source]</code></pre>
 <hr />
 <h1 id="appendix-e-interactive-3d-simulation-and-visualisation-framework">Appendix E: Interactive 3D Simulation and Visualisation Framework</h1>
 <blockquote>
@@ -595,7 +342,7 @@
 <hr />
 <h2 id="e.2-interface-design">E.2 Interface Design</h2>
 <p>The monitor replicates the visual language of professional CCTV/DVR security systems, which is intentional: the agent’s task <em>is</em> to operate a security monitoring system, and making the visualisation look like one helps viewers immediately contextualise agent decisions.</p>
-<pre><code>[see paper source for code listing]</code></pre>
+<pre><code>[code listing — see paper source]</code></pre>
 <p><strong>Left panel (960×720 px)</strong> — the currently active camera feed, rendered in perspective with:</p>
 <ul>
 <li>Room-specific wall, floor, and ceiling colours</li>
@@ -693,45 +440,11 @@
 <p>The simulation loads <code>rollouts_step190.json</code> — a raw JSON file produced by the Prime Intellect GRPO harness. It parses both the <code>prompt</code> field (user-turn observations) and <code>completion</code> field (assistant-turn actions), interleaving them by message role to reconstruct the chronological episode timeline. Robust <code>strict=False</code> JSON parsing was required to handle literal newlines embedded in multi-turn message strings.</p>
 <h3 id="room-perspective-rendering">Room Perspective Rendering</h3>
 <p>Each room is rendered using a fixed vanishing-point perspective system simulating a security camera mounted in the upper portion of a room wall (approximately 52% horizontal, 36% vertical of the frame):</p>
-<pre class="python"><code>[see paper source for code listing]</code></pre>
+<pre class="python"><code>[code listing — see paper source]</code></pre>
 <p>Floor-plane objects (furniture, carpet strips) are drawn as trapezoids projected toward this vanishing point. Vertical surfaces (walls, headboards, shelving) are drawn at the correct depth scale. Night/day tinting is applied uniformly using the <code>time_of_day</code> field extracted from each timestep’s observation.</p>
 <h3 id="sensor-state-visual-mapping">Sensor State → Visual Mapping</h3>
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th>{Sensor State}{Visual Representation}</th>
-<th>{Camera OFF}{Grey static (<code>NO SIGNAL</code>)}</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>{Camera LOW}{Yellow CRT tint + scanlines}</td>
-<td>{Camera HIGH}{Red CRT tint + scanlines + vignette}</td>
-</tr>
-<tr>
-<td>{PIR motion}{Orange ambient glow + red MOTION corner brackets}</td>
-<td>{Alert NOTIFY}{Blue banner at top of main feed}</td>
-</tr>
-<tr>
-<td>{Alert RECORD}{Amber banner}</td>
-<td>{Alert ESCALATE}{Red banner + pulsing glow ring around banner}</td>
-</tr>
-<tr>
-<td>{Door triggered}{Orange <code>🚪 DOOR SENSOR TRIGGERED</code> banner}</td>
-<td>{Night (TOD &lt; 0.3)}{All rooms darkened; windows show dark sky}</td>
-</tr>
-<tr>
-<td>{Day (TOD &gt; 0.6)}{Full brightness; kitchen window shows bright daylight}</td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <h3 id="running-the-simulation">Running the Simulation</h3>
-<pre class="bash"><code>[see paper source for code listing]</code></pre>
+<pre class="bash"><code>[code listing — see paper source]</code></pre>
 <p>The simulation loads <code>privacy_guard/results/rollouts_step190.json</code> automatically. Controls: <code>SPACE</code>/<code>→</code> − next timestep; <code>←</code> − previous; <code>A</code> − auto-play; <code>N</code>/<code>P</code> − next/previous episode; <code>0</code>–<code>7</code> − jump to episode; <code>+</code>/<code>–</code> − adjust speed; <code>S</code> − save screenshot; <code>Q</code> − quit.</p>
 <hr />
 <h2 id="e.5-key-observations-from-visual-inspection">E.5 Key Observations from Visual Inspection</h2>
