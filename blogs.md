@@ -8,21 +8,16 @@ permalink: /blogs/
 {% assign blogs_sorted = site.blogs | sort: "date" | reverse %}
 
 {% for b in blogs_sorted %}
-<details class="blog-entry" style="margin: 1rem 0; padding: 0.75rem; border: 0; border-radius: 0; background: transparent;">
-  <summary style="cursor: pointer; font-size: 1.25rem; font-weight: 600;">
-    {{ b.title }}
-    <span style="display: block; font-size: 0.85rem; font-weight: 400; color: #666; margin-top: 0.2rem;">
-      {{ b.date | date: "%B %d, %Y" }}{% if b.description %} · {{ b.description }}{% endif %}
-    </span>
-  </summary>
-
-  <div style="margin-top: 0.75rem;">
-    <div>
-      {{ b.content }}
-    </div>
-    <p style="margin-top: 1rem;">
-      <a href="{{ b.url | relative_url }}">Read full post →</a>
-    </p>
-  </div>
-</details>
+<article class="blog-entry" style="margin: 1.5rem 0; padding: 1rem 0; border-bottom: 1px solid #eee;">
+  <h2 style="margin: 0 0 0.3rem; font-size: 1.25rem;">
+    <a href="{{ b.url | relative_url }}" style="text-decoration: none; color: inherit;">{{ b.title }}</a>
+  </h2>
+  <p style="margin: 0 0 0.5rem; font-size: 0.85rem; color: #666;">
+    {{ b.date | date: "%B %d, %Y" }}{% if b.author %} · {{ b.author }}{% endif %}
+  </p>
+  {% if b.description %}
+  <p style="margin: 0 0 0.5rem; color: #444;">{{ b.description }}</p>
+  {% endif %}
+  <a href="{{ b.url | relative_url }}" style="font-size: 0.9rem;">Read full post →</a>
+</article>
 {% endfor %}
