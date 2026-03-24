@@ -213,11 +213,6 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
 
   https://static.wixstatic.com/media/ffcc74_1634525ab2e34c31b6a6634749a0fab8~mv2.png/v1/fill/w_412,h_538,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_1634525ab2e34c31b6a6634749a0fab8~mv2.png
 
-  <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Q-Learning (Watkins, 1989)</title>
 
   <!-- KaTeX -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -241,8 +236,6 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
     h3 { margin-top: 1.6em; font-weight:700; line-height:1.25; }
     .eq { margin: 1rem 0; }
   </style>
-</head>
-<body>
 
 <h3>Q-Learning (Watkins, 1989): The First Practical Model-Free Control Algorithm</h3>
 
@@ -295,8 +288,6 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
 Watkins &amp; Dayan (1992). <em>Q-learning</em>. <em>Machine Learning</em> 8: 279–292.<br>
 Mnih et al. (2015). <em>Human-level control through deep reinforcement learning</em>. <em>Nature</em> 518: 529–533.</p>
 
-</body>
-</html>
 
 
 # Practical Implementation: Python Snippet
@@ -450,11 +441,6 @@ https://static.wixstatic.com/media/ffcc74_e02ea9f38152485b98d5c31394216f75~mv2.j
 
 # From Tabular to Deep Q-Learning
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Q-Learning & DQN — Math-Ready Snippet</title>
 
   <!-- KaTeX for reliable math rendering on Wix/six.com -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -477,8 +463,6 @@ https://static.wixstatic.com/media/ffcc74_e02ea9f38152485b98d5c31394216f75~mv2.j
     h3 { margin-top: 1.4em; line-height: 1.25; }
     .eq { margin: 0.75rem 0; }
   </style>
-</head>
-<body>
 
 <h3>a) Classical Q-Learning recap</h3>
 
@@ -498,8 +482,6 @@ https://static.wixstatic.com/media/ffcc74_e02ea9f38152485b98d5c31394216f75~mv2.j
 
 <p>Here $\theta$ are the parameters of the online network, and $\theta^-$ those of the target network. Gradients of $L$ backpropagate through the convolutional layers, enabling the agent to generalize across similar states.</p>
 
-</body>
-</html>
 
 
 #  Stabilization Mechanisms — The Hidden Genius
@@ -706,11 +688,6 @@ These models now power applications in robotics, game AI, finance, and autonomou
  What Policy Gradients Optimize (High-Level)
 
 
- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Policy Gradient (PG) Methods</title>
 
   <!-- KaTeX for math rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -741,8 +718,6 @@ These models now power applications in robotics, game AI, finance, and autonomou
     }
     .eq { margin: 1rem 0; }
   </style>
-</head>
-<body>
 
 <h3>Policy Gradient (PG) methods optimize the expected return directly by adjusting the parameters of a stochastic policy $\pi_\theta(a|s)$. Using the likelihood-ratio trick, the vanilla REINFORCE gradient is:</h3>
 
@@ -754,8 +729,6 @@ These models now power applications in robotics, game AI, finance, and autonomou
 
 <p><em>(www-anw.cs.umass.edu)</em></p>
 
-</body>
-</html>
 
  Why PG Methods Matter (Context & Impact)
 
@@ -763,11 +736,6 @@ These models now power applications in robotics, game AI, finance, and autonomou
 
   Intuition + Variance Reduction
 
-  <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>REINFORCE with Baseline</title>
 
   <!-- KaTeX for math rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -798,8 +766,6 @@ These models now power applications in robotics, game AI, finance, and autonomou
     }
     .eq { margin: 1rem 0; }
   </style>
-</head>
-<body>
 
 <h3>REINFORCE updates are simple but high-variance (episode-level credit assignment). Subtracting a baseline $b(s)$ leaves the expectation unbiased yet reduces variance:</h3>
 
@@ -811,18 +777,11 @@ These models now power applications in robotics, game AI, finance, and autonomou
 
 <p><em>(papers.neurips.cc)</em></p>
 
-</body>
-</html>
 
 Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabilize learning.
 
  Derivation (Sketch)
 
- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Policy Gradient Objective Derivation</title>
 
   <!-- KaTeX for math rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -853,8 +812,6 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
     }
     .eq { margin: 1rem 0; }
   </style>
-</head>
-<body>
 
 <h3>Objective</h3>
 
@@ -882,16 +839,9 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 
 <p><em>(spinningup.openai.com)</em></p>
 
-</body>
-</html>
 
  Practical Tricks (That Actually Help)
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Stabilizing Policy Gradient Training</title>
 
   <!-- KaTeX for math rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -922,8 +872,6 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
     }
     .eq { margin: 1rem 0; }
   </style>
-</head>
-<body>
 
 <h3>Normalize returns and advantages per batch</h3>
 
@@ -947,8 +895,6 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 
 <p><em>(Proceedings of Machine Learning Research)</em></p>
 
-</body>
-</html>
 
 
 If you prefer a learning-curve image, generate it from the code below (average episodic return vs. episodes) and embed it as Figure 3.5.
@@ -1124,11 +1070,6 @@ A3C quickly became one of the most influential algorithms in modern RL history �
 
 #  The Intuition Behind Actor–Critic
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Actor–Critic (Math-Ready)</title>
 
   <!-- KaTeX for math rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -1156,8 +1097,6 @@ A3C quickly became one of the most influential algorithms in modern RL history �
     h3 { margin-top: 1.4em; font-weight: 500; }
     .eq { margin: 1rem 0; }
   </style>
-</head>
-<body>
 
 <p>At its heart, the Actor–Critic method introduces two learning systems that work in tandem. The actor is responsible for deciding what to do — it learns a policy $\\pi_\\theta(a\\mid s)$ that defines a probability distribution over actions given a state. The critic, on the other hand, evaluates how good that decision was — it estimates the value function $V_w(s)$, which represents the expected future reward from that state.</p>
 
@@ -1173,8 +1112,6 @@ A3C quickly became one of the most influential algorithms in modern RL history �
 
 <p>This two-network dynamic is powerful: the actor pushes the policy toward actions that improve expected return, while the critic grounds those updates in context, providing smoother and more reliable gradient feedback.</p>
 
-</body>
-</html>
 
 
 #  The Innovation of A3C
@@ -1194,11 +1131,6 @@ Each worker interacts with its own environment instance and periodically updates
 
 #  The Mathematics of A3C
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>A3C (Asynchronous Advantage Actor–Critic)</title>
 
   <!-- KaTeX for math rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -1226,8 +1158,6 @@ Each worker interacts with its own environment instance and periodically updates
     h3 { margin-top: 1.4em; font-weight: 500; }
     .eq { margin: 1rem 0; }
   </style>
-</head>
-<body>
 
 <p>The A3C model builds upon the actor–critic structure with an important enhancement — the Advantage function 
 $A(s_t, a_t) = R_t + \gamma V(s_{t+1}) - V(s_t)$. 
@@ -1261,8 +1191,6 @@ This term allows the network to assess how much better an action was compared to
 
 <p>The entropy term $H(\pi_\theta)$ acts as a regularizer that encourages the policy to remain uncertain when appropriate, promoting exploration and preventing the network from converging prematurely to suboptimal deterministic policies.</p>
 
-</body>
-</html>
 
 
 #  Implementation Walkthrough
@@ -1384,11 +1312,6 @@ Proximal Policy Optimization (PPO), proposed by John Schulman et al. (2017) at O
 
 #  The Core Idea
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Proximal Policy Optimization (PPO)</title>
 
   <!-- KaTeX for math rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -1416,8 +1339,6 @@ Proximal Policy Optimization (PPO), proposed by John Schulman et al. (2017) at O
     h3 { margin-top: 1.4em; font-weight: 500; }
     .eq { margin: 1rem 0; }
   </style>
-</head>
-<body>
 
 <p>The goal of Proximal Policy Optimization (PPO) is to make policy updates trustworthy and consistent. Instead of taking large, unstable gradient steps, PPO restricts how much the new policy can deviate from the old one.</p>
 
@@ -1437,8 +1358,6 @@ Proximal Policy Optimization (PPO), proposed by John Schulman et al. (2017) at O
 
 <p>This seemingly minor change had massive impact: it combined the stability of TRPO with the simplicity of REINFORCE — all without requiring second-order derivatives or complex constraints.</p>
 
-</body>
-</html>
 
 # Why It Worked
 
@@ -1463,11 +1382,6 @@ These projects cemented PPO as a cornerstone algorithm for safe, scalable, and h
 
 #  Mathematical Perspective
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>PPO Combined Loss Function</title>
 
   <!-- KaTeX for math rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -1495,8 +1409,6 @@ These projects cemented PPO as a cornerstone algorithm for safe, scalable, and h
     h3 { margin-top: 1.4em; font-weight: 500; }
     .eq { margin: 1rem 0; }
   </style>
-</head>
-<body>
 
 <p>The PPO loss function balances three objectives: the clipped surrogate objective, the value function loss, and an entropy bonus for exploration.</p>
 
@@ -1510,8 +1422,6 @@ These projects cemented PPO as a cornerstone algorithm for safe, scalable, and h
 
 <p>Here, $c_1$ and $c_2$ are coefficients that balance value function accuracy and entropy regularization. This formulation shows how PPO jointly optimizes for return maximization while maintaining diversity and value accuracy — a three-way harmony between stability, exploration, and performance.</p>
 
-</body>
-</html>
 
 #  Implementation in Practice (Python)
 
@@ -2280,12 +2190,6 @@ if __name__ == "__main__":
 
 
 <!-- results.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>RL Playground Results</title>
 <style>
   :root{
     --bg:#0b0f14; --card:#111825; --muted:#9fb0c7; --text:#e6edf3; --accent:#5aa7ff; --accent2:#8fd18f;
@@ -2320,8 +2224,6 @@ if __name__ == "__main__":
   a{color:var(--accent)}
   @media (max-width: 820px){ .grid{grid-template-columns:1fr} }
 </style>
-</head>
-<body>
 <header>
   <h1>RL Playground Results</h1>
   <p class="lead">Quick diagnostics from Gymnasium environments. Run the Python script to regenerate <code>results.json</code>, then refresh this page.</p>
@@ -2424,8 +2326,6 @@ loadData().then(data=>{
   document.getElementById('view-best').onclick = ()=>{ METRIC='best'; render(data); };
 });
 </script>
-</body>
-</html>
 
 
 Interpreting results: CartPole’s average return should trend upward even with simple exploration because rewards are dense; ~200 indicates a full solve for an episode. MountainCar’s averages are typically negative (−1 per step) until you reach the flag; the heuristic demonstrates momentum building and usually beats random without learning. If you enable LunarLander, expect wider variance and noisier returns use it to test stability knobs (target-sync cadence, grad clipping, replay size) when you later add DQN or PPO.
@@ -2499,11 +2399,6 @@ if __name__ == "__main__":
 
 
     <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PettingZoo MARL — Demo Results</title>
   <style>
     :root { --bg:#0b1220; --card:#111a2b; --ink:#e6eefc; --muted:#94a3b8; --accent:#60a5fa; }
     *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#0b1220,#0a0f1a);
@@ -2529,8 +2424,6 @@ if __name__ == "__main__":
     .note{color:var(--muted);font-size:.92rem;margin-top:12px}
     code{background:#0a1629;border:1px solid #1b3354;padding:2px 6px;border-radius:6px}
   </style>
-</head>
-<body>
   <div class="wrap">
     <div class="hero">
       <span class="badge">PettingZoo • MPE <span class="pill">simple_v3</span></span>
@@ -2602,8 +2495,6 @@ if __name__ == "__main__":
       </div>
     </div>
   </div>
-</body>
-</html>
 
 
 
@@ -2615,11 +2506,6 @@ PettingZoo uses an Agent-Environment-Cycle (AEC) API: agents act in turns within
 # Popular Architectures & Algorithms
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <title>DQN – good for discrete actions</title>
   <!-- MathJax for rendering LaTeX math in HTML -->
   <script>
     window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, svg: { fontCache: 'global' } };
@@ -2635,8 +2521,6 @@ PettingZoo uses an Agent-Environment-Cycle (AEC) API: agents act in turns within
     a{color:#0b72e7;text-decoration:none}
     a:hover{text-decoration:underline}
   </style>
-</head>
-<body>
 
 <h3><strong>DQN – good for discrete actions</strong></h3>
 
@@ -2695,14 +2579,7 @@ for episode = 1 ... M:
 <strong>References.</strong> [1] Mnih, V. et&nbsp;al. “Human-level control through deep reinforcement learning,” <em>Nature</em>, 518, 2015. <a href="https://doi.org/10.1038/nature14236">doi:10.1038/nature14236</a>. [2] Van Hasselt, H., Guez, A., Silver, D. “Deep Reinforcement Learning with Double Q-learning,” <em>AAAI</em>, 2016. <a href="https://arxiv.org/abs/1509.06461">arXiv:1509.06461</a>. [3] Schaul, T., Quan, J., Antonoglou, I., Silver, D. “Prioritized Experience Replay,” <em>ICLR</em>, 2016. <a href="https://arxiv.org/abs/1511.05952">arXiv:1511.05952</a>.
 </p>
 
-</body>
-</html>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <title>Double DQN – solves overestimation bias</title>
   <!-- MathJax for LaTeX math -->
   <script>
     window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, svg: { fontCache: 'global' } };
@@ -2718,8 +2595,6 @@ for episode = 1 ... M:
     a:hover{text-decoration:underline}
     .note{opacity:.92}
   </style>
-</head>
-<body>
 
 <h3><strong>Double DQN – solves overestimation bias</strong></h3>
 
@@ -2780,15 +2655,8 @@ for episode = 1 ... M:
 <strong>References.</strong> [1] Van Hasselt, H. “Double Q-learning,” <em>NIPS</em>, 2010. <a href="https://proceedings.neurips.cc/paper/2010/hash/091d584fced301b442654dd8c23b3fc9-Abstract.html">NeurIPS 2010</a>. [2] Van Hasselt, H., Guez, A., Silver, D. “Deep Reinforcement Learning with Double Q-learning,” <em>AAAI</em>, 2016. <a href="https://arxiv.org/abs/1509.06461">arXiv:1509.06461</a>. [3] Mnih, V. et&nbsp;al. “Human-level control through deep reinforcement learning,” <em>Nature</em>, 518, 2015. <a href="https://doi.org/10.1038/nature14236">doi:10.1038/nature14236</a>.
 </p>
 
-</body>
-</html>
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <title>A3C / A2C – parallel actor-learners</title>
   <style>
     body{max-width:860px;margin:0 auto;padding:24px;line-height:1.6;font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
     h3{margin-top:0.2em;font-weight:800}
@@ -2802,8 +2670,6 @@ for episode = 1 ... M:
     .label{font:13px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
     .small{font:12px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
   </style>
-</head>
-<body>
 
 <h3><strong>A3C / A2C – parallel actor-learners</strong></h3>
 
@@ -2906,11 +2772,6 @@ For each worker w in parallel:
 <strong>Why parallelism helps.</strong> Multiple actors diversify trajectories and decorrelate updates without a replay buffer. Short n-step returns reduce bias/variance trade-offs, entropy β·H(π) sustains exploration, and CPU-friendly threads scale easily. A2C’s synchronized averaging often improves stability on GPUs; A3C’s async updates can be faster on many-core CPUs. Typical heads share a convolutional (or MLP) torso with two output branches: π<sub>θ</sub>(a | s) an
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <title>PPO – stable, scalable</title>
   <!-- MathJax for LaTeX math -->
   <script>
     window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, svg: { fontCache: 'global' } };
@@ -2928,8 +2789,6 @@ For each worker w in parallel:
     .small{font: 12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; fill:#374151}
     .label{font: 13px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; fill:#111827}
   </style>
-</head>
-<body>
 
 <h3><strong>PPO – stable, scalable</strong></h3>
 
@@ -3035,19 +2894,12 @@ Repeat for iterations k = 1…K:
 <strong>References.</strong> [1] Schulman, J. et&nbsp;al. “Proximal Policy Optimization Algorithms,” 2017. <a href="https://arxiv.org/abs/1707.06347">arXiv:1707.06347</a>. [2] Schulman, J. et&nbsp;al. “High-Dimensional Continuous Control Using Generalized Advantage Estimation,” 2016. <a href="https://arxiv.org/abs/1506.02438">arXiv:1506.02438</a>. [3] OpenAI Spinning Up, “PPO.” <a href="https://spinningup.openai.com/en/latest/algorithms/ppo.html">overview and tips</a>.
 </p>
 
-</body>
-</html>
 
 
 When to Use What
 
 Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overestimation. Choose A3C/A2C for CPU-friendly parallel on-policy training. Pick PPO for stable, scalable, low-tuning policies. Select SAC for continuous control: off-policy, sample-efficient, entropy-regularized with auto temperature. Add prioritized replay or dueling to DQN-family when needed.
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>RL Projects & Applications — Atari Agent (DQN, PyTorch)</title>
 
   <!-- MathJax for equations on Wix/Six -->
   <script>
@@ -3076,8 +2928,6 @@ Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overesti
     pre { background: #ffffff; color: #000000; padding: 14px; overflow: auto; border-radius: 10px; border: 1px solid #e5e7eb; }
     .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
   </style>
-</head>
-<body>
 
   <h2><strong>RL Projects &amp; Applications — Training an Atari Agent (DQN, PyTorch)</strong></h2>
 
@@ -3169,15 +3019,8 @@ for episode in range(num_episodes):
 
   <p><strong>Code &amp; repository:</strong> <a href="https://github.com/jasonbian97/Deep-Q-Learning-Atari-Pytorch" target="_blank" rel="noopener">github.com/mohammed840/Reinforcement-Learning-on-Atari-Games.</a></p>
 
-</body>
-</html>
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>RL Projects & Applications — Movie Recommender with Bandits & Actor–Critic</title>
 
   <!-- MathJax for equations on Wix/Six -->
   <script>
@@ -3204,8 +3047,6 @@ for episode in range(num_episodes):
     .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
     .muted { color: #666; }
   </style>
-</head>
-<body>
 
   <h2><strong>RL Projects &amp; Applications — Reinforcement-Learning-based Movie Recommendation</strong></h2>
 
@@ -3291,8 +3132,6 @@ for epoch in 1..E:
     </a>
   </p>
 
-</body>
-</html>
 
 
 
