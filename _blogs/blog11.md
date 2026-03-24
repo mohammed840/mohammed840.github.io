@@ -348,37 +348,12 @@ This bootstrapping is what allows an agent to learn long-term outcomes from imme
 
 Although elegant, Watkins’ formulation had some practical challenges:
 
-# Table 
-
-
-Limitation
-
-
-Solution
-
-
-Over-estimation bias from max operator
-
-
-Double Q-Learning
-
-
-Slow convergence in large spaces
-
-
-Function approximation (Deep Q-Networks)
-
-
-Poor exploration
-
-
-Entropy regularization / ε decay / Soft-Q
-
-
-Instability with neural networks
-
-
-Experience Replay + Target Networks (DQN)
+| Limitation | Solution |
+|---|---|
+| Over-estimation bias from max operator | Double Q-Learning |
+| Slow convergence in large spaces | Function approximation (Deep Q-Networks) |
+| Poor exploration | Entropy regularization / ε decay / Soft-Q |
+| Instability with neural networks | Experience Replay + Target Networks (DQN) |
 
 These refinements show how Q-Learning served as the seed for an entire field of algorithms.
 
@@ -431,34 +406,10 @@ DeepMind’s DQN changed that by introducing representation learning.The network
 Naively combining Q-Learning with neural nets quickly diverges.DeepMind introduced two elegant yet powerful fixes:
 
 
-# table 
-
-
-Technique
-
-
-Problem Solved
-
-
-Mechanism
-
-
-Experience Replay
-
-
-Temporal correlation between samples
-
-
-Store past transitions ((s,a,r,s')) → sample random mini-batches to approximate i.i.d. data
-
-
-Target Network
-
-
-Moving targets destabilize gradient updates
-
-
-Freeze a copy (Q(s,a;\theta^-)) for (N) steps → periodically sync with online network
+| Technique | Problem Solved | Mechanism |
+|---|---|---|
+| Experience Replay | Temporal correlation between samples | Store past transitions (s,a,r,s') → sample random mini-batches to approximate i.i.d. data |
+| Target Network | Moving targets destabilize gradient updates | Freeze a copy Q(s,a;θ⁻) for N steps → periodically sync with online network |
 
 ![image](https://static.wixstatic.com/media/ffcc74_f15c8fdc8398458ca7ff6ffa1042f643~mv2.png/v1/fill/w_850,h_547,al_c,q_90,enc_auto/ffcc74_f15c8fdc8398458ca7ff6ffa1042f643~mv2.png)
 
@@ -515,65 +466,18 @@ This was the first demonstration that a general RL agent could learn complex tas
 
 DQN’s success sparked a wave of descendants that remain core to modern AI systems:
 
-# Table 
-
-
-Successor
-
-
-Core Idea
-
-
-Year
-
-
-Double DQN
-
-
-Decouples action selection and evaluation to reduce over-estimation bias
-
-
-2016
-
-
-Dueling DQN
-
-
-Separates state value and advantage streams for better generalization
-
-
-2016
-
-
-Prioritized Replay
-
-
-Samples high-TD-error experiences more often
-
-
-2016
-
-
-Rainbow DQN
-
-
-Combines six improvements (Double, Dueling, NoisyNets, etc.)
-
-
-2017
-
-
-AlphaGo / AlphaZero / MuZero
-
-
-Integrate Q-value estimation into Monte Carlo Tree Search
+| Successor | Core Idea | Year |
+|---|---|---|
+| Double DQN | Decouples action selection and evaluation to reduce over-estimation bias | 2016 |
+| Dueling DQN | Separates state value and advantage streams for better generalization | 2016 |
+| Prioritized Replay | Samples high-TD-error experiences more often | 2016 |
+| Rainbow DQN | Combines six improvements (Double, Dueling, NoisyNets, etc.) | 2017 |
+| AlphaGo / AlphaZero / MuZero | Integrate Q-value estimation into Monte Carlo Tree Search | — |
 
 These models now power applications in robotics, game AI, finance, and autonomous control.
 
 #  Conceptual Summary
 
-
-# table 
 
 # Policy Gradient Methods (Williams, 1992; REINFORCE)
 
