@@ -31,7 +31,6 @@ for episode in range(num_episodes):
         state = next_state
 
 
-
  Each episode represents a full attempt by the agent to reach a goal. Each iteration within it is a small moment of learning  the agent takes an action, sees how the world reacts, and slightly refines its behavior. Over time, this repeated process transforms random behavior into deliberate intelligence.   
 
 
@@ -91,7 +90,6 @@ https://static.wixstatic.com/media/ffcc74_edebbb10a55640d2b0d2e0e2b1cde936~mv2.p
 Imagine a cycle spinning endlessly:Agent → Action → Environment → Reward → Policy Update.Each pass through the loop sharpens the agent’s understanding of the world around it. At first, it acts blindly, like a baby exploring through touch. But with every reward, every correction, its behavior becomes more intentional. Over time, randomness gives way to intelligence.
 
 This dialogue between the agent and the environment can be expressed in just a few lines of Python  simple, but powerful enough to capture the entire philosophy of reinforcement learning.
-
 
 
 for episode in range(num_episodes):
@@ -215,27 +213,11 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
 
 
   <!-- KaTeX -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        throwOnError: false
-      });
-    });
-  </script>
+    
+  
+  
 
-  <style>
-    body { max-width: 900px; margin: 0 auto; padding: 24px;
-           font: 16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
-    h3 { margin-top: 1.6em; font-weight:700; line-height:1.25; }
-    .eq { margin: 1rem 0; }
-  </style>
+  
 
 <h3>Q-Learning (Watkins, 1989): The First Practical Model-Free Control Algorithm</h3>
 
@@ -287,7 +269,6 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
 <p>Watkins, C. J. C. H. (1989). <em>Learning from Delayed Rewards</em>, PhD Thesis, King’s College Cambridge.<br>
 Watkins &amp; Dayan (1992). <em>Q-learning</em>. <em>Machine Learning</em> 8: 279–292.<br>
 Mnih et al. (2015). <em>Human-level control through deep reinforcement learning</em>. <em>Nature</em> 518: 529–533.</p>
-
 
 
 # Practical Implementation: Python Snippet
@@ -370,54 +351,31 @@ Although elegant, Watkins’ formulation had some practical challenges:
 # Table 
 
 
-
-
-
-
-
-
 Limitation
-
 
 
 Solution
 
 
-
-
-
 Over-estimation bias from max operator
-
 
 
 Double Q-Learning
 
 
-
-
-
 Slow convergence in large spaces
-
 
 
 Function approximation (Deep Q-Networks)
 
 
-
-
-
 Poor exploration
-
 
 
 Entropy regularization / ε decay / Soft-Q
 
 
-
-
-
 Instability with neural networks
-
 
 
 Experience Replay + Target Networks (DQN)
@@ -443,26 +401,11 @@ https://static.wixstatic.com/media/ffcc74_e02ea9f38152485b98d5c31394216f75~mv2.j
 
 
   <!-- KaTeX for reliable math rendering on Wix/six.com -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        throwOnError: false
-      });
-    });
-  </script>
+    
+  
+  
 
-  <style>
-    body { max-width: 900px; margin: 0 auto; padding: 24px; font: 16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
-    h3 { margin-top: 1.4em; line-height: 1.25; }
-    .eq { margin: 0.75rem 0; }
-  </style>
+  
 
 <h3>a) Classical Q-Learning recap</h3>
 
@@ -483,7 +426,6 @@ https://static.wixstatic.com/media/ffcc74_e02ea9f38152485b98d5c31394216f75~mv2.j
 <p>Here $\theta$ are the parameters of the online network, and $\theta^-$ those of the target network. Gradients of $L$ backpropagate through the convolutional layers, enabling the agent to generalize across similar states.</p>
 
 
-
 #  Stabilization Mechanisms — The Hidden Genius
 
 Naively combining Q-Learning with neural nets quickly diverges.DeepMind introduced two elegant yet powerful fixes:
@@ -492,46 +434,28 @@ Naively combining Q-Learning with neural nets quickly diverges.DeepMind introduc
 # table 
 
 
-
-
-
-
-
-
 Technique
-
 
 
 Problem Solved
 
 
-
 Mechanism
-
-
-
 
 
 Experience Replay
 
 
-
 Temporal correlation between samples
-
 
 
 Store past transitions ((s,a,r,s')) → sample random mini-batches to approximate i.i.d. data
 
 
-
-
-
 Target Network
 
 
-
 Moving targets destabilize gradient updates
-
 
 
 Freeze a copy (Q(s,a;\theta^-)) for (N) steps → periodically sync with online network
@@ -594,83 +518,52 @@ DQN’s success sparked a wave of descendants that remain core to modern AI syst
 # Table 
 
 
-
-
-
-
-
 Successor
-
 
 
 Core Idea
 
 
-
 Year
-
-
-
 
 
 Double DQN
 
 
-
 Decouples action selection and evaluation to reduce over-estimation bias
 
 
-
 2016
-
-
-
 
 
 Dueling DQN
 
 
-
 Separates state value and advantage streams for better generalization
 
 
-
 2016
-
-
-
 
 
 Prioritized Replay
 
 
-
 Samples high-TD-error experiences more often
-
 
 
 2016
 
 
-
-
-
 Rainbow DQN
-
 
 
 Combines six improvements (Double, Dueling, NoisyNets, etc.)
 
 
-
 2017
 
 
-
-
-
 AlphaGo / AlphaZero / MuZero
-
 
 
 Integrate Q-value estimation into Monte Carlo Tree Search
@@ -688,36 +581,12 @@ These models now power applications in robotics, game AI, finance, and autonomou
  What Policy Gradients Optimize (High-Level)
 
 
-
   <!-- KaTeX for math rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        throwOnError: false
-      });
-    });
-  </script>
+    
+  
+  
 
-  <style>
-    body { 
-      max-width: 900px; 
-      margin: 0 auto; 
-      padding: 24px; 
-      font: 16px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-    }
-    h3 { 
-      margin-top: 1.6em; 
-      font-weight: 400;  /* not bold */
-    }
-    .eq { margin: 1rem 0; }
-  </style>
+  
 
 <h3>Policy Gradient (PG) methods optimize the expected return directly by adjusting the parameters of a stochastic policy $\pi_\theta(a|s)$. Using the likelihood-ratio trick, the vanilla REINFORCE gradient is:</h3>
 
@@ -738,34 +607,11 @@ These models now power applications in robotics, game AI, finance, and autonomou
 
 
   <!-- KaTeX for math rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        throwOnError: false
-      });
-    });
-  </script>
+    
+  
+  
 
-  <style>
-    body { 
-      max-width: 900px; 
-      margin: 0 auto; 
-      padding: 24px; 
-      font: 16px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-    }
-    h3 { 
-      margin-top: 1.6em; 
-      font-weight: 400; /* not bold */
-    }
-    .eq { margin: 1rem 0; }
-  </style>
+  
 
 <h3>REINFORCE updates are simple but high-variance (episode-level credit assignment). Subtracting a baseline $b(s)$ leaves the expectation unbiased yet reduces variance:</h3>
 
@@ -784,34 +630,11 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 
 
   <!-- KaTeX for math rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        throwOnError: false
-      });
-    });
-  </script>
+    
+  
+  
 
-  <style>
-    body { 
-      max-width: 900px; 
-      margin: 0 auto; 
-      padding: 24px; 
-      font: 16px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-    }
-    h3 { 
-      margin-top: 1.6em; 
-      font-weight: 400; /* not bold */
-    }
-    .eq { margin: 1rem 0; }
-  </style>
+  
 
 <h3>Objective</h3>
 
@@ -844,34 +667,11 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 
 
   <!-- KaTeX for math rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        throwOnError: false
-      });
-    });
-  </script>
+    
+  
+  
 
-  <style>
-    body { 
-      max-width: 900px; 
-      margin: 0 auto; 
-      padding: 24px; 
-      font: 16px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-    }
-    h3 { 
-      margin-top: 1.6em; 
-      font-weight: 400; /* not bold */
-    }
-    .eq { margin: 1rem 0; }
-  </style>
+  
 
 <h3>Normalize returns and advantages per batch</h3>
 
@@ -894,7 +694,6 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 <p>Track moving averages of episodic return and key loss components (policy loss, entropy loss, value loss). Logging helps diagnose instability and detect performance regressions.</p>
 
 <p><em>(Proceedings of Machine Learning Research)</em></p>
-
 
 
 If you prefer a learning-curve image, generate it from the code below (average episodic return vs. episodes) and embed it as Figure 3.5.
@@ -1036,13 +835,10 @@ Note: For production-grade continuous PG, prefer actor-critic (with learned (V_\
  Learning curves: plot average episodic return (sliding window 50–100 eps).
 
 
-
 Entropy: should decline gradually (too fast ⇒ stuck; too slow ⇒ wandering).
 
 
-
 Variance: if unstable, increase batch size (more episodes per update), reduce LR, or improve baseline (learn (V_\psi)).
-
 
 
 Sanity checks: random policy baseline; seed reproducibility; verify action scaling for continuous envs.
@@ -1052,9 +848,7 @@ Sanity checks: random policy baseline; seed reproducibility; verify action scali
 A2C/A3C: lower variance with learned critic; parallelism for speed.
 
 
-
 TRPO/PPO: constrain updates (trust regions/clipping) to avoid destructive steps.
-
 
 
 SAC: off-policy + maximum entropy with strong stability in continuous control. (spinningup.openai.com)
@@ -1072,31 +866,11 @@ A3C quickly became one of the most influential algorithms in modern RL history �
 
 
   <!-- KaTeX for math rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        throwOnError: false
-      });
-    });
-  </script>
+    
+  
+  
 
-  <style>
-    body {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 24px;
-      font: 16px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    h3 { margin-top: 1.4em; font-weight: 500; }
-    .eq { margin: 1rem 0; }
-  </style>
+  
 
 <p>At its heart, the Actor–Critic method introduces two learning systems that work in tandem. The actor is responsible for deciding what to do — it learns a policy $\\pi_\\theta(a\\mid s)$ that defines a probability distribution over actions given a state. The critic, on the other hand, evaluates how good that decision was — it estimates the value function $V_w(s)$, which represents the expected future reward from that state.</p>
 
@@ -1111,7 +885,6 @@ A3C quickly became one of the most influential algorithms in modern RL history �
 <p>where $R_t$ is the return and $V_w(s_t)$ is the critic’s value estimate. The term $\big(R_t - V_w(s_t)\big)$ is known as the <em>advantage</em> — a measure of relative performance that stabilizes updates and reduces noise in the learning process.</p>
 
 <p>This two-network dynamic is powerful: the actor pushes the policy toward actions that improve expected return, while the critic grounds those updates in context, providing smoother and more reliable gradient feedback.</p>
-
 
 
 #  The Innovation of A3C
@@ -1133,31 +906,11 @@ Each worker interacts with its own environment instance and periodically updates
 
 
   <!-- KaTeX for math rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        throwOnError: false
-      });
-    });
-  </script>
+    
+  
+  
 
-  <style>
-    body {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 24px;
-      font: 16px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    h3 { margin-top: 1.4em; font-weight: 500; }
-    .eq { margin: 1rem 0; }
-  </style>
+  
 
 <p>The A3C model builds upon the actor–critic structure with an important enhancement — the Advantage function 
 $A(s_t, a_t) = R_t + \gamma V(s_{t+1}) - V(s_t)$. 
@@ -1190,7 +943,6 @@ This term allows the network to assess how much better an action was compared to
 </div>
 
 <p>The entropy term $H(\pi_\theta)$ acts as a regularizer that encourages the policy to remain uncertain when appropriate, promoting exploration and preventing the network from converging prematurely to suboptimal deterministic policies.</p>
-
 
 
 #  Implementation Walkthrough
@@ -1270,7 +1022,6 @@ The asynchronous version expands this logic across multiple worker processes, ea
 The impact of A3C cannot be overstated. It introduced a practical blueprint for scaling reinforcement learning across multiple environments, breaking the reliance on GPUs and replay buffers. It showed that robust, human-level performance could be achieved using simple architectures powered by parallel computation.
 
 
-
 Its asynchronous updates acted as a form of implicit regularization, reducing the overfitting and instability often observed in on-policy methods. Moreover, the idea of computing the advantage and the use of entropy bonuses became standard across nearly all subsequent algorithms. In short, A3C was the bridge between early deep RL methods and the modern policy optimization era.
 
 #  Beyond A3C: The Road to PPO and SAC
@@ -1286,16 +1037,11 @@ For practical implementations, you can explore the official PyTorch examples, wh
 GitHub Links:
 
 
-
-
-
 PyTorch: Actor–Critic Implementation https://github.com/pytorch/examples/tree/main/reinforcement_learning/actor_critic
-
 
 
 DeepMind: A3C and ACER Repository 
 https://github.com/Kaixhin/ACER
-
 
 
 OpenAI Baselines: A2C/A3C Implementation
@@ -1314,31 +1060,11 @@ Proximal Policy Optimization (PPO), proposed by John Schulman et al. (2017) at O
 
 
   <!-- KaTeX for math rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        throwOnError: false
-      });
-    });
-  </script>
+    
+  
+  
 
-  <style>
-    body {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 24px;
-      font: 16px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    h3 { margin-top: 1.4em; font-weight: 500; }
-    .eq { margin: 1rem 0; }
-  </style>
+  
 
 <p>The goal of Proximal Policy Optimization (PPO) is to make policy updates trustworthy and consistent. Instead of taking large, unstable gradient steps, PPO restricts how much the new policy can deviate from the old one.</p>
 
@@ -1364,15 +1090,10 @@ Proximal Policy Optimization (PPO), proposed by John Schulman et al. (2017) at O
 PPO brought a level of practical reliability that made deep reinforcement learning trainable on large-scale tasks. Its balance between exploration and trust-region control allowed researchers to train massive agents safely. It became the foundation of OpenAI’s entire RL stack   from game agents to language models.
 
 
-
-
-
 OpenAI Five (2018) used PPO to train neural policies controlling five Dota 2 heroes, scaling to thousands of simulated matches per day across hundreds of workers.
 
 
-
 Dactyl (2018) employed PPO to train a robotic hand to manipulate a cube purely in simulation before transferring to a real-world robot.
-
 
 
 InstructGPT and ChatGPT later used PPO in the RLHF stage (Reinforcement Learning from Human Feedback) to fine-tune language models based on human preferences and ranking data.
@@ -1384,31 +1105,11 @@ These projects cemented PPO as a cornerstone algorithm for safe, scalable, and h
 
 
   <!-- KaTeX for math rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        throwOnError: false
-      });
-    });
-  </script>
+    
+  
+  
 
-  <style>
-    body {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 24px;
-      font: 16px/1.65 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    h3 { margin-top: 1.4em; font-weight: 500; }
-    .eq { margin: 1rem 0; }
-  </style>
+  
 
 <p>The PPO loss function balances three objectives: the clipped surrogate objective, the value function loss, and an entropy bonus for exploration.</p>
 
@@ -1525,7 +1226,6 @@ Reinforcement Learning (RL) studies how an agent should act in an environment to
 # Layer 1 MDPs: the world as state, action, reward
 
 <!-- KaTeX (loads fast) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
 <div id="mdp-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
   <p>
     An RL problem is modeled as a Markov Decision Process, written as
@@ -1541,21 +1241,6 @@ Reinforcement Learning (RL) studies how an agent should act in an environment to
   </p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
-<script>
-  // Render AFTER everything is on the page (important in Wix)
-  window.addEventListener('load', function () {
-    renderMathInElement(document.getElementById('mdp-para'), {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$',  right: '$',  display: false},
-        {left: '\\(', right: '\\)', display: false},
-        {left: '\\[', right: '\\]', display: true}
-      ]
-    });
-  });
-</script>
 
 How to solve it (conceptually): specify S,A,P,R,γS,A,P,R,γ for your task; choose whether you will compute exact values with a known model PP (dynamic programming) or learn from data when PP is unknown (temporal-difference and policy gradient methods). That fork planning vs. learning determines everything that follows.
 
@@ -1563,7 +1248,6 @@ How to solve it (conceptually): specify S,A,P,R,γS,A,P,R,γ for your task; choo
 # Layer 2  Bellman equations: recursive value reasoning
 
 <!-- KaTeX (loads fast) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
 
 <div id="bellman-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
   <p>For a fixed policy $\pi$, the state-value function satisfies</p>
@@ -1584,26 +1268,10 @@ How to solve it (conceptually): specify S,A,P,R,γS,A,P,R,γ for your task; choo
   $$</p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
-<script>
-  window.addEventListener('load', function () {
-    renderMathInElement(document.getElementById('bellman-para'), {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$',  right: '$',  display: false},
-        {left: '\\(', right: '\\)', display: false},
-        {left: '\\[', right: '\\]', display: true}
-      ]
-    });
-  });
-</script>
-
 
 These recursions express a simple intuition: the value of “here” equals reward now plus the discounted value of “where you’ll land.” In a maze, squares adjacent to the exit inherit high value; value then “flows backward” across the grid by these equations (Bellman, 1957).
 
 <!-- KaTeX (fast) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
 
 <div id="dp-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
   <p>
@@ -1637,25 +1305,9 @@ These recursions express a simple intuition: the value of “here” equals rewa
     the closer to winning, the higher the value.
   </p>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
-<script>
-  window.addEventListener('load', function () {
-    renderMathInElement(document.getElementById('dp-para'), {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$',  right: '$',  display: false},
-        {left: '\\(', right: '\\)', display: false},
-        {left: '\\[', right: '\\]', display: true}
-      ]
-    });
-  });
-</script>
 
 
 <!-- KaTeX (fast) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
 
 <div id="dp-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
   <p>
@@ -1689,27 +1341,11 @@ These recursions express a simple intuition: the value of “here” equals rewa
     the closer to winning, the higher the value.
   </p>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
-<script>
-  window.addEventListener('load', function () {
-    renderMathInElement(document.getElementById('dp-para'), {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$',  right: '$',  display: false},
-        {left: '\\(', right: '\\)', display: false},
-        {left: '\\[', right: '\\]', display: true}
-      ]
-    });
-  });
-</script>
 
 
 # Layer 3 Q-Learning: learning optimal action values from experience
 
 <!-- KaTeX (fast) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
 
 <div id="qlearning-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
   <p>
@@ -1748,20 +1384,6 @@ These recursions express a simple intuition: the value of “here” equals rewa
   </p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
-<script>
-  window.addEventListener('load', function () {
-    renderMathInElement(document.getElementById('qlearning-para'), {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$',  right: '$',  display: false},
-        {left: '\\(', right: '\\)', display: false},
-        {left: '\\[', right: '\\]', display: true}
-      ]
-    });
-  });
-</script>
 
 by gradient descent; DeepMind’s DQN adds experience replay and target networks for stability (Mnih et al., 2015).
 
@@ -1769,15 +1391,7 @@ by gradient descent; DeepMind’s DQN adds experience replay and target networks
 # Layer 4 — Policy gradients: optimizing behavior directly
 
 Policy gradient methods skip value maximization and adjust a parameterized policy πθ(a∣s)πθ​(a∣s) to maximize expected return. Write the objective as
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
 
-<style>
-  /* keep the display equation centered and close to the sentence */
-  #pg-centered p { margin: 0.6em 0; }
-  #pg-centered .eq { text-align: center; margin-top: 0.25em; }
-  /* tighten KaTeX's default top/bottom gap a bit */
-  #pg-centered .katex-display { margin: 0.25em 0 !important; }
-</style>
 
 <div id="pg-centered" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
   <!-- Objective (centered) -->
@@ -1794,30 +1408,9 @@ Policy gradient methods skip value maximization and adjust a parameterized polic
   </p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
-<script>
-  window.addEventListener('load', function () {
-    renderMathInElement(document.getElementById('pg-centered'), {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$',  right: '$',  display: false},
-        {left: '\\(', right: '\\)', display: false},
-        {left: '\\[', right: '\\]', display: true}
-      ]
-    });
-  });
-</script>
 
 where GtGt​ is a return estimate from time tt. Intuitively, actions that led to high returns are made more likely, proportional to how sensitive the policy was to choosing them (Williams, 1992).
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
-
-<style>
-  #steps-pg p { margin: 0.6em 0; font-size:18px; line-height:1.7; }
-  #steps-pg .eq { text-align:center; margin: 0.25em 0; }
-  #steps-pg .katex-display { margin: 0.25em 0 !important; }
-</style>
 
 <div id="steps-pg" style="max-width:900px; margin:auto">
   <p>
@@ -1841,28 +1434,6 @@ where GtGt​ is a return estimate from time tt. Intuitively, actions that led t
   </p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
-<script>
-  window.addEventListener('load', function () {
-    renderMathInElement(document.getElementById('steps-pg'), {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$',  right: '$',  display: false},
-        {left: '\\(', right: '\\)', display: false},
-        {left: '\\[', right: '\\]', display: true}
-      ]
-    });
-  });
-</script>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
-
-<style>
-  #ac-full p { margin: 0.6em 0; font-size:18px; line-height:1.7; }
-  #ac-full .eq { text-align:center; margin: 0.25em 0; }
-  #ac-full .katex-display { margin: 0.25em 0 !important; }
-</style>
 
 <div id="ac-full" style="max-width:900px; margin:auto">
   <p><strong>First, subtract a baseline</strong> $b(s_t)$ <strong>without biasing the gradient:</strong></p>
@@ -1907,21 +1478,6 @@ where GtGt​ is a return estimate from time tt. Intuitively, actions that led t
   <p><strong>PPO</strong> keeps the same advantage-based objective but constrains each policy update to stay near the old policy by clipping the probability ratio, which stabilizes training (Schulman et&nbsp;al., 2017).</p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
-<script>
-  window.addEventListener('load', function () {
-    renderMathInElement(document.getElementById('ac-full'), {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$',  right: '$',  display: false},
-        {left: '\\(', right: '\\)', display: false},
-        {left: '\\[', right: '\\]', display: true}
-      ]
-    });
-  });
-</script>
-
 
 # A final intuition check
 
@@ -1932,9 +1488,7 @@ If the maze exit lights up with a reward, Bellman equations let value “shine b
 This section gives you a compact, runnable path from a tabular baseline to a neural one. We start with Q-Learning on FrozenLake to make the update rule concrete, then scale the same idea to function approximation with a tiny PyTorch DQN on CartPole. 
 
 
-
 Read the short motivation, skim the pseudocode to lock in the algorithmic loop, and run the Python to verify you can reproduce learning on your machine.
-
 
 
 Q-Learning learns action values in a table by bootstrapping from its own estimates. At each step you act ε-greedily from the current state, observe the next state and reward, and push the old entry toward the target r+γmax⁡a′Q(s′,a′)r+γmaxa′​Q(s′,a′). Exploration starts high and decays so the agent first discovers outcomes and then exploits what it has learned. On FrozenLake, using a deterministic variant keeps the learning curve focused on the update itself rather than stochastic slips.
@@ -1981,7 +1535,6 @@ print("Sample Q[0]:", Q[0])
 Deep Q-Networks replace the table with a neural network Qθ(s,⋅)Qθ​(s,⋅), train it on random mini-batches from a replay buffer to break temporal correlations, and stabilize targets with a lagged copy Qθ−Qθ−​. A small MLP is enough for CartPole. 
 
 Using the Double DQN trick selecting the next action with the policy network but evaluating it with the target network reduces overestimation bias and improves stability without extra complexity. Keep ε-greedy exploration early, start learning only after the buffer has a few hundred to a thousand transitions, and periodically sync the target network.
-
 
 
 # DQN (pseudocode)
@@ -2074,7 +1627,6 @@ for ep in range(300):
     eps = max(eps_min, eps * eps_decay)
 
 print("Training complete.")
-
 
 
 If you prefer studying from existing, public code, the classic reference implementations and a Colab-backed tutorial are freely available. 
@@ -2188,42 +1740,8 @@ if __name__ == "__main__":
     main()
 
 
-
 <!-- results.html -->
-<style>
-  :root{
-    --bg:#0b0f14; --card:#111825; --muted:#9fb0c7; --text:#e6edf3; --accent:#5aa7ff; --accent2:#8fd18f;
-    --border:#1f2a3a; --chip:#152233;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:linear-gradient(180deg,#0b0f14,#0b1118);color:var(--text);font:16px/1.5 system-ui,Segoe UI,Roboto,Arial,sans-serif}
-  header{padding:28px 22px 8px;max-width:1100px;margin:0 auto}
-  h1{margin:0 0 6px;font-size:28px;letter-spacing:.2px}
-  p.lead{margin:0;color:var(--muted)}
-  main{max-width:1100px;margin:20px auto;padding:0 22px 34px}
-  section.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;margin-bottom:16px;box-shadow:0 4px 16px rgba(0,0,0,.25)}
-  .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
-  .metric{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
-  .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--border);color:var(--muted);font-size:12px}
-  .nowrap{white-space:nowrap}
-  table{width:100%;border-collapse:collapse;margin-top:12px}
-  th,td{border-bottom:1px solid var(--border);padding:8px 6px;text-align:left}
-  th{color:#c9d7e1;font-weight:600}
-  .envcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:10px}
-  .envcard{background:#0f1726;border:1px solid var(--border);border-radius:14px;padding:12px}
-  .envtitle{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-  .envname{font-weight:700}
-  .spark{width:100%;height:80px;border:1px solid var(--border);border-radius:10px;background:#0c1420}
-  .hint{color:var(--muted);font-size:13px}
-  .controls{display:flex;gap:8px;flex-wrap:wrap}
-  button{background:#13243a;border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:10px;cursor:pointer}
-  button:hover{background:#172a45}
-  .badge{padding:2px 8px;border-radius:6px;background:#143a1b;border:1px solid #20502b;color:#b9f2c1;font-size:12px}
-  .footer{color:var(--muted);font-size:13px;margin-top:10px}
-  code{background:#09131f;border:1px solid var(--border);padding:2px 6px;border-radius:6px}
-  a{color:var(--accent)}
-  @media (max-width: 820px){ .grid{grid-template-columns:1fr} }
-</style>
+
 <header>
   <h1>RL Playground Results</h1>
   <p class="lead">Quick diagnostics from Gymnasium environments. Run the Python script to regenerate <code>results.json</code>, then refresh this page.</p>
@@ -2262,70 +1780,6 @@ if __name__ == "__main__":
     <table id="tbl"><thead><tr><th>Environment</th><th>Policy</th><th>Episodes</th><th>Avg Return</th><th>Best Return</th></tr></thead><tbody></tbody></table>
   </section>
 </main>
-
-<script>
-let METRIC = 'avg';
-function xmap(x, a1, a2, b1, b2){ return b1 + (x-a1) * (b2-b1) / (a2-a1 || 1); }
-function drawSpark(svg, values, color){
-  const W = svg.clientWidth || 260, H = svg.clientHeight || 80, pad=6;
-  const minV = Math.min(...values, 0), maxV = Math.max(...values, 0);
-  const n = values.length || 1;
-  const pts = values.map((v,i)=>[ xmap(i, 0, n-1, pad, W-pad), xmap(v, minV, maxV, H-pad, pad) ]);
-  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-  const d = pts.map((p,i)=> (i?'L':'M') + p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
-  path.setAttribute('d', d); path.setAttribute('fill','none'); path.setAttribute('stroke', color); path.setAttribute('stroke-width','2'); svg.appendChild(path);
-  const zeroY = xmap(0, minV, maxV, H-pad, pad);
-  const zero = document.createElementNS('http://www.w3.org/2000/svg','line');
-  zero.setAttribute('x1', pad); zero.setAttribute('x2', W-pad); zero.setAttribute('y1', zeroY); zero.setAttribute('y2', zeroY);
-  zero.setAttribute('stroke', '#2a3b52'); zero.setAttribute('stroke-dasharray','4 4'); svg.appendChild(zero);
-}
-async function loadData(){
-  try{ const r = await fetch('results.json'); if(!r.ok) throw 0; return await r.json(); }
-  catch(e){ return {"generated_at":"N/A","episodes_per_env":0,"policy":"auto","envs":[
-    {"env_id":"CartPole-v1","policy":"random","episodes":3,"avg_return":18,"best_return":24,"returns":[{"return_":12},{"return_":18},{"return_":24}]},
-    {"env_id":"MountainCar-v0","policy":"heuristic(velocity-sign)","episodes":3,"avg_return":-190,"best_return":-110,"returns":[{"return_":-220},{"return_":-190},{"return_":-110}]}
-  ]}; }
-}
-function render(data){
-  document.getElementById('gen').textContent = data.generated_at;
-  document.getElementById('eps').textContent = data.episodes_per_env;
-  document.getElementById('pol').textContent = data.policy;
-
-  const tbody = document.querySelector('#tbl tbody'); tbody.innerHTML='';
-  data.envs.forEach(e=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${e.env_id}</td><td>${e.policy}</td><td>${e.episodes}</td>
-                    <td>${(+e.avg_return).toFixed(2)}</td><td>${(+e.best_return).toFixed(2)}</td>`;
-    tbody.appendChild(tr);
-  });
-
-  const wrap = document.getElementById('envcards'); wrap.innerHTML='';
-  const maxMetric = Math.max(...data.envs.map(e=> METRIC==='avg'? e.avg_return : e.best_return));
-  data.envs.forEach(e=>{
-    const card = document.createElement('div'); card.className='envcard';
-    const cur = METRIC==='avg'? e.avg_return : e.best_return;
-    const pct = Math.round(xmap(cur, Math.min(0,maxMetric), maxMetric||1, 10, 100));
-    card.innerHTML = `
-      <div class="envtitle">
-        <div class="envname">${e.env_id}</div>
-        <div class="chip">${METRIC==='avg'?'Avg':'Best'}: <b>${(+cur).toFixed(2)}</b></div>
-      </div>
-      <div class="hint" style="margin-bottom:8px">Policy: ${e.policy} • Episodes: ${e.episodes}</div>
-      <div class="hint" style="margin-bottom:6px">Relative score: <b>${pct}%</b> of max (${METRIC==='avg'?'avg':''} return)</div>
-      <svg class="spark"></svg>
-    `;
-    wrap.appendChild(card);
-    const svg = card.querySelector('svg');
-    const vals = (e.returns||[]).map(r=> +r.return_);
-    drawSpark(svg, vals.length?vals:[0,cur], METRIC==='avg' ? '#5aa7ff' : '#8fd18f');
-  });
-}
-loadData().then(data=>{
-  render(data);
-  document.getElementById('view-avg').onclick = ()=>{ METRIC='avg'; render(data); };
-  document.getElementById('view-best').onclick = ()=>{ METRIC='best'; render(data); };
-});
-</script>
 
 
 Interpreting results: CartPole’s average return should trend upward even with simple exploration because rewards are dense; ~200 indicates a full solve for an episode. MountainCar’s averages are typically negative (−1 per step) until you reach the flag; the heuristic demonstrates momentum building and usually beats random without learning. If you enable LunarLander, expect wider variance and noisier returns use it to test stability knobs (target-sync cadence, grad clipping, replay size) when you later add DQN or PPO.
@@ -2397,33 +1851,8 @@ if __name__ == "__main__":
     print(results)  # replace with saving to JSON if you like
 
 
-
     <!doctype html>
-  <style>
-    :root { --bg:#0b1220; --card:#111a2b; --ink:#e6eefc; --muted:#94a3b8; --accent:#60a5fa; }
-    *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#0b1220,#0a0f1a);
-    color:var(--ink);font:500 16px/1.5 Inter,system-ui,Segoe UI,Roboto,Arial}
-    .wrap{max-width:980px;margin:40px auto;padding:0 20px}
-    .hero{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-    .badge{padding:.35rem .6rem;border:1px solid #1e293b;border-radius:999px;color:var(--muted);font-size:.8rem}
-    h1{font-size:1.6rem;margin:.2rem 0 .6rem}
-    .card{background:var(--card);border:1px solid #1e293b;border-radius:16px;padding:18px;
-      box-shadow:0 6px 20px rgba(0,0,0,.35)}
-    .grid{display:grid;gap:14px}
-    @media(min-width:720px){.grid{grid-template-columns:1.25fr .75fr}}
-    table{width:100%;border-collapse:separate;border-spacing:0 8px}
-    th,td{text-align:left;padding:10px 12px}
-    th{color:var(--muted);font-weight:600}
-    tr{background:#0c1526;border-radius:12px}
-    tr td:first-child, tr th:first-child{border-top-left-radius:12px;border-bottom-left-radius:12px}
-    tr td:last-child, tr th:last-child{border-top-right-radius:12px;border-bottom-right-radius:12px}
-    .pill{display:inline-block;padding:.2rem .5rem;border-radius:999px;background:#0b2546;border:1px solid #1e3a5f;color:#9cc1ff;font-size:.78rem}
-    .kpi{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
-    .kpi div{background:#0b1528;border:1px solid #183252;border-radius:12px;padding:12px 14px;min-width:180px}
-    .kpi .val{font-size:1.2rem;color:#e2efff}
-    .note{color:var(--muted);font-size:.92rem;margin-top:12px}
-    code{background:#0a1629;border:1px solid #1b3354;padding:2px 6px;border-radius:6px}
-  </style>
+  
   <div class="wrap">
     <div class="hero">
       <span class="badge">PettingZoo • MPE <span class="pill">simple_v3</span></span>
@@ -2497,7 +1926,6 @@ if __name__ == "__main__":
   </div>
 
 
-
 Explanation (what’s happening)
 
 PettingZoo uses an Agent-Environment-Cycle (AEC) API: agents act in turns within each timestep. In the script, we roll out the cooperative MPE environment simple_v3 for 30 episodes using random actions to baseline performance. We log each agent’s reward at its turn, then aggregate per-agent averages and totals. Negative mean rewards are expected here because agents don’t coordinate to reach landmarks; replacing the random policy with a learned multi-agent method (e.g., Independent Q-Learning or MADDPG) should increase average returns and shorten episodes as coordination improves.
@@ -2507,20 +1935,9 @@ PettingZoo uses an Agent-Environment-Cycle (AEC) API: agents act in turns within
 
 
   <!-- MathJax for rendering LaTeX math in HTML -->
-  <script>
-    window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, svg: { fontCache: 'global' } };
-  </script>
-  <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-  <style>
-    body{max-width:860px;margin:0 auto;padding:24px;line-height:1.6;font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
-    h3{margin-top:0.2em;font-weight:800}
-    code, pre{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
-    /* Pseudocode block is white */
-    pre{background:#ffffff;color:#111827;padding:16px;border-radius:12px;overflow:auto;border:1px solid #e5e7eb}
-    .note{opacity:.85}
-    a{color:#0b72e7;text-decoration:none}
-    a:hover{text-decoration:underline}
-  </style>
+  
+  
+  
 
 <h3><strong>DQN – good for discrete actions</strong></h3>
 
@@ -2581,20 +1998,9 @@ for episode = 1 ... M:
 
 
   <!-- MathJax for LaTeX math -->
-  <script>
-    window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, svg: { fontCache: 'global' } };
-  </script>
-  <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-  <style>
-    body{max-width:860px;margin:0 auto;padding:24px;line-height:1.6;font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
-    h3{margin-top:0.2em;font-weight:800}
-    code, pre{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
-    /* Pseudocode block stays white per your style */
-    pre{background:#ffffff;color:#111827;padding:16px;border-radius:12px;overflow:auto;border:1px solid #e5e7eb}
-    a{color:#0b72e7;text-decoration:none}
-    a:hover{text-decoration:underline}
-    .note{opacity:.92}
-  </style>
+  
+  
+  
 
 <h3><strong>Double DQN – solves overestimation bias</strong></h3>
 
@@ -2656,20 +2062,7 @@ for episode = 1 ... M:
 </p>
 
 
-
-  <style>
-    body{max-width:860px;margin:0 auto;padding:24px;line-height:1.6;font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
-    h3{margin-top:0.2em;font-weight:800}
-    code, pre{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
-    pre{background:#ffffff;color:#111827;padding:16px;border-radius:12px;overflow:auto;border:1px solid #e5e7eb}
-    a{color:#0b72e7;text-decoration:none}
-    a:hover{text-decoration:underline}
-    figure{margin:18px 0;padding:12px;border:1px solid #e5e7eb;border-radius:12px;background:#fff}
-    figcaption{font-size:.92rem;opacity:.9;text-align:center;margin-top:8px}
-    .note{opacity:.92}
-    .label{font:13px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
-    .small{font:12px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
-  </style>
+  
 
 <h3><strong>A3C / A2C – parallel actor-learners</strong></h3>
 
@@ -2687,12 +2080,7 @@ Advantage Actor–Critic (A2C) is the <em>synchronous</em> variant: it runs the 
   <!-- Inline SVG figure: parallel workers pushing grads to shared params -->
   <svg viewBox="0 0 820 280" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A3C/A2C architecture diagram">
     <defs>
-      <style>
-        .box{fill:#ffffff;stroke:#1f2937;stroke-width:1.2}
-        .label{font:13px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; fill:#111827}
-        .small{font:12px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; fill:#374151}
-        .arrow{marker-end:url(#arrowhead);stroke:#374151;stroke-width:1.2;fill:none}
-      </style>
+      
       <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
         <polygon points="0 0, 10 3.5, 0 7" fill="#374151"></polygon>
       </marker>
@@ -2773,22 +2161,9 @@ For each worker w in parallel:
 
 
   <!-- MathJax for LaTeX math -->
-  <script>
-    window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, svg: { fontCache: 'global' } };
-  </script>
-  <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-  <style>
-    body{max-width:860px;margin:0 auto;padding:24px;line-height:1.6;font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
-    h3{margin-top:0.2em;font-weight:800}
-    code, pre{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
-    pre{background:#ffffff;color:#111827;padding:16px;border-radius:12px;overflow:auto;border:1px solid #e5e7eb}
-    a{color:#0b72e7;text-decoration:none}
-    a:hover{text-decoration:underline}
-    figure{margin:18px 0;padding:12px;border:1px solid #e5e7eb;border-radius:12px;background:#fff}
-    figcaption{font-size:.92rem;opacity:.9;text-align:center;margin-top:8px}
-    .small{font: 12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; fill:#374151}
-    .label{font: 13px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; fill:#111827}
-  </style>
+  
+  
+  
 
 <h3><strong>PPO – stable, scalable</strong></h3>
 
@@ -2812,15 +2187,7 @@ yielding robust improvements with simple hyperparameters (clip $\\epsilon\\appro
       <marker id="arrow" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
         <polygon points="0 0, 10 3.5, 0 7" fill="#374151"/>
       </marker>
-      <style>
-        .axis{stroke:#374151;stroke-width:1.2;fill:none;marker-end:url(#arrow)}
-        .curve{stroke:#0f766e;stroke-width:2;fill:none}
-        .clipcurve{stroke:#1d4ed8;stroke-width:2;fill:none;stroke-dasharray:5 4}
-        .vline{stroke:#ef4444;stroke-width:1.2;stroke-dasharray:4 4}
-        .tick{stroke:#9ca3af;stroke-width:.8}
-        .text{font:13px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; fill:#111827}
-        .small{font:12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; fill:#374151}
-      </style>
+      
     </defs>
 
     <!-- Axes -->
@@ -2895,39 +2262,16 @@ Repeat for iterations k = 1…K:
 </p>
 
 
-
 When to Use What
 
 Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overestimation. Choose A3C/A2C for CPU-friendly parallel on-policy training. Pick PPO for stable, scalable, low-tuning policies. Select SAC for continuous control: off-policy, sample-efficient, entropy-regularized with auto temperature. Add prioritized replay or dueling to DQN-family when needed.
 
 
   <!-- MathJax for equations on Wix/Six -->
-  <script>
-    window.MathJax = {
-      tex: {inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']]},
-      svg: {fontCache: 'global'}
-    };
-  </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  
+  
 
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.7; margin: 0; padding: 28px; color: #111; }
-    h2 { font-size: 1.9rem; margin: 1.2rem 0 0.8rem; font-weight: 800; }
-    h3 { font-size: 1.25rem; margin: 1.2rem 0 0.5rem; font-weight: 800; }
-    p  { margin: 0.6rem 0 1.1rem; max-width: 72ch; }
-    .figure { margin: 1.25rem 0; text-align: center; }
-    .figure img { max-width: 100%; height: auto; border-radius: 10px; }
-    .gif-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    @media (min-width: 720px) { .gif-grid { grid-template-columns: 1fr 1fr; } }
-    .caption { font-size: 0.9rem; color: #555; margin-top: 0.5rem; }
-    .note { background: #f7f7f9; border: 1px solid #eee; border-radius: 10px; padding: 14px 16px; font-size: 0.98rem; }
-    a { color: #0b72ff; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    code { background: #f6f8fa; padding: 2px 6px; border-radius: 6px; }
-    /* Pseudocode block: white background + black text as requested */
-    pre { background: #ffffff; color: #000000; padding: 14px; overflow: auto; border-radius: 10px; border: 1px solid #e5e7eb; }
-    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
-  </style>
+  
 
   <h2><strong>RL Projects &amp; Applications — Training an Atari Agent (DQN, PyTorch)</strong></h2>
 
@@ -3020,33 +2364,11 @@ for episode in range(num_episodes):
   <p><strong>Code &amp; repository:</strong> <a href="https://github.com/jasonbian97/Deep-Q-Learning-Atari-Pytorch" target="_blank" rel="noopener">github.com/mohammed840/Reinforcement-Learning-on-Atari-Games.</a></p>
 
 
-
-
   <!-- MathJax for equations on Wix/Six -->
-  <script>
-    window.MathJax = {
-      tex: {inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']]},
-      svg: {fontCache: 'global'}
-    };
-  </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  
+  
 
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.7; margin: 0; padding: 28px; color: #111; }
-    h2 { font-size: 1.9rem; margin: 1.2rem 0 0.8rem; font-weight: 800; }
-    h3 { font-size: 1.25rem; margin: 1.2rem 0 0.5rem; font-weight: 800; }
-    p  { margin: 0.6rem 0 1.1rem; max-width: 78ch; }
-    ul { margin: 0.25rem 0 1.1rem 1.25rem; max-width: 78ch; }
-    li { margin: 0.25rem 0; }
-    a { color: #0b72ff; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    code { background: #f6f8fa; padding: 2px 6px; border-radius: 6px; }
-    /* Pseudocode/Code: white background + black text (as requested) */
-    pre { background: #ffffff; color: #000000; padding: 14px; overflow: auto; border-radius: 10px; border: 1px solid #e5e7eb; }
-    .note { background: #f7f7f9; border: 1px solid #eee; border-radius: 10px; padding: 14px 16px; font-size: 0.98rem; }
-    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
-    .muted { color: #666; }
-  </style>
+  
 
   <h2><strong>RL Projects &amp; Applications — Reinforcement-Learning-based Movie Recommendation</strong></h2>
 
@@ -3133,8 +2455,6 @@ for epoch in 1..E:
   </p>
 
 
-
-
 # Conclusion
 
 Reinforcement Learning is the rare field where a single loop observe, act, reward, update scales from FrozenLake to AlphaGo. The intuition is visceral: like a puppy learning “sit,” agents discover what works by doing, not by being told. The math makes that discovery precise: Bellman equations let value “flow backward” through futures; policy gradients turn good trajectories into better instincts; PPO’s clipping and A3C’s advantage estimates stabilize change. And the code grounds it all tiny Q-tables grow into policies, then into robust systems from tabular updates to deep networks with replay and target copies that keep learning stable.
@@ -3142,9 +2462,7 @@ Reinforcement Learning is the rare field where a single loop observe, act, rewar
 For me, RL is deep because it mirrors how people grow. There’s no answer key, just feedback, curiosity, and iteration. Every project is a lived experiment where design choices have consequences: reward shaping reveals your values; exploration exposes your risk appetite; baselines and entropy teach humility about variance. I love that the field refuses shortcuts progress is earned episode by episode, graph by graph.
 
 
-
 Projects are the bridge from theory to conviction. Atari taught representation and stability; CartPole taught bootstrapping; PPO-powered systems taught trust and scale; robotics and sim-to-real taught grit. Each build tightened the loop between ideas and evidence. That is why this series blends all four pillars: intuition to feel the problem, math to reason about it, code to test it, and projects to prove it.
-
 
 
 If you remember one thing, remember the loop. Wrap it in good measurements, respect stability, and let agents surprise you. Start simple, instrument everything, and iterate toward clarity. RL isn’t about scripting intelligence; it’s about creating the conditions where intelligence emerges and watching, with quiet awe, as your agent figures it out. In that cadence, craft, measure, refine, and let learning write itself over time. Episode by episode.
