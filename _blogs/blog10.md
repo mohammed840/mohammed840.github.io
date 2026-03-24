@@ -1,6 +1,6 @@
 ---
 title: "From Scaling To Research: Reflections On The Ilya Sutskever Conversation With Dwarkesh"
-date: 2026-03-24
+date: 2025-12-02
 author: "Mohammed Alshehri"
 description: "Sutskever argues the age of scaling is ending — it is back to the age of research, now with big computers. A reflection on what this means for AI, generalization, and the future of intelligence."
 ---
