@@ -1,6 +1,6 @@
 ---
 title: "RL: Why It Matters More Than Ever"
-date: 2025-12-14
+date: 2025-10-10
 author: "Mohammed Alshehri"
 description: "A comprehensive guide to Reinforcement Learning — from Q-Learning and DQN to A3C, PPO, and real-world projects. Covers the math, the code, the key papers, and why RL is more important than ever."
 ---
