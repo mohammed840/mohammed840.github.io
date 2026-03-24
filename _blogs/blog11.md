@@ -9,14 +9,14 @@ description: "A comprehensive guide to Reinforcement Learning — from Q-Learnin
 
 In 2016, the world witnessed a moment that redefined the boundaries of artificial intelligence. A system called AlphaGo, created by DeepMind, faced off against Lee Sedol, one of the greatest Go players in history   and won. It wasn’t just another AI victory. It was a turning point. Unlike traditional chess engines that rely on exhaustive search or hand coded rules, AlphaGo taught itself to play through millions of simulated games, refining its strategies over time until it could outthink its creators.
 
-https://static.wixstatic.com/media/ffcc74_8ce0c5db66904645bbd7adfe97512728~mv2.png/v1/fill/w_1124,h_570,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/ffcc74_8ce0c5db66904645bbd7adfe97512728~mv2.png
+![image](https://static.wixstatic.com/media/ffcc74_8ce0c5db66904645bbd7adfe97512728~mv2.png/v1/fill/w_1124,h_570,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/ffcc74_8ce0c5db66904645bbd7adfe97512728~mv2.png)
 
 
 Imagine a Go board filled with black and white stones. Each move AlphaGo makes isn’t based on memorized plays. It’s the result of trial and error, where every victory and defeat becomes data. Over thousands of matches against itself, it began to recognize which patterns led to success  forming a kind of machine intuition. What made that victory extraordinary was not that the AI beat a human, but how it learned to do it. AlphaGo’s intelligence wasn’t pre-written; it emerged through interaction and feedback  the very essence of Reinforcement Learning (RL).
 
 Reinforcement Learning differs from most of the AI systems people talk about today. In supervised learning, a model learns from labeled examples  it’s like having a teacher provide the correct answers to every question. In unsupervised learning, models explore patterns in data without explicit guidance. But in reinforcement learning, there is no teacher. Instead, the model learns by acting  taking an action in an environment, observing the result, and adjusting based on the feedback it receives. It is an ongoing loop of experimentation and improvement, the closest computational analogy to how humans and animals learn through experience.
 
-https://static.wixstatic.com/media/ffcc74_32bc915ac1e5435b9805b92159d17cb9~mv2.png/v1/fill/w_1019,h_480,al_c,lg_1,q_90,enc_auto/ffcc74_32bc915ac1e5435b9805b92159d17cb9~mv2.png
+![image](https://static.wixstatic.com/media/ffcc74_32bc915ac1e5435b9805b92159d17cb9~mv2.png/v1/fill/w_1019,h_480,al_c,lg_1,q_90,enc_auto/ffcc74_32bc915ac1e5435b9805b92159d17cb9~mv2.png)
 
 You can visualize this as a circular cycle. The agent (our decision-maker) observes its environment, performs an action, and receives a reward  a signal of how good or bad that action was. Based on that reward, it updates its policy, which is its internal playbook for what to do next. The more it interacts, the better its decisions become. The process looks beautifully simple in code 
 
@@ -34,7 +34,7 @@ for episode in range(num_episodes):
  Each episode represents a full attempt by the agent to reach a goal. Each iteration within it is a small moment of learning  the agent takes an action, sees how the world reacts, and slightly refines its behavior. Over time, this repeated process transforms random behavior into deliberate intelligence.   
 
 
- https://static.wixstatic.com/media/ffcc74_9b98a5daef1244759828732236b4eb41~mv2.png/v1/fill/w_749,h_432,al_c,lg_1,q_85,enc_auto/ffcc74_9b98a5daef1244759828732236b4eb41~mv2.png
+![image](https://static.wixstatic.com/media/ffcc74_9b98a5daef1244759828732236b4eb41~mv2.png/v1/fill/w_749,h_432,al_c,lg_1,q_85,enc_auto/ffcc74_9b98a5daef1244759828732236b4eb41~mv2.png)
 
 Picture a robotic arm trying to grasp a cup. The first few attempts are clumsy; it drops the cup again and again. But with each try, it receives feedback: how close it was, whether it succeeded, and what its sensors observed. Slowly, it adjusts  refining its movements until, one day, the cup is lifted smoothly. That moment  when trial becomes mastery  is what makes reinforcement learning extraordinary.
 
@@ -85,7 +85,7 @@ The model  or agent  exists within an environment, and every choice it makes aff
 
 This process is not just statistical learning  it’s behavioral learning.
 
-https://static.wixstatic.com/media/ffcc74_edebbb10a55640d2b0d2e0e2b1cde936~mv2.png/v1/fill/w_859,h_469,al_c,lg_1,q_90,enc_auto/ffcc74_edebbb10a55640d2b0d2e0e2b1cde936~mv2.png
+![image](https://static.wixstatic.com/media/ffcc74_edebbb10a55640d2b0d2e0e2b1cde936~mv2.png/v1/fill/w_859,h_469,al_c,lg_1,q_90,enc_auto/ffcc74_edebbb10a55640d2b0d2e0e2b1cde936~mv2.png)
 
 Imagine a cycle spinning endlessly:Agent → Action → Environment → Reward → Policy Update.Each pass through the loop sharpens the agent’s understanding of the world around it. At first, it acts blindly, like a baby exploring through touch. But with every reward, every correction, its behavior becomes more intentional. Over time, randomness gives way to intelligence.
 
@@ -108,7 +108,7 @@ To make this idea more tangible, imagine you’re training a puppy. The first ti
 
 You try again, gently pressing it down, and when it finally sits, you reward it with a treat. That moment  the connection between the action and the reward  imprints a memory. The puppy realizes: sit = treat. After enough repetitions, it begins to sit automatically when it hears the word, anticipating the reward.
 
-https://static.wixstatic.com/media/ffcc74_227f034bc0e84f8bbbb63037c5330d2f~mv2.png/v1/fill/w_842,h_596,al_c,lg_1,q_90,enc_auto/ffcc74_227f034bc0e84f8bbbb63037c5330d2f~mv2.png
+![image](https://static.wixstatic.com/media/ffcc74_227f034bc0e84f8bbbb63037c5330d2f~mv2.png/v1/fill/w_842,h_596,al_c,lg_1,q_90,enc_auto/ffcc74_227f034bc0e84f8bbbb63037c5330d2f~mv2.png)
 
 Now replace the puppy with an AI agent and the treat with a numerical signal. When the agent performs a desirable action, the environment gives it a positive reward. When it fails, it receives nothing  or worse, a penalty. This simple system of incentives and consequences creates complex, intelligent behavior.
 
@@ -124,7 +124,7 @@ This blog isn’t about memorizing formulas or decoding walls of math  it’s ab
 Each post in this series will take you on a journey  from intuition to implementation, from theory to experiment.
 
 You’ll learn how algorithms like Q-Learning, Deep Q-Networks (DQN), and Proximal Policy Optimization (PPO)make decisions, improve through experience, and generalize their knowledge to entirely new challenges.But this won’t be a blog where you just read and nod.You’ll build, train, and observe  coding agents that live and learn inside interactive environments like OpenAI Gym.
-https://static.wixstatic.com/media/ffcc74_5a962d77f4ef41f2acf0a24bbef4ba29~mv2.gif
+![image](https://static.wixstatic.com/media/ffcc74_5a962d77f4ef41f2acf0a24bbef4ba29~mv2.gif)
 
 Imagine OpenAI Gym not as a simulation library, but as a vast digital ocean  a world where agents learn to survive, explore, and adapt.Your agent is a small explorer drifting in these virtual waters.At first, it moves without purpose, colliding with invisible walls, tossed around by uncertainty.But with each episode, it begins to sense the currents  the cause and effect of its own actions.Every misstep sends a ripple of feedback, every success adds a faint pattern to its memory.Slowly, these fragments of experience start forming something remarkable: a strategy.
 
@@ -169,7 +169,7 @@ for episode in range(1000):
 
 At the start, the agent knows nothing.It slips, falls, and fails  over and over.Every episode is a new attempt, and every mistake leaves a trace in the Q-table, a memory of what not to do.The code above, though simple, embodies something profound: a model that improves itself without any explicit teacher.All it has are consequences  rewards and penalties  and through them, it constructs its own understanding of the world.
 
-https://static.wixstatic.com/media/ffcc74_2f188b0ff6714115901d56696bc94e69~mv2.jpeg/v1/fill/w_428,h_230,al_c,lg_1,q_80,enc_auto/ffcc74_2f188b0ff6714115901d56696bc94e69~mv2.jpeg
+![image](https://static.wixstatic.com/media/ffcc74_2f188b0ff6714115901d56696bc94e69~mv2.jpeg/v1/fill/w_428,h_230,al_c,lg_1,q_80,enc_auto/ffcc74_2f188b0ff6714115901d56696bc94e69~mv2.jpeg)
 
 Now imagine this as a small boat in your ocean-themed OpenAI Gym world.In the first few trials, it drifts aimlessly, caught in the unpredictable tides of chance.But as time passes, the boat learns to read the sea  turning at the right time, avoiding hidden rocks, and steering steadily toward its destination.No one is guiding it; there’s no map or compass.Its progress is entirely earned through experience.
 
@@ -209,7 +209,7 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
  # 	Popular RL Papers
   Q-Learning (Watkins, 1989): The Birth of Model-Free Control
 
-  https://static.wixstatic.com/media/ffcc74_1634525ab2e34c31b6a6634749a0fab8~mv2.png/v1/fill/w_412,h_538,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_1634525ab2e34c31b6a6634749a0fab8~mv2.png
+![image](https://static.wixstatic.com/media/ffcc74_1634525ab2e34c31b6a6634749a0fab8~mv2.png/v1/fill/w_412,h_538,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_1634525ab2e34c31b6a6634749a0fab8~mv2.png)
 
 
   <!-- KaTeX -->
@@ -395,7 +395,7 @@ Before 2015, RL was largely confined to simple, low-dimensional domains — maze
 
 DeepMind’s DQN changed that by introducing representation learning.The network didn’t just store Q-values — it understood spatial and temporal regularities from pixels.
 
-https://static.wixstatic.com/media/ffcc74_e02ea9f38152485b98d5c31394216f75~mv2.jpg/v1/fill/w_1172,h_670,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_e02ea9f38152485b98d5c31394216f75~mv2.jpg
+![image](https://static.wixstatic.com/media/ffcc74_e02ea9f38152485b98d5c31394216f75~mv2.jpg/v1/fill/w_1172,h_670,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_e02ea9f38152485b98d5c31394216f75~mv2.jpg)
 
 # From Tabular to Deep Q-Learning
 
@@ -460,7 +460,7 @@ Moving targets destabilize gradient updates
 
 Freeze a copy (Q(s,a;\theta^-)) for (N) steps → periodically sync with online network
 
-https://static.wixstatic.com/media/ffcc74_f15c8fdc8398458ca7ff6ffa1042f643~mv2.png/v1/fill/w_850,h_547,al_c,q_90,enc_auto/ffcc74_f15c8fdc8398458ca7ff6ffa1042f643~mv2.png
+![image](https://static.wixstatic.com/media/ffcc74_f15c8fdc8398458ca7ff6ffa1042f643~mv2.png/v1/fill/w_850,h_547,al_c,q_90,enc_auto/ffcc74_f15c8fdc8398458ca7ff6ffa1042f643~mv2.png)
 
 Together, these created a stable, data-efficient RL pipeline that finally made deep RL feasible.
 
@@ -507,7 +507,7 @@ Such emergent behavior illustrated that reward driven learning could produce hum
 
 Across 49 Atari titles, DQN achieved a median human-normalized score of 121%  beating humans in many games like Breakout, Enduro, and Seaquest.Performance was consistent without any hyperparameter tuning per game.
 
-https://static.wixstatic.com/media/ffcc74_e285e5146cf8449c99fd2c99f9cfdd82~mv2.png/v1/fill/w_850,h_702,al_c,q_90,enc_auto/ffcc74_e285e5146cf8449c99fd2c99f9cfdd82~mv2.png
+![image](https://static.wixstatic.com/media/ffcc74_e285e5146cf8449c99fd2c99f9cfdd82~mv2.png/v1/fill/w_850,h_702,al_c,q_90,enc_auto/ffcc74_e285e5146cf8449c99fd2c99f9cfdd82~mv2.png)
 
 This was the first demonstration that a general RL agent could learn complex tasks directly from raw sensory input.
 
@@ -897,7 +897,7 @@ Each worker maintains a local copy of the model that interacts with the environm
 
 The result was extraordinary. Instead of needing powerful GPUs, A3C could achieve state-of-the-art performance on dozens of Atari games using only CPUs. The asynchronous design not only accelerated learning (by making better use of computational resources) but also introduced diversity into experience collection. Each worker explores different parts of the environment, reducing correlation in training data and enhancing the robustness of the learned policy.
 
-https://static.wixstatic.com/media/ffcc74_6a147ee8f57044e2ade321f496a2f53a~mv2.png/v1/fill/w_884,h_790,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/ffcc74_6a147ee8f57044e2ade321f496a2f53a~mv2.png
+![image](https://static.wixstatic.com/media/ffcc74_6a147ee8f57044e2ade321f496a2f53a~mv2.png/v1/fill/w_884,h_790,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/ffcc74_6a147ee8f57044e2ade321f496a2f53a~mv2.png)
 
 Each worker interacts with its own environment instance and periodically updates a global shared network asynchronously. The global model accumulates gradients from multiple environments, leading to faster convergence and more stable updates.
 
@@ -1636,7 +1636,7 @@ Denny Britz’s Reinforcement Learning GitHub repository includes tabular algori
 
 # RL Playgrounds
 
-https://static.wixstatic.com/media/ffcc74_75f72bc1d73c4341ae87d8f0a68a9d2c~mv2.webp/v1/fill/w_844,h_562,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_75f72bc1d73c4341ae87d8f0a68a9d2c~mv2.webp
+![image](https://static.wixstatic.com/media/ffcc74_75f72bc1d73c4341ae87d8f0a68a9d2c~mv2.webp/v1/fill/w_844,h_562,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_75f72bc1d73c4341ae87d8f0a68a9d2c~mv2.webp)
 
 
 Reinforcement Learning playgrounds are sandboxes for rapid, reproducible experimentation where you prototype algorithms, visualize behavior, tune rewards, and debug safely. OpenAI Gym/Gymnasium offers standardized single-agent benchmarks with a consistent API, from CartPole (balance), to LunarLander (control), to MountainCar (sparse rewards), letting you swap environments with minimal code changes. For multi-agent settings, PettingZoo extends the idea to competitive and cooperative tasks with clear interfaces for parallel or turn-based interactions. Together, these suites enable apples-to-apples comparisons, curriculum design from simple to complex, and fast iteration cycles that turn ideas into working policies.

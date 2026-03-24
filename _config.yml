@@ -6,6 +6,7 @@ theme: minima
 markdown: kramdown
 kramdown:
   input: GFM
+  math_engine: mathjax
 collections:
   papers:
     output: true
