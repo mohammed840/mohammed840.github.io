@@ -780,6 +780,7 @@ This term allows the network to assess how much better an action was compared to
 
 Below is a simplified single-threaded implementation of A3C in PyTorch. While true A3C operates asynchronously with multiple workers running in parallel, this version captures the essence of the method in a self-contained example that can run on a single machine.
 
+```python
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -840,6 +841,7 @@ for episode in range(1000):
 
     if episode % 50 == 0:
         print(f"Episode {episode}: Loss = {loss.item():.3f}, Return = {sum(rewards)}")
+```
 
 
 This simple version demonstrates the dual-network architecture in action. The shared layers extract state features, which then branch into the actor (policy head) and the critic (value head). The actor samples an action, the critic evaluates it, and the advantage function determines how much the actor should adjust its behavior. Over time, the network learns both to predict values accurately and to favor beneficial actions.
