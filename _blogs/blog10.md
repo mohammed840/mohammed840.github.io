@@ -9,10 +9,10 @@ layout: blog
 
 Evolution by natural selection is a scientific theory which aims to explain how natural systems evolved over time into more complex systems. Four main components are necessary for evolution by natural selection to take place:
 
-- **Reproduction:** organisms need to be able to reproduce and generate offsprings in order to perpetuate their species.
-- **Heredity:** offsprings need to resemble to some extent their parents.
-- **Variation:** individuals in a population need to be different from one another.
-- **Change in fitness:** differences between individuals should lead to a change in their reproductive success (fitness).
+**Reproduction:** organisms need to be able to reproduce and generate offsprings in order to perpetuate their species.
+**Heredity:** offsprings need to resemble to some extent their parents.
+**Variation:** individuals in a population need to be different from one another.
+**Change in fitness:** differences between individuals should lead to a change in their reproductive success (fitness).
 
 In evolutionary algorithms, a fitness value can be used as a guide to indicate how close we are to a solution (eg. the higher the value, the closer we are to our desired objective). By grouping closer together all the elements in a population which share a similar fitnesses and further apart all the dissimilar elements, we can then construct a Fitness Landscape (Figure 1). One of the main problems faced by evolutionary algorithms is the presence of local optima in the fitness landscape. Local optima can, in fact, mislead our algorithm to not reach our desired global maxima in favour of a less optimal solution.
 
@@ -38,9 +38,9 @@ A Hill Climber is a type of stochastic local search method which can be used in 
 
 This algorithm can be implemented using the following steps:
 
-1. Create a random individual (eg. a bitstring, a string of characters, etc.).
-2. Apply some form of random mutation to the individual.
-3. If this mutation leads to an increase in fitness of the individual, replace the old individual with the new one and repeat iteratively until we reach our desired fitness score. If a mutation doesn't lead to an increase in fitness (eg. deleterious mutation), discard the mutated individual and keep the original one.
+Create a random individual (eg. a bitstring, a string of characters, etc.).
+Apply some form of random mutation to the individual.
+If this mutation leads to an increase in fitness of the individual, replace the old individual with the new one and repeat iteratively until we reach our desired fitness score. If a mutation doesn't lead to an increase in fitness (eg. deleterious mutation), discard the mutated individual and keep the original one.
 
 As a simple example, let's imagine we know that a genotype represented by a bitstring with 12 ones represents the best possible combination an element in a population can achieve. Our fitness score is simply the number of ones in the bitstring (the greater the number of ones, the closer we are to our desired score).
 
@@ -123,9 +123,9 @@ def crossover(one, two, method):
 
 Since we have an entire population of individuals, we can now make use of different techniques to decide which individuals to crossover and mutate. Some examples of selection techniques are:
 
-- **Fitness Proportionate Selection**
-- **Rank Based Selection**
-- **Tournament Selection**
+**Fitness Proportionate Selection**
+**Rank Based Selection**
+**Tournament Selection**
 
 When using **Fitness Proportionate Selection**, we create an imaginary wheel and divide it into N parts (where N is the number of individuals in the population). The size of each individual's share of the wheel is proportional to its fitness. A fixed point is chosen on the wheel circumference and the wheel is rotated — the region in front of the fixed point is selected. The wheel can be spun multiple times to select multiple individuals for crossover and mutation.
 
@@ -222,8 +222,8 @@ def tournment(pop, proportion_to_keep):
 
 Now we have all the elements needed to create our evolutionary algorithm. There are two main types:
 
-- **Steady-State** (reproduction with replacement): once new offsprings are generated, they are immediately put back into the original population and some less fit elements are discarded to keep the population size constant.
-- **Generational** (reproduction without replacement): new offsprings are put into a new population; after a predetermined number of generations, this new population becomes the current population.
+**Steady-State** (reproduction with replacement): once new offsprings are generated, they are immediately put back into the original population and some less fit elements are discarded to keep the population size constant.
+**Generational** (reproduction without replacement): new offsprings are put into a new population; after a predetermined number of generations, this new population becomes the current population.
 
 An example of a **steady-state** evolutionary algorithm using Rank Based Selection:
 
