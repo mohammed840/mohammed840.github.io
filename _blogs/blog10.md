@@ -1,179 +1,281 @@
 ---
-title: "From Scaling To Research: Reflections On The Ilya Sutskever Conversation With Dwarkesh"
-date: 2025-12-02
-author: "Mohammed Alshehri"
-description: "Sutskever argues the age of scaling is ending — it is back to the age of research, now with big computers. A reflection on what this means for AI, generalization, and the future of intelligence."
+title: "Evolutionary Algorithms: A Practical Introduction in Python"
+date: 2025-10-03
+description: "A practical introduction on how to program Evolutionary Algorithms in Python to solve optimization tasks, including Hill Climbers, selection methods, and TPOT."
+layout: blog
 ---
 
-## From Scaling To Research: Reflections On The Ilya Sutskever Conversation With Dwarkesh
+# Introduction
 
-There is a moment in the recent Dwarkesh Podcast episode with Ilya Sutskever that captures a turning point in how the AI community understands its own progress. Sutskever, one of the central figures behind modern deep learning and now the founder of Safe Superintelligence Inc., looks back at the last few years and says, in effect: the era when simply scaling models was the main engine of progress is ending. It is time to return to the age of research, only this time with very large computers in the background. ([Dwarkesh Podcast][1])
+Evolution by natural selection is a scientific theory which aims to explain how natural systems evolved over time into more complex systems. Four main components are necessary for evolution by natural selection to take place:
 
+- **Reproduction:** organisms need to be able to reproduce and generate offsprings in order to perpetuate their species.
+- **Heredity:** offsprings need to resemble to some extent their parents.
+- **Variation:** individuals in a population need to be different from one another.
+- **Change in fitness:** differences between individuals should lead to a change in their reproductive success (fitness).
 
+In evolutionary algorithms, a fitness value can be used as a guide to indicate how close we are to a solution (eg. the higher the value, the closer we are to our desired objective). By grouping closer together all the elements in a population which share a similar fitnesses and further apart all the dissimilar elements, we can then construct a Fitness Landscape (Figure 1). One of the main problems faced by evolutionary algorithms is the presence of local optima in the fitness landscape. Local optima can, in fact, mislead our algorithm to not reach our desired global maxima in favour of a less optimal solution.
 
-The phrase sounds almost modest, but it carries a sharp edge. For a long stretch of the 2020s, the main recipe for progress was clear. Train larger transformers, on more data, with more compute, and new capabilities would appear. Companies invested staggering sums into GPUs and data centers precisely because this recipe was low risk and highly legible. If performance did not reach some desired level, you scaled again. The Dwarkesh episode gives voice to an emerging unease with that story. It asks whether raw scale has done most of what it can do within the current paradigm and whether the real bottleneck has quietly shifted back to something harder to buy: fundamentally new ideas. ([Teahose][2])
+![Figure 1: Fitness Landscape Example](https://static.wixstatic.com/media/ffcc74_df6b3ed5c0d843dfb0dd423091dffb98~mv2.png/v1/fill/w_1020,h_484,al_c,lg_1,q_90,enc_auto/ffcc74_df6b3ed5c0d843dfb0dd423091dffb98~mv2.png)
 
+*Figure 1: Fitness Landscape Example [1]*
 
+Using variation operators such as crossover and mutations could then be possible to jump across a valley and reach our desired objective.
 
-To understand the weight of that claim, it helps to revisit what the scaling era actually accomplished and where its limits have become visible.
+If using mutation, we allow for a small probability that a random element composing an individual mutates. As an example, if we represent an individual as a bitstring, using mutation we allow for a bit or more of an individual to randomly change (eg. change a 1 for a 0 and vice-versa).
 
+When using crossover instead, we take two elements as parents and combine them together to generate a brand new offspring (Figure 2).
 
-# What The Scaling Era Really Delivered
+![Figure 2: Different types of crossover](https://static.wixstatic.com/media/ffcc74_8e1c7b41d1994f2fbb039c63414e8c7d~mv2.png/v1/fill/w_554,h_440,al_c,lg_1,q_85,enc_auto/ffcc74_8e1c7b41d1994f2fbb039c63414e8c7d~mv2.png)
 
+*Figure 2: Different types of crossover [2]*
 
+In this article, I will walk you through two different approaches to implement evolutionary algorithms in order to solve a simple optimization problem. These same techniques can then be used in order to tackle much more complicated tasks such as Machine Learning Hyperparameters Optimization.
 
-The successes of the scaling era are undeniable. Starting from the early transformer models and extending through increasingly large generations of language and multimodal models, the same core pattern repeated: increase the number of parameters, the volume and diversity of training data, and the compute budget, and the model becomes more capable across a wide variety of tasks. Performance curves on benchmarks for translation, question answering, coding, and reasoning improved in a surprisingly smooth fashion as model and data scale grew. This was not just correlation but a robust engineering fact that teams around the world were able to reproduce.
+# Hill Climber
 
+A Hill Climber is a type of stochastic local search method which can be used in order to solve optimization problems.
 
+This algorithm can be implemented using the following steps:
 
-This repeated success gave rise to a seductive narrative. Intelligence was treated as an emergent property of large scale prediction. If a system can predict the next token with sufficiently rich internal representations, it will eventually be able to solve almost any task that can be formulated in language or code. Under this view, there was no sharp conceptual boundary between current models and more advanced ones. The difference was mostly one of scale and refinement.
+1. Create a random individual (eg. a bitstring, a string of characters, etc.).
+2. Apply some form of random mutation to the individual.
+3. If this mutation leads to an increase in fitness of the individual, replace the old individual with the new one and repeat iteratively until we reach our desired fitness score. If a mutation doesn't lead to an increase in fitness (eg. deleterious mutation), discard the mutated individual and keep the original one.
 
+As a simple example, let's imagine we know that a genotype represented by a bitstring with 12 ones represents the best possible combination an element in a population can achieve. Our fitness score is simply the number of ones in the bitstring (the greater the number of ones, the closer we are to our desired score).
 
+In order to implement our Hill Climber, we first need to create a mutation function. We will allow for a 30% probability that each individual bit might mutate.
 
-Companies and labs acted accordingly. Effort flowed into training ever larger models and building the infrastructure required to support them. The core architecture, while refined, remained recognizably the same. The main bet was that more of the same would carry the field all the way to artificial general intelligence, or at least close enough that the remaining distance would be bridged by incremental improvements.
+```python
+import numpy as np
+import pandas as pd
+import math
+import random
+import matplotlib.pyplot as plt
 
+def mutations(individual):
+    res = []
+    for i in individual:
+        if int(i) == 0:
+            r = 1
+        elif int(i) == 1:
+            r = 0
+        res.append(np.random.choice([int(i), r], p=[0.7, 0.3]))
+    return ''.join([str(i) for i in res])
+```
 
+Finally, we can create our Hill Climber and test it with an individual with initial fitness of zero.
 
-The Dwarkesh conversation does not deny any of this. Instead, it takes these successes as given, then asks why the gap between benchmark performance and real world impact still feels so large.
+```python
+def hill_climber(pop):
+    fitness = pop[0].count('1')
+    while fitness < len(pop[0]):
+        res = mutations(*pop)
+        fitness2 = res.count('1')
+        if fitness2 > fitness:
+            pop = [res]
+            fitness = fitness2
+    return fitness, pop
 
+fitness, pop = hill_climber(['000000000000'])
+print('Fitness:', fitness, '\nResulting Individual:', pop)
+```
 
-# The Generalization Gap At The Heart Of The Podcast 
+```
+Fitness: 12
+Resulting Individual: ['111111111111']
+```
 
-One of the central themes of the Ilya Sutskever episode is the persistent gap between how models perform on evaluations and how they behave in messy, real world settings. Sutskever notes that current systems can achieve excellent, sometimes superhuman, scores on a wide range of benchmarks, yet they still generalize dramatically worse than humans when faced with new tasks or slightly shifted conditions. ([podchemy.com][3])
+# Evolutionary Algorithms
 
+One of the main problems of a Hill Climber is that it might be necessary to run the algorithm multiple times in order to try to escape a local minima. Using different initialization conditions, our initial individual might be placed closer or further away from the local optima.
 
+Evolutionary algorithms solve this problem by using a population instead of a single individual (exploits parallelism) and by making use of crossover as well as mutation as variation mechanisms.
 
-This is more than a complaint about occasional hallucinations or failures. It points to a deeper structural issue. If a model can ace difficult tests but still behave in fragile, surprising, or obviously flawed ways in deployment, then something about its inner organization is misaligned with our intuitive notion of understanding. The system is very good at performing well in carefully specified evaluation regimes. It is less good at robustly solving problems that are only partially specified, open ended, or qualitatively different from what it saw before.
+These two additions can be implemented in Python using the following two functions.
 
+```python
+def population(num, length):
+    pop = []
+    for j in range(num):
+        res = []
+        for i in range(length):
+            res.append(np.random.choice([0, 1], p=[0.5, 0.5]))
+        pop.append(''.join([str(i) for i in res]))
+    return pop
 
 
-In the podcast and in summaries of it, this is sometimes framed as the problem of generalization. Human beings, even teenagers learning to drive, can acquire new complex skills with surprisingly little explicit data, guided by an internal sense of what matters and what counts as a correct or safe outcome. Models, by contrast, often require orders of magnitude more data and still fail in obvious ways when taken slightly off their training manifold. ([podchemy.com][3])
-
-
-
-This mismatch is at the core of Sutskever’s claim that simply scaling up more of the same will not solve the problem. If models already have vast capacity and training data, and yet their generalization remains qualitatively different from human generalization, then the issue is not just that they are not big enough.
-
-
-# Performance, Intelligence, And The Limits Of External Optimization
-
-Another way to look at the argument in the podcast is through the distinction between performance and intelligence. The scaling era optimized performance. It targeted measurable outcomes: benchmark scores, task accuracy, user satisfaction ratings, reward models in reinforcement learning from human feedback. These are all external signals. The model is trained to produce outputs that match targets or please evaluators, but it does not have an internal concept of why those outputs are good.
-
-
-
-In the Dwarkesh interview, Sutskever alludes to the idea that human emotions play a role similar to an internal value function. Emotions, in this view, are a compact, evolutionarily shaped mechanism that guides behavior and learning without requiring constant external rewards. They provide immediate feedback about what is desirable or dangerous, even in situations that have never been encountered before. ([podchemy.com][3])
-
-
-
-Current AI systems, by contrast, do not have a robust internal value function. They have parameter settings that encode statistical patterns, and they have been shaped by large scale optimization procedures to match some objective. However, there is no simple, interpretable inner structure that corresponds to a stable sense of what is good or bad across different contexts.
-
-
-
-This matters because intelligence, in the deeper sense, seems to require internally guided behavior. An intelligent system should be able to evaluate its own thoughts, to prefer some strategies over others, and to pursue goals consistently even when external feedback is sparse or delayed. External supervision alone can approximate this in narrow regimes, but it does not automatically give rise to the kind of unified, coherent inner evaluation that human minds appear to have.
-
-
-
-The podcast suggests, implicitly and at times explicitly, that this is one of the reasons why the pure scaling strategy is running out of conceptual steam. Scaling improves performance relative to external metrics, but it does not obviously build the internal machinery that would turn these systems into agents with robust, humanlike generalization. 
-
-
-# Why Sutskever Says The Age Of Scaling Is Over
-
-
-In the Dwarkesh episode and in subsequent coverage, Sutskever describes the last few years as an age of scaling, roughly from 2020 to 2025, during which compute was the dominant bottleneck and pretraining provided a clear, low risk pathway to improvement. Now, he argues, that situation has changed. The scale of current models and training runs is already enormous. The question he poses is whether increasing that scale another hundred times would transform the situation in a fundamental way, and his answer is that it probably would not. ([Teahose][2])
-
-
-
-This does not mean that larger models would not be different or more capable in many respects. It means that the underlying conceptual problems, especially the generalization gap and the lack of deep internal value structures, would still be waiting on the other side of that investment. More data and compute will produce refinements. They are unlikely on their own to resolve the mismatch between benchmark brilliance and real world brittleness.
-
-
-
-Hence the phrase that has been echoed in articles and summaries of the interview: the age of scaling is over, and it is back to the age of research, now with big computers. The ordering in that sentence matters. Research comes first, compute second. Compute is still extremely important, but its role is to empower new ideas rather than to stand in for them.
-
-
-# The Return Of Ideas As The Bottleneck
-
-One of the more thought provoking observations associated with the podcast and its commentary is Sutskever’s remark that there are now more companies than ideas. During the scaling era, the path to relevance was clear. You obtained access to large amounts of compute, trained foundation models, built products around them, and refined the process. Many organizations pursued more or less the same strategy, differentiated by resources, execution, and product design, but not by fundamentally different conceptions of how intelligence should work. ([podchemy.com][3])
-
-
-
-If scaling is no longer the main frontier, this balance changes. The true bottleneck shifts back toward novel, high impact ideas about architectures, learning mechanisms, and ways of integrating AI into the world. Compute continues to be necessary to demonstrate and scale those ideas, but it is not the scarce ingredient in the same way.
-
-
-
-This vision has historical echoes. In earlier decades, researchers often had interesting ideas but lacked the compute to prove them convincingly. That made it hard to tell which concepts were genuinely powerful and which were artifacts of small experiments. Today, as Sutskever points out, the situation is inverted. Compute is relatively abundant at the upper end of the field. It is now possible to test the viability of new architectures or training tricks at meaningful scales, at least within large labs and well resourced startups. The limiter is the flow of ideas that are truly different from what has already been tried.
-
-
-
-The implication is that the next big advances in AI will look less like parameter count announcements and more like conceptual breakthroughs. They may involve new ways to represent knowledge, new forms of interaction between agents and environments, or new understanding of how to embed value functions inside learning systems in a robust way. They will likely be tested on large hardware, but their origin will be intellectual, not economic.
-
-
-# Safety, Alignment, And The Need For Internal Structure
-
-Another important thread that runs through the Ilya Sutskever conversation is the relationship between capability, safety, and the overall trajectory toward superintelligent systems. As head of Safe Superintelligence Inc., Sutskever explicitly frames his work around the idea of building extremely powerful AI that is safe by design. ([Dwarkesh Podcast][1])
-
-
-
-This concern interacts directly with the end of the scaling era. If one believes that pure scaling will not automatically produce systems with humanlike generalization or robust internal value structures, then safety cannot be an afterthought applied on top of ever larger models. It has to be built into the way those models are conceived and trained from the beginning.
-
-
-
-In the podcast, there is a repeated emphasis on understanding what is missing from current models, especially in terms of their internal evaluation mechanisms. If emotions in humans function as a primitive but powerful value network, then something analogous may be needed in AI systems if they are to behave coherently and safely in a wide range of situations. This is not a matter of adding more data to the pretraining corpus. It is a research question about how to formalize and implement something like internal values in a machine.
-
-
-
-Here again, scaling is necessary but not sufficient. Training such systems will require large compute budgets, but the question of what exactly is being trained and why becomes central. In that sense, the shift from scaling to research is also a shift from a mainly external view of AI behavior to a more internal one, where the structure of the system and its self evaluation processes are just as important as its external outputs.
-
-
-
-# Economic And Cultural Consequences Of A Post Scaling Turn
-
-The framing of the Dwarkesh Podcast episode has implications beyond pure research. If a field moves from a regime where progress is mostly a function of capital and engineering to one where it depends more heavily on ideas and scientific taste, the competitive landscape changes. Large companies still enjoy advantages in data, compute, and deployment. However, their success becomes more dependent on their ability to cultivate and recognize deep conceptual work, not only on their capacity to run enormous training jobs.
-
-
-
-For smaller teams and independent researchers, this shift can be both daunting and encouraging. It means that brute force replication of large model training runs is unlikely to be a winning strategy. At the same time, it opens the possibility that genuinely novel insights about architectures, learning processes, or evaluation can matter again, even if they begin in more modest settings.
-
-
-
-Culturally, moving from scaling to research can also influence how the community talks about progress. In a scaling dominated era, charts showing performance versus compute and parameter count carry a great deal of weight. In a research driven era, progress may be more uneven and harder to quantify in the short term. New ideas can take time to mature and may initially underperform simpler baselines before revealing their strengths. Patience and conceptual clarity become more important virtues than the ability to show smooth, upward trending curves.
-
-
-#  What Might The Next Era Actually Look Like
-
-Trying to predict the specific technical shape of the post scaling era is speculative, but it is possible to outline some themes that align with the concerns raised in the Ilya Sutskever podcast.
-
-
-
-One likely theme is richer interaction. Instead of treating training as a one way process of ingesting static data, more systems may learn through ongoing interaction with environments, humans, or other agents. This could allow them to build internal models of cause and effect and to refine their behavior using feedback that is not neatly packaged as supervised labels.
-
-
-
-Another is explicit structure. Current models rely heavily on implicit representations that emerge from end to end training. Future systems might include more explicit modules for memory, planning, self evaluation, and environment modeling, with architectures designed to encourage certain kinds of reasoning rather than hoping that such capabilities emerge spontaneously from scale.
-
-
-
-A third is internal value modeling. Inspired in part by the discussion of emotions and value functions in the podcast, research may aim to encode something like a learned but stable evaluation layer inside models, so they have a consistent way to assess their own actions and thoughts across many situations. Achieving this would require blending insights from machine learning, cognitive science, and philosophy, since it touches on the nature of goals, preferences, and ethical constraints.
-
-
-
-All of these directions are demanding. None can be reduced to a simple formula of more parameters plus more data. They represent exactly the sort of research agenda that an age of research, as Sutskever describes it, is meant to prioritize.
-
-
-# A Turning Point, Not A Dead End
-
-Seen in this light, the Ilya Sutskever episode of the Dwarkesh Podcast is not a funeral for scaling but a reframing of its role. Scaling has taken AI remarkably far. It has revealed how much can be done with a single architecture pushed very hard. It has also clarified the limits of that approach, especially around generalization, internal values, and the gap between evaluation metrics and real world effectiveness.
-
-
-
-Declaring that the age of scaling is over is not a claim that AI progress will slow to a halt. It is a statement that the simple story of bigger models as the main path forward is no longer enough. The field is entering a more complex, and in some ways more interesting, phase in which ideas, architectures, and deep research questions reclaim center stage, supported rather than overshadowed by the immense compute that the scaling era left behind.
-
-
-
-In that sense, the conversation between Sutskever and Dwarkesh is a marker of transition. It acknowledges the achievements of the past few years while insisting that the most important work still lies ahead, not in building yet another scaled up version of the same system, but in asking what kind of system is needed in the first place if we want machines that truly generalize, reason, and align with human values.
-
-
-
-[1]: https://www.dwarkesh.com/p/ilya-sutskever-2?utm_source=chatgpt.com "Ilya Sutskever – We're moving from the age of scaling to ..."
-
-[2]: https://www.teahose.com/podcast/Dwarkesh/Ilya%20Sutskever%20%E2%80%93%20We%27re%20moving%20from%20the%20age%20of%20scaling%20to%20the%20age%20of%20research?utm_source=chatgpt.com "Ilya Sutskever – We're moving from the age of scaling to the ..."
-
-[3]: https://www.podchemy.com/notes/ilya-sutskever-the-age-of-scaling-is-over-45724979786?utm_source=chatgpt.com "Podcast Notes /// Ilya Sutskever – The age of scaling is over"
+def crossover(one, two, method):
+    if (len(one) == len(two)) == True and method < 3:
+        block = math.ceil(len(one) / (method + 1))
+        res = []
+        count = 1
+        for i in range(0, len(one), block):
+            if count % 2 == 0:
+                res.append(one[i:i+block])
+            else:
+                res.append(two[i:i+block])
+            count += 1
+    else:
+        return print('Just one or two points crossover allowed!')
+    return ''.join(res)
+```
+
+Since we have an entire population of individuals, we can now make use of different techniques to decide which individuals to crossover and mutate. Some examples of selection techniques are:
+
+- **Fitness Proportionate Selection**
+- **Rank Based Selection**
+- **Tournament Selection**
+
+When using **Fitness Proportionate Selection**, we create an imaginary wheel and divide it into N parts (where N is the number of individuals in the population). The size of each individual's share of the wheel is proportional to its fitness. A fixed point is chosen on the wheel circumference and the wheel is rotated — the region in front of the fixed point is selected. The wheel can be spun multiple times to select multiple individuals for crossover and mutation.
+
+```python
+def fitness_proportionate_selection(pop, fitnesses):
+    portions = []
+    for i in fitnesses:
+        portions.append(i / sum(fitnesses))
+
+    parents = []
+    for i in range(2):
+        parents.append(np.random.choice(pop, p=portions))
+
+    return parents
+```
+
+By using a population of 4 individuals and plotting the results, the graph in Figure 3 can be reproduced.
+
+![Figure 3: Fitness Proportionate Selection](https://static.wixstatic.com/media/ffcc74_06b2fda244d84551983e933c21b81562~mv2.png/v1/fill/w_496,h_343,al_c,lg_1,q_85,enc_auto/ffcc74_06b2fda244d84551983e933c21b81562~mv2.png)
+
+*Figure 3: Fitness Proportionate Selection*
+
+When using Fitness Proportionate Selection, if one element has much higher fitness compared to the others, it would be almost impossible for the other elements to be selected. To solve this, we can use **Rank Based Selection**.
+
+Rank selection ranks each individual based on its fitness (eg. the worst individual gets Rank 1, the second-worst Rank 2, and so on). Using this method, the wheel shares will be more evenly distributed.
+
+```python
+def rank_selection(pop, fitnesses, number_of_parents):
+    ranks = {}
+    for i, j in zip(pop, fitnesses):
+        ranks[i] = j
+
+    a = np.sort(list(ranks.values()))
+    res = {}
+    for i in a:
+        for j, z in zip(list(ranks.values()), list(ranks.keys())):
+            if i == j:
+                res[z] = i
+
+    count = 0
+    previous = np.inf
+    for i, h in zip(list(res.values()), list(res.keys())):
+        if i != previous:
+            count += 1
+        res[h] = count
+        previous = i
+
+    proportions = [i / sum(list(res.values())) for i in list(res.values())]
+
+    parents = []
+    for i in range(number_of_parents):
+        selected = np.random.choice(pop, p=proportions)
+        parents.append(selected)
+        for i, j in enumerate(pop):
+            if j == selected:
+                pop.pop(i)
+                proportions.pop(i)
+                proportions = [i / sum(proportions) for i in proportions]
+                break
+
+    return parents
+```
+
+Plotting the results with a population of 4, using Rank Based Selection, gives us Figure 4.
+
+![Figure 4: Rank Based Selection](https://static.wixstatic.com/media/ffcc74_5ee8a43442814ecfa34909b0eb24b7aa~mv2.png/v1/fill/w_455,h_344,al_c,lg_1,q_85,enc_auto/ffcc74_5ee8a43442814ecfa34909b0eb24b7aa~mv2.png)
+
+*Figure 4: Rank Based Selection*
+
+Finally, we can use **Tournament Selection**. We select N individuals at random from the population and choose the best among them. This process can be repeated to select multiple individuals.
+
+```python
+def tournment(pop, proportion_to_keep):
+    '''
+    If proportion_to_keep is less than 1, we input the percentage proportion of
+    the amount of individuals we want to keep. If proportion is instead greater
+    than 1, we input the explicit number of individuals we want to keep.
+    '''
+    if proportion_to_keep < 1:
+        delete_num = len(pop) - (int(len(pop) * proportion_to_keep))
+    else:
+        delete_num = int(len(pop) - proportion_to_keep)
+
+    for i in range(delete_num):
+        a = pop.pop(random.randrange(len(pop)))
+        b = pop.pop(random.randrange(len(pop)))
+        if a.count('1') > b.count('1'):
+            pop.append(a)
+        else:
+            pop.append(b)
+
+    return pop
+```
+
+Now we have all the elements needed to create our evolutionary algorithm. There are two main types:
+
+- **Steady-State** (reproduction with replacement): once new offsprings are generated, they are immediately put back into the original population and some less fit elements are discarded to keep the population size constant.
+- **Generational** (reproduction without replacement): new offsprings are put into a new population; after a predetermined number of generations, this new population becomes the current population.
+
+An example of a **steady-state** evolutionary algorithm using Rank Based Selection:
+
+```python
+pop = population(100, 12)
+fitness = 0
+
+while fitness < len(pop[0]):
+    fitnesses = {}
+    for i in pop:
+        fitnesses[i] = i.count('1')
+    fitness = max(fitnesses.values())
+    value = max(fitnesses)
+    parents = rank_selection(list(fitnesses.keys()), list(fitnesses.values()), 2)
+    offspring = crossover(parents[0], parents[1], 2)
+    offspring = mutations(offspring)
+    for j, i in enumerate(pop):
+        if i == min(fitnesses):
+            pop.pop(j)
+            break
+    pop.append(offspring)
+```
+
+An example of a **generational** evolutionary algorithm using Rank Based Selection:
+
+```python
+pop = population(100, 12)
+fitness = 0
+
+while fitness < len(pop[0]):
+    newpop = []
+    for i in range(len(pop)):
+        fitnesses = {}
+        for i in pop:
+            fitnesses[i] = i.count('1')
+        fitness = max(fitnesses.values())
+        value = max(fitnesses)
+        parents = rank_selection(list(fitnesses.keys()), list(fitnesses.values()), 10)
+        offspring = crossover(parents[0], parents[1], 2)
+        offspring = mutations(offspring)
+        newpop.append(offspring)
+    pop = newpop
+```
+
+# TPOT
+
+Evolutionary Algorithms can be implemented in Python using the [TPOT](http://epistasislab.github.io/tpot/) Auto Machine Learning library. TPOT is built on the scikit-learn library and can be used for either regression or classification tasks.
+
+One of the main applications of Evolutionary Algorithms in Machine Learning is **Hyperparameters Optimization**. For example, imagine we create a population of N Machine Learning models with some predefined hyperparameters. We then calculate the accuracy of each model and keep just half (the ones that perform best). We generate offsprings with similar hyperparameters to the best models and repeat the cycle for a defined number of generations. In this way, just the best models survive at the end of the process.
+
+# Bibliography
+
+[1] Evolutionary optimization of robot morphology and control. Tønnes Nygaard. [ResearchGate](https://www.researchgate.net/figure/An-example-of-a-fairly-simple-three-dimensional-fitness-landscape-including-two-local_fig2_323772899)
+
+[2] Genetic Algorithms in Wireless Networking: Techniques, Applications, and Issues. Usama Mehboob et al. [ResearchGate](https://www.researchgate.net/figure/Illustration-of-examples-of-one-point-two-points-and-uniform-crossover-methods-Adapted_fig5_268525551)
