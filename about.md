@@ -36,6 +36,4 @@ At **IBM**, I worked on the **Watsonx** team as a Multimodal AI Engineer, buildi
 
 I care about going from research to production, taking **foundation models** and turning them into highly scalable, production ready systems. I'm especially interested in **evaluation** (if you can't measure it, you can't improve it), **closing tooling gaps** in underserved domains, **RL for language** (RLHF, RLVR, PPO, GRPO, reward modeling), and **reasoning models** where RL training enables models to develop stronger chain of thought and problem solving capabilities.
 
-## Skills
 
-PyTorch, Hugging Face Transformers, TensorFlow, RLlib, LoRA/SFT/RLHF/RLVR, PPO, GRPO, reasoning models, prompt engineering, ASR pipelines, Python, Docker, Linux, Node.js, Express.js, React, REST APIs, Nginx, DigitalOcean, CI/CD.
