@@ -314,21 +314,23 @@ Key takeaway: Each line of the update rule is a direct numerical realization of 
 
 Think of it as a self-consistent equation for the universe of optimal decisions:
 
-  ┌───────────────────────────────┐
-  │ Current state–action: (s, a)  │
-  └───────────────────────────────┘
-                 │
-                 ▼
-   Take action → Receive reward r
-                 │
-                 ▼
-   Next state s' → Evaluate best future value max_a' Q(s', a')
-                 │
-                 ▼
-   Combine → r + γ * max_a' Q(s', a')
-                 │
-                 ▼
-   Update Q(s,a) ← Old Q(s,a) + α * (Target − Old)
+```
+┌───────────────────────────────┐
+│ Current state–action: (s, a)  │
+└───────────────────────────────┘
+               │
+               ▼
+ Take action → Receive reward r
+               │
+               ▼
+ Next state s' → Evaluate best future value max_a' Q(s', a')
+               │
+               ▼
+ Combine → r + γ * max_a' Q(s', a')
+               │
+               ▼
+ Update Q(s,a) ← Old Q(s,a) + α * (Target − Old)
+```
 
 This bootstrapping is what allows an agent to learn long-term outcomes from immediate experiences.
 
