@@ -327,12 +327,12 @@ This bootstrapping is what allows an agent to learn long-term outcomes from imme
 
 Although elegant, Watkins’ formulation had some practical challenges:
 
-\mid Limitation \mid Solution \mid
-\mid---\mid---\mid
-\mid Over-estimation bias from max operator \mid Double Q-Learning \mid
-\mid Slow convergence in large spaces \mid Function approximation (Deep Q-Networks) \mid
-\mid Poor exploration \mid Entropy regularization / ε decay / Soft-Q \mid
-\mid Instability with neural networks \mid Experience Replay + Target Networks (DQN) \mid
+| Limitation | Solution |
+|---|---|
+| Over-estimation bias from max operator | Double Q-Learning |
+| Slow convergence in large spaces | Function approximation (Deep Q-Networks) |
+| Poor exploration | Entropy regularization / ε decay / Soft-Q |
+| Instability with neural networks | Experience Replay + Target Networks (DQN) |
 
 These refinements show how Q-Learning served as the seed for an entire field of algorithms.
 
@@ -372,10 +372,10 @@ Here $\theta$ are the parameters of the online network, and $\theta^-$ those of 
 
 Naively combining Q-Learning with neural nets quickly diverges.DeepMind introduced two elegant yet powerful fixes:
 
-\mid Technique \mid Problem Solved \mid Mechanism \mid
-\mid---\mid---\mid---\mid
-\mid Experience Replay \mid Temporal correlation between samples \mid Store past transitions (s,a,r,s') → sample random mini-batches to approximate i.i.d. data \mid
-\mid Target Network \mid Moving targets destabilize gradient updates \mid Freeze a copy Q(s,a;θ⁻) for N steps → periodically sync with online network \mid
+| Technique | Problem Solved | Mechanism |
+|---|---|---|
+| Experience Replay | Temporal correlation between samples | Store past transitions (s,a,r,s') → sample random mini-batches to approximate i.i.d. data |
+| Target Network | Moving targets destabilize gradient updates | Freeze a copy Q(s,a;θ⁻) for N steps → periodically sync with online network |
 
 ![image](https://static.wixstatic.com/media/ffcc74_f15c8fdc8398458ca7ff6ffa1042f643~mv2.png/v1/fill/w_850,h_547,al_c,q_90,enc_auto/ffcc74_f15c8fdc8398458ca7ff6ffa1042f643~mv2.png)
 
@@ -1616,7 +1616,7 @@ if done: break
 Asynchronous Advantage Actor–Critic (A3C) accelerates and stabilizes training by running many lightweight actor-learners in parallel environments, each with its own copy of parameters θ (policy) and θᵥ (value). Each worker collects short on-policy rollouts, computes multi-step returns and advantages
 A<sub>t</sub> = ∑<sub>k=0</sub><sup>n−1</sup> γ<sup>k</sup> r<sub>{t+k}</sub> + γ<sup>n</sup> V<sub>θᵥ</sub>(s<sub>{t+n}</sub>) − V<sub>θᵥ</sub>(s<sub>t</sub>),
 and then pushes *asynchronous* gradients to shared parameters (often via a Hogwild-style update) so exploration decorrelates naturally across threads. The policy is optimized by maximizing the entropy-regularized objective
-J(θ) = E[∑<sub>t</sub> log π<sub>θ</sub>(a<sub>t</sub> \mid s<sub>t</sub>) · Â<sub>t</sub> + β · H(π<sub>θ</sub>(· \mid s<sub>t</sub>))],
+J(θ) = E[∑<sub>t</sub> log π<sub>θ</sub>(a<sub>t</sub> | s<sub>t</sub>) · Â<sub>t</sub> + β · H(π<sub>θ</sub>(· | s<sub>t</sub>))],
 while the critic minimizes
 ∑<sub>t</sub>(R<sub>t</sub> − V<sub>θᵥ</sub>(s<sub>t</sub>))<sup>2</sup>.
 Advantage Actor–Critic (A2C) is the *synchronous* variant: it runs the same parallel rollout collection but averages gradients across workers and applies a single update step per cycle. In practice, A3C/A2C are strong choices for discrete or continuous actions, scale well on CPUs, and learn robust behaviors without replay buffers. Key knobs are the rollout length n, entropy weight β, learning rate, and the balance of workers and envs per worker.
@@ -1650,7 +1650,7 @@ Apply gradients to shared θ, θᵥ immediately
 // Tune n (rollout length), β (entropy), c_v (value weight)
 ```
 
-**Why parallelism helps.** Multiple actors diversify trajectories and decorrelate updates without a replay buffer. Short n-step returns reduce bias/variance trade-offs, entropy β·H(π) sustains exploration, and CPU-friendly threads scale easily. A2C’s synchronized averaging often improves stability on GPUs; A3C’s async updates can be faster on many-core CPUs. Typical heads share a convolutional (or MLP) torso with two output branches: π<sub>θ</sub>(a \mid s) an
+**Why parallelism helps.** Multiple actors diversify trajectories and decorrelate updates without a replay buffer. Short n-step returns reduce bias/variance trade-offs, entropy β·H(π) sustains exploration, and CPU-friendly threads scale easily. A2C’s synchronized averaging often improves stability on GPUs; A3C’s async updates can be faster on many-core CPUs. Typical heads share a convolutional (or MLP) torso with two output branches: π<sub>θ</sub>(a | s) an
   
   
   
