@@ -544,7 +544,9 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 <p><em>(Proceedings of Machine Learning Research)</em></p>
 If you prefer a learning-curve image, generate it from the code below (average episodic return vs. episodes) and embed it as Figure 3.5.
 
- Pseudocode (REINFORCE with Baseline)
+## Pseudocode (REINFORCE with Baseline)
+
+```
 
  Initialize θ; optional value net Vψ(s)
 repeat for each iteration:
@@ -560,8 +562,12 @@ repeat for each iteration:
         Ā_t ← (G_t − mean(G)) / std(G)
     Update θ by ascending ∑_t log πθ(a_t|s_t) · Ā_t + β·H[πθ(·|s_t)]
 until solved
+```
 
- PyTorch Snippet — Discrete Actions (CartPole, “vanilla” REINFORCE)
+
+## PyTorch Snippet — Discrete Actions (CartPole)
+
+```python
 
  # REINFORCE on CartPole-v1 (discrete) — minimal, clear
 import gym, torch, torch.nn as nn, torch.optim as optim
@@ -605,6 +611,8 @@ for ep in range(600):
 
     if ep % 50 == 0:
         print(f"Episode {ep} | loss {loss.item():.3f} | return {sum(rews):.1f}")
+```
+
 
 
 Why this works: REINFORCE uses Monte-Carlo returns and a (normalized) baseline; an entropy bonusprevents premature collapse.
@@ -614,6 +622,7 @@ Why this works: REINFORCE uses Monte-Carlo returns and a (normalized) baseline; 
 
 This shows a Gaussian policy with learnable mean and log-std. For simplicity, we clamp actions to env bounds (tanh-squash with proper log-prob correction is more exact but longer).
 
+```python
 # REINFORCE for continuous control (Gaussian policy)
 import gym, torch, torch.nn as nn, torch.optim as optim
 import numpy as np
@@ -672,6 +681,8 @@ for ep in range(800):
 
     if ep % 50 == 0:
         print(f"[Cont] Episode {ep} | return {sum(rews):.1f}")
+```
+
 
 
 Note: For production-grade continuous PG, prefer actor-critic (with learned (V_\psi)), GAE, and proper tanh-squash log-prob correction. SAC adds max-entropy objectives to further stabilize/encourage exploration. (Proceedings of Machine Learning Research)
