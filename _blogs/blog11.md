@@ -219,6 +219,8 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
 
   
 
+
+{::nomarkdown}
 <h3>Q-Learning (Watkins, 1989): The First Practical Model-Free Control Algorithm</h3>
 
 <p>In 1989, Christopher J. C. H. Watkins introduced a breakthrough in reinforcement learning: Q-Learning. It was the first practical algorithm that could learn optimal behavior purely from experience, without knowing how the world works underneath. This work, later formalized in Watkins &amp; Dayan (1992), became the foundation of modern RL—from Deep Q-Networks (DQN) to AlphaGo.</p>
@@ -232,13 +234,21 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
 <p>The optimal action-value function $Q^*(s,a)$ satisfies the Bellman optimality equation:</p>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$Q^*(s,a) = \mathbb{E}\!\left[\, r_{t+1} + \gamma \max_{a'} Q^*(s_{t+1}, a') \,\middle|\, s_t=s, a_t=a \right].$$
+
+{::nomarkdown}
 </div>
 
 <p>If $Q^*(s,a)$ were known, the optimal policy is simply</p>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$\pi^*(s) = \arg\max_{a} Q^*(s,a).$$
+
+{::nomarkdown}
 </div>
 
 <p>Since $Q^*$ is unknown, Q-Learning approximates it from experience.</p>
@@ -248,10 +258,14 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
 <p>Given a transition $(s_t,a_t,r_{t+1},s_{t+1})$, the update is:</p>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$Q(s_t,a_t) \leftarrow Q(s_t,a_t)
     + \alpha \big[ r_{t+1}
     + \gamma \max_{a'} Q(s_{t+1},a')
     - Q(s_t,a_t) \big].$$
+
+{::nomarkdown}
 </div>
 
 <p>Here $\alpha$ is the learning rate and $\gamma$ the discount factor. The term $\max_{a'}Q(s_{t+1},a')$ bootstraps from the next state. Q-Learning is off-policy: it learns the greedy target while following an exploratory policy such as $\varepsilon$-greedy (choose a random action with probability $\varepsilon$, otherwise the greedy one).</p>
@@ -267,6 +281,8 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
 <h3>Citations</h3>
 
 <p>Watkins, C. J. C. H. (1989). <em>Learning from Delayed Rewards</em>, PhD Thesis, King’s College Cambridge.<br>
+{:/nomarkdown}
+
 Watkins &amp; Dayan (1992). <em>Q-learning</em>. <em>Machine Learning</em> 8: 279–292.<br>
 Mnih et al. (2015). <em>Human-level control through deep reinforcement learning</em>. <em>Nature</em> 518: 529–533.</p>
 
@@ -382,10 +398,16 @@ DeepMind’s DQN changed that by introducing representation learning.The network
 
   
 
+
+{::nomarkdown}
 <h3>a) Classical Q-Learning recap</h3>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$Q(s,a) \leftarrow Q(s,a) + \alpha \Big[r + \gamma \max_{a'} Q(s',a') - Q(s,a)\Big]$$
+
+{::nomarkdown}
 </div>
 
 <p>This update iteratively drives $Q$ toward the Bellman optimality fixed point. In tabular settings, every $(s,a)$ pair has its own entry.</p>
@@ -395,10 +417,16 @@ DeepMind’s DQN changed that by introducing representation learning.The network
 <p>Replace the table with a neural network $Q(s,a;\,\theta)$ and train by minimizing a squared temporal-difference loss with a target network:</p>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$L(\theta) \;=\; \Big(r + \gamma \max_{a'} Q(s',a';\,\theta^-) \;-\; Q(s,a;\,\theta)\Big)^2$$
+
+{::nomarkdown}
 </div>
 
 <p>Here $\theta$ are the parameters of the online network, and $\theta^-$ those of the target network. Gradients of $L$ backpropagate through the convolutional layers, enabling the agent to generalize across similar states.</p>
+{:/nomarkdown}
+
 
 
 #  Stabilization Mechanisms — The Hidden Genius
@@ -492,15 +520,23 @@ These models now power applications in robotics, game AI, finance, and autonomou
 
   
 
+
+{::nomarkdown}
 <h3>Policy Gradient (PG) methods optimize the expected return directly by adjusting the parameters of a stochastic policy $\pi_\theta(a|s)$. Using the likelihood-ratio trick, the vanilla REINFORCE gradient is:</h3>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}\!\left[\nabla_\theta \log \pi_\theta(a_t|s_t) \, R_t \right].$$
+
+{::nomarkdown}
 </div>
 
 <p>This increases the probability of actions that produced high returns — effectively a form of reward-weighted imitation. The key conceptual win over Q-learning–style methods is that policy gradients naturally support continuous actions and differentiable policies.</p>
 
 <p><em>(www-anw.cs.umass.edu)</em></p>
+{:/nomarkdown}
+
 
 
  Why PG Methods Matter (Context & Impact)
@@ -517,15 +553,23 @@ These models now power applications in robotics, game AI, finance, and autonomou
 
   
 
+
+{::nomarkdown}
 <h3>REINFORCE updates are simple but high-variance (episode-level credit assignment). Subtracting a baseline $b(s)$ leaves the expectation unbiased yet reduces variance:</h3>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}\!\left[\nabla_\theta \log \pi_\theta(a_t|s_t)\,\big(R_t - b(s_t)\big)\right].$$
+
+{::nomarkdown}
 </div>
 
 <p>Choosing $b(s) = V^\pi(s)$ yields the advantage function $A^\pi(s,a) = Q^\pi(s,a) - V^\pi(s)$ — a cornerstone of modern policy gradient methods such as Generalized Advantage Estimation (GAE) in PPO and TRPO.</p>
 
 <p><em>(papers.neurips.cc)</em></p>
+{:/nomarkdown}
+
 
 
 Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabilize learning.
@@ -540,16 +584,26 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 
   
 
+
+{::nomarkdown}
 <h3>Objective</h3>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}\!\left[\sum_t \gamma^t r_t\right].$$
+
+{::nomarkdown}
 </div>
 
 <h3>Apply log-derivative trick</h3>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$\nabla_\theta p_\theta(\tau) = p_\theta(\tau)\sum_t \nabla_\theta \log \pi_\theta(a_t|s_t).$$
+
+{::nomarkdown}
 </div>
 
 <h3>Exchange gradient and expectation to obtain REINFORCE</h3>
@@ -565,6 +619,8 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 <p>Subtracting any baseline independent of $a_t$ yields an unbiased but lower-variance estimator. The advantage function then emerges naturally as a centered return signal.</p>
 
 <p><em>(spinningup.openai.com)</em></p>
+{:/nomarkdown}
+
 
 
  Practical Tricks (That Actually Help)
@@ -577,6 +633,8 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 
   
 
+
+{::nomarkdown}
 <h3>Normalize returns and advantages per batch</h3>
 
 <p>Standardizing advantages within each batch helps stabilize learning and prevents excessively large gradients.</p>
@@ -598,6 +656,8 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 <p>Track moving averages of episodic return and key loss components (policy loss, entropy loss, value loss). Logging helps diagnose instability and detect performance regressions.</p>
 
 <p><em>(Proceedings of Machine Learning Research)</em></p>
+{:/nomarkdown}
+
 
 
 If you prefer a learning-curve image, generate it from the code below (average episodic return vs. episodes) and embed it as Figure 3.5.
@@ -776,6 +836,8 @@ A3C quickly became one of the most influential algorithms in modern RL history �
 
   
 
+
+{::nomarkdown}
 <p>At its heart, the Actor–Critic method introduces two learning systems that work in tandem. The actor is responsible for deciding what to do — it learns a policy $\\pi_\\theta(a\\mid s)$ that defines a probability distribution over actions given a state. The critic, on the other hand, evaluates how good that decision was — it estimates the value function $V_w(s)$, which represents the expected future reward from that state.</p>
 
 <p>This design addresses one of the biggest weaknesses of pure policy gradient methods like REINFORCE: the instability caused by high variance in return estimates. REINFORCE updates its policy only after an episode ends, basing the gradient entirely on the cumulative return, which can fluctuate wildly between runs. By incorporating a critic that estimates the value of each state, Actor–Critic methods can adjust the policy using a much more stable signal: the advantage function, which measures how much better an action performed compared to the critic’s expectation.</p>
@@ -783,12 +845,18 @@ A3C quickly became one of the most influential algorithms in modern RL history �
 <p>Mathematically, this update can be expressed as:</p>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$\nabla_\theta J(\theta) \;=\; \mathbb{E}_{\pi_\theta}\!\Big[\, \nabla_\theta \log \pi_\theta(a_t\mid s_t)\, \big(R_t - V_w(s_t)\big) \,\Big]\,,$$
+
+{::nomarkdown}
 </div>
 
 <p>where $R_t$ is the return and $V_w(s_t)$ is the critic’s value estimate. The term $\big(R_t - V_w(s_t)\big)$ is known as the <em>advantage</em> — a measure of relative performance that stabilizes updates and reduces noise in the learning process.</p>
 
 <p>This two-network dynamic is powerful: the actor pushes the policy toward actions that improve expected return, while the critic grounds those updates in context, providing smoother and more reliable gradient feedback.</p>
+{:/nomarkdown}
+
 
 
 #  The Innovation of A3C
@@ -816,37 +884,61 @@ Each worker interacts with its own environment instance and periodically updates
 
   
 
+
+{::nomarkdown}
 <p>The A3C model builds upon the actor–critic structure with an important enhancement — the Advantage function 
+{:/nomarkdown}
+
 $A(s_t, a_t) = R_t + \gamma V(s_{t+1}) - V(s_t)$. 
 This term allows the network to assess how much better an action was compared to the expected value at that state.</p>
 
+
+{::nomarkdown}
 <p>The total loss in A3C combines three components:</p>
 
 <h3>Actor Loss</h3>
 <p>Encourages actions that improve the policy:</p>
 <div class="eq">
+{:/nomarkdown}
+
   $$L_{\text{actor}} = -\log \pi_\theta(a_t|s_t)\, A(s_t, a_t)$$
+
+{::nomarkdown}
 </div>
 
 <h3>Critic Loss</h3>
 <p>Minimizes the error in the value function:</p>
 <div class="eq">
+{:/nomarkdown}
+
   $$L_{\text{critic}} = (R_t - V(s_t))^2$$
+
+{::nomarkdown}
 </div>
 
 <h3>Entropy Loss</h3>
 <p>Maintains policy diversity and avoids early convergence:</p>
 <div class="eq">
+{:/nomarkdown}
+
   $$L_{\text{entropy}} = -\beta\, H(\pi_\theta)$$
+
+{::nomarkdown}
 </div>
 
 <h3>Total Loss</h3>
 <p>These components are combined into a total loss:</p>
 <div class="eq">
+{:/nomarkdown}
+
   $$L = L_{\text{actor}} + c_v L_{\text{critic}} - c_H L_{\text{entropy}}$$
+
+{::nomarkdown}
 </div>
 
 <p>The entropy term $H(\pi_\theta)$ acts as a regularizer that encourages the policy to remain uncertain when appropriate, promoting exploration and preventing the network from converging prematurely to suboptimal deterministic policies.</p>
+{:/nomarkdown}
+
 
 
 #  Implementation Walkthrough
@@ -970,23 +1062,35 @@ Proximal Policy Optimization (PPO), proposed by John Schulman et al. (2017) at O
 
   
 
+
+{::nomarkdown}
 <p>The goal of Proximal Policy Optimization (PPO) is to make policy updates trustworthy and consistent. Instead of taking large, unstable gradient steps, PPO restricts how much the new policy can deviate from the old one.</p>
 
 <p>Let $\\pi_\\theta(a|s)$ be the current policy and $\\pi_{\\text{old}}(a|s)$ the previous policy. We define the probability ratio:</p>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$r_t(\\theta) = \\frac{\\pi_\\theta(a_t|s_t)}{\\pi_{\\text{old}}(a_t|s_t)}.$$
+
+{::nomarkdown}
 </div>
 
 <p>This ratio measures how much the new policy has changed its probability of taking the same action in the same state. The objective is then to maximize the expected advantage, but with a clip to prevent too large of a policy shift:</p>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$L^{\\text{CLIP}}(\\theta) = \\mathbb{E}_t\\!\\left[\\min\\left(r_t(\\theta) A_t, \\; \\text{clip}\\big(r_t(\\theta), 1 - \\epsilon, 1 + \\epsilon\\big) A_t\\right)\\right].$$
+
+{::nomarkdown}
 </div>
 
 <p>Here $\\epsilon$ is a small constant (typically 0.1–0.2) that bounds the step size. If the new policy attempts to change too much, the clipped term prevents further increase in the objective value, thereby keeping updates proximal to the old policy.</p>
 
 <p>This seemingly minor change had massive impact: it combined the stability of TRPO with the simplicity of REINFORCE — all without requiring second-order derivatives or complex constraints.</p>
+{:/nomarkdown}
+
 
 
 # Why It Worked
@@ -1015,17 +1119,25 @@ These projects cemented PPO as a cornerstone algorithm for safe, scalable, and h
 
   
 
+
+{::nomarkdown}
 <p>The PPO loss function balances three objectives: the clipped surrogate objective, the value function loss, and an entropy bonus for exploration.</p>
 
 <div class="eq">
+{:/nomarkdown}
+
   $$L^{\text{PPO}}(\theta) = \mathbb{E}_t \Big[ 
   L^{\text{CLIP}}(\theta) 
   - c_1 (V_\theta(s_t) - R_t)^2 
   + c_2 \, H[\pi_\theta(\cdot|s_t)]
   \Big].$$
+
+{::nomarkdown}
 </div>
 
 <p>Here, $c_1$ and $c_2$ are coefficients that balance value function accuracy and entropy regularization. This formulation shows how PPO jointly optimizes for return maximization while maintaining diversity and value accuracy — a three-way harmony between stability, exploration, and performance.</p>
+{:/nomarkdown}
+
 
 
 #  Implementation in Practice (Python)
@@ -1130,8 +1242,12 @@ Reinforcement Learning (RL) studies how an agent should act in an environment to
 # Layer 1 MDPs: the world as state, action, reward
 
 <!-- KaTeX (loads fast) -->
+
+{::nomarkdown}
 <div id="mdp-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
 <p>
+{:/nomarkdown}
+
     An RL problem is modeled as a Markov Decision Process, written as
     $\text{MDP}=(S,A,P,R,\gamma)$. Here $S$ is the set of states, $A$ the actions,
     $P(s' \mid s,a)$ the transition law, $R(s,a)$ the reward, and
@@ -1142,8 +1258,12 @@ Reinforcement Learning (RL) studies how an agent should act in an environment to
     Formally, we seek a policy $\pi^*$ that maximizes
     $J(\pi)=\mathbb{E}_{\pi}\!\left[\sum_{t\ge0}\gamma^t r_{t+1}\right]$
     under the environment dynamics.
+
+{::nomarkdown}
 </p>
 </div>
+{:/nomarkdown}
+
 
 
 How to solve it (conceptually): specify S,A,P,R,γS,A,P,R,γ for your task; choose whether you will compute exact values with a known model PP (dynamic programming) or learn from data when PP is unknown (temporal-difference and policy gradient methods). That fork planning vs. learning determines everything that follows.
@@ -1153,140 +1273,252 @@ How to solve it (conceptually): specify S,A,P,R,γS,A,P,R,γ for your task; choo
 
 <!-- KaTeX (loads fast) -->
 
+
+{::nomarkdown}
 <div id="bellman-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
 <p>For a fixed policy $\pi$, the state-value function satisfies</p>
 <p>$$
+{:/nomarkdown}
+
     V^{\pi}(s) = \mathbb{E}_{a\sim\pi,\, s'\sim P}\!\left[r(s,a) + \gamma\, V^{\pi}(s')\right].
   $$</p>
 
+
+{::nomarkdown}
 <p>The action-value function satisfies</p>
 <p>$$
+{:/nomarkdown}
+
     Q^{\pi}(s,a) = \mathbb{E}_{s'\sim P}\!\left[r(s,a) + \gamma\, \mathbb{E}_{a'\sim\pi}Q^{\pi}(s',a')\right].
   $$</p>
 
+
+{::nomarkdown}
 <p>For optimal control (Bellman optimality), remove $\pi$ by taking a max:</p>
 <p>$$
+{:/nomarkdown}
+
     V^*(s) = \max_{a}\, \mathbb{E}_{s'\sim P}\!\left[r(s,a) + \gamma\, V^*(s')\right],
     \qquad
     Q^*(s,a) = \mathbb{E}_{s'\sim P}\!\left[r(s,a) + \gamma\, \max_{a'} Q^*(s',a')\right].
   $$</p>
+
+{::nomarkdown}
 </div>
+{:/nomarkdown}
+
 
 
 These recursions express a simple intuition: the value of “here” equals reward now plus the discounted value of “where you’ll land.” In a maze, squares adjacent to the exit inherit high value; value then “flows backward” across the grid by these equations (Bellman, 1957).
 
 <!-- KaTeX (fast) -->
 
+
+{::nomarkdown}
 <div id="dp-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
 <p>
 <em>How to solve it in practice:</em> if the model $P$ is known, you can iterate to convergence.
+{:/nomarkdown}
+
     For policy evaluation, initialize $V_0$ arbitrarily and update
+
+{::nomarkdown}
 </p>
 
 <p>$$
+{:/nomarkdown}
+
     V_{k+1}(s)=\sum_{a}\pi(a\mid s)\sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big].
   $$</p>
 
+
+{::nomarkdown}
 <p>
+{:/nomarkdown}
+
     Improve the policy greedily via
+
+{::nomarkdown}
 </p>
 
 <p>$$
+{:/nomarkdown}
+
     \pi_{k+1}(s)=\arg\max_{a}\ \sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big],
   $$</p>
 
+
+{::nomarkdown}
 <p>
+{:/nomarkdown}
+
     and alternate these two steps (policy iteration). Or collapse them into value iteration:
+
+{::nomarkdown}
 </p>
 
 <p>$$
+{:/nomarkdown}
+
     V_{k+1}(s)=\max_{a}\ \sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big]
   $$</p>
 
+
+{::nomarkdown}
 <p>
+{:/nomarkdown}
+
     until changes fall below a tolerance; then act greedily with respect to $V$.
     With grids and tic-tac-toe, this converges quickly and matches intuition:
     the closer to winning, the higher the value.
+
+{::nomarkdown}
 </p>
 </div>
+{:/nomarkdown}
+
 
 
 <!-- KaTeX (fast) -->
 
+
+{::nomarkdown}
 <div id="dp-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
 <p>
 <em>How to solve it in practice:</em> if the model $P$ is known, you can iterate to convergence.
+{:/nomarkdown}
+
     For policy evaluation, initialize $V_0$ arbitrarily and update
+
+{::nomarkdown}
 </p>
 
 <p>$$
+{:/nomarkdown}
+
     V_{k+1}(s)=\sum_{a}\pi(a\mid s)\sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big].
   $$</p>
 
+
+{::nomarkdown}
 <p>
+{:/nomarkdown}
+
     Improve the policy greedily via
+
+{::nomarkdown}
 </p>
 
 <p>$$
+{:/nomarkdown}
+
     \pi_{k+1}(s)=\arg\max_{a}\ \sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big],
   $$</p>
 
+
+{::nomarkdown}
 <p>
+{:/nomarkdown}
+
     and alternate these two steps (policy iteration). Or collapse them into value iteration:
+
+{::nomarkdown}
 </p>
 
 <p>$$
+{:/nomarkdown}
+
     V_{k+1}(s)=\max_{a}\ \sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big]
   $$</p>
 
+
+{::nomarkdown}
 <p>
+{:/nomarkdown}
+
     until changes fall below a tolerance; then act greedily with respect to $V$.
     With grids and tic-tac-toe, this converges quickly and matches intuition:
     the closer to winning, the higher the value.
+
+{::nomarkdown}
 </p>
 </div>
+{:/nomarkdown}
+
 
 
 # Layer 3 Q-Learning: learning optimal action values from experience
 
 <!-- KaTeX (fast) -->
 
+
+{::nomarkdown}
 <div id="qlearning-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
 <p>
+{:/nomarkdown}
+
     When the dynamics $P$ are unknown, Watkins’ Q-Learning learns $Q^*(s,a)$ directly from trajectories.
     The canonical update is
+
+{::nomarkdown}
 </p>
 
 <p>$$
+{:/nomarkdown}
+
     Q(s,a) \leftarrow Q(s,a) + \alpha\Big[\, r + \gamma \max_{a'} Q(s',a') - Q(s,a) \,\Big],
   $$</p>
 
+
+{::nomarkdown}
 <p>
+{:/nomarkdown}
+
     with learning rate $\alpha \in (0,1]$. The agent typically uses $\epsilon$-greedy exploration:
     with probability $1-\epsilon$ it selects $\arg\max_a Q(s,a)$, and with probability $\epsilon$
     it explores a random action. Over repeated visits, actions that ultimately lead to high returns
     accumulate larger $Q$-values; poor actions decay.
+
+{::nomarkdown}
 </p>
 
 <p><em>How to solve it step by step:</em> initialize $Q(s,a)$ (often to zero). For each episode,
+{:/nomarkdown}
+
     start in some $s$; at each step pick an action via $\epsilon$-greedy, observe reward $r$ and next
     state $s'$, apply the update above, then move to $s'$. Anneal $\epsilon$ over time and stop when
     $Q$ stabilizes or your target performance is reached.</p>
 
+
+{::nomarkdown}
 <p>
+{:/nomarkdown}
+
     With function approximation (e.g., a neural network $\hat Q_\theta$), minimize the squared TD error
+
+{::nomarkdown}
 </p>
 
 <p>$$
+{:/nomarkdown}
+
     \mathcal{L}_{\text{DQN}} =
     \Big( r + \gamma \max_{a'} \hat Q_{\theta^-}(s',a') - \hat Q_\theta(s,a) \Big)^2,
   $$</p>
 
+
+{::nomarkdown}
 <p>
+{:/nomarkdown}
+
     using gradient descent; DQN stabilizes training with experience replay and a target network
     (parameters $\theta^-$) updated periodically.
+
+{::nomarkdown}
 </p>
 </div>
+{:/nomarkdown}
+
 
 
 by gradient descent; DeepMind’s DQN adds experience replay and target networks for stability (Mnih et al., 2015).
@@ -1297,71 +1529,141 @@ by gradient descent; DeepMind’s DQN adds experience replay and target networks
 Policy gradient methods skip value maximization and adjust a parameterized policy πθ(a∣s)πθ​(a∣s) to maximize expected return. Write the objective as
 
 
+
+{::nomarkdown}
 <div id="pg-centered" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
+{:/nomarkdown}
+
   <!-- Objective (centered) -->
+
+{::nomarkdown}
 <p class="eq">
+{:/nomarkdown}
+
     $$J(\theta)=\mathbb{E}_{\tau\sim\pi_\theta}\!\left[\sum_{t\ge 0}\gamma^t r_{t+1}\right]$$
+
+{::nomarkdown}
 </p>
+{:/nomarkdown}
+
 
   <!-- Sentence, then the centered equation directly under it -->
+
+{::nomarkdown}
 <p>Using the likelihood-ratio trick (REINFORCE), the gradient becomes</p>
 <p class="eq">
+{:/nomarkdown}
+
     $$\nabla_\theta J(\theta)
       = \mathbb{E}_{\tau\sim\pi_\theta}\!\left[\sum_{t}
       \nabla_\theta \log \pi_\theta(a_t \mid s_t)\, G_t\right]$$
+
+{::nomarkdown}
 </p>
 </div>
+{:/nomarkdown}
+
 
 
 where GtGt​ is a return estimate from time tt. Intuitively, actions that led to high returns are made more likely, proportional to how sensitive the policy was to choosing them (Williams, 1992).
 
 
+
+{::nomarkdown}
 <div id="steps-pg" style="max-width:900px; margin:auto">
 <p>
 <em>How to solve it step by step:</em> sample trajectories by running $\pi_\theta$ in the environment; 
+{:/nomarkdown}
+
     compute returns $G_t$ for each step (Monte-Carlo or bootstrapped estimates);
     form the stochastic gradient and apply the parameter update.
+
+{::nomarkdown}
 </p>
+{:/nomarkdown}
+
 
   <!-- Stochastic gradient (centered) -->
+
+{::nomarkdown}
 <p class="eq">
+{:/nomarkdown}
+
     $$\widehat{\nabla_\theta J(\theta)}=\sum_{t}\nabla_\theta \log \pi_\theta(a_t \mid s_t)\, G_t$$
+
+{::nomarkdown}
 </p>
+{:/nomarkdown}
+
 
   <!-- Update rule (centered) -->
+
+{::nomarkdown}
 <p class="eq">
+{:/nomarkdown}
+
     $$\theta \leftarrow \theta + \eta\, \widehat{\nabla_\theta J(\theta)}$$
+
+{::nomarkdown}
 </p>
 
 <p>
+{:/nomarkdown}
+
     This naïve estimator is high-variance, so two refinements are essential in practice.
+
+{::nomarkdown}
 </p>
 </div>
+{:/nomarkdown}
 
 
+
+
+{::nomarkdown}
 <div id="ac-full" style="max-width:900px; margin:auto">
 <p><strong>First, subtract a baseline</strong> $b(s_t)$ <strong>without biasing the gradient:</strong></p>
 <p class="eq">
+{:/nomarkdown}
+
     $$\nabla_\theta J(\theta)
       = \mathbb{E}\!\left[\sum_t \nabla_\theta \log \pi_\theta(a_t \mid s_t)\,\big(G_t - b(s_t)\big)\right].$$
+
+{::nomarkdown}
 </p>
 <p>Choosing $b(s)=V^\pi(s)$ yields the <em>advantage</em> $A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s)$, focusing the update on how much better an action was than typical for that state (A2C/A3C; Mnih et&nbsp;al., 2016).</p>
 <p class="eq">
+{:/nomarkdown}
+
     $$A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s).$$
+
+{::nomarkdown}
 </p>
 
 <p>A practical estimator uses the TD-error</p>
 <p class="eq">
+{:/nomarkdown}
+
     $$\delta_t = r_{t+1} + \gamma\, V_\phi(s_{t+1}) - V_\phi(s_t),$$
+
+{::nomarkdown}
 </p>
 <p>and its exponentially-weighted sums. Schulman et&nbsp;al. (2016) popularized <strong>Generalized Advantage Estimation (GAE)</strong>:</p>
 <p class="eq">
+{:/nomarkdown}
+
     $$\hat A_t=\sum_{\ell=0}^{\infty}(\gamma\lambda)^{\ell}\,\delta_{t+\ell},\qquad \lambda\in[0,1].$$
+
+{::nomarkdown}
 </p>
 
 <p><strong>Second, encourage exploration by adding entropy regularization.</strong> Augment the objective with</p>
 <p class="eq">
+{:/nomarkdown}
+
     $$J_{\text{ent}}(\theta)=\beta\,\mathbb{E}_s\!\left[\,H\!\big(\pi_\theta(\cdot\mid s)\big)\right],$$
+
+{::nomarkdown}
 </p>
 <p>where $H(\cdot)$ is the categorical entropy and $\beta>0$ controls strength. The resulting actor loss adds the entropy term, resisting premature collapse to deterministic policies and often improving robustness.</p>
 
@@ -1369,18 +1671,32 @@ where GtGt​ is a return estimate from time tt. Intuitively, actions that led t
 <p>Initialize policy parameters $\theta$ and value-function parameters $\phi$. Roll out the policy to collect batches of $(s_t,a_t,r_{t+1},s_{t+1})$. Compute value targets $\hat V_{\text{target},t}$ and advantages $\hat A_t$ (via TD-errors or GAE). Update the critic and actor as follows, then repeat until returns plateau.</p>
 
 <p class="eq">
+{:/nomarkdown}
+
     $$\mathcal{L}_{\text{critic}}=\sum_t\Big(\hat V_{\text{target},t}-V_\phi(s_t)\Big)^2$$
+
+{::nomarkdown}
 </p>
 <p class="eq">
+{:/nomarkdown}
+
     $$\mathcal{L}_{\text{actor}}=-\sum_t \log \pi_\theta(a_t\mid s_t)\,\hat A_t\;-\;\beta\, H\!\big(\pi_\theta(\cdot\mid s_t)\big)$$
+
+{::nomarkdown}
 </p>
 <p class="eq">
+{:/nomarkdown}
+
     $$\theta \leftarrow \theta - \eta\,\nabla_\theta \mathcal{L}_{\text{actor}},\qquad
       \phi \leftarrow \phi - \eta_V\, \nabla_\phi \mathcal{L}_{\text{critic}}.$$
+
+{::nomarkdown}
 </p>
 
 <p><strong>PPO</strong> keeps the same advantage-based objective but constrains each policy update to stay near the old policy by clipping the probability ratio, which stabilizes training (Schulman et&nbsp;al., 2017).</p>
 </div>
+{:/nomarkdown}
+
 
 
 # A final intuition check
@@ -1646,6 +1962,8 @@ if __name__ == "__main__":
 
 <!-- results.html -->
 
+
+{::nomarkdown}
 <header>
 <h1>RL Playground Results</h1>
 <p class="lead">Quick diagnostics from Gymnasium environments. Run the Python script to regenerate <code>results.json</code>, then refresh this page.</p>
@@ -1684,6 +2002,8 @@ if __name__ == "__main__":
 <table id="tbl"><thead><tr><th>Environment</th><th>Policy</th><th>Episodes</th><th>Avg Return</th><th>Best Return</th></tr></thead><tbody></tbody></table>
 </section>
 </main>
+{:/nomarkdown}
+
 
 
 Interpreting results: CartPole’s average return should trend upward even with simple exploration because rewards are dense; ~200 indicates a full solve for an episode. MountainCar’s averages are typically negative (−1 per step) until you reach the flag; the heuristic demonstrates momentum building and usually beats random without learning. If you enable LunarLander, expect wider variance and noisier returns use it to test stability knobs (target-sync cadence, grad clipping, replay size) when you later add DQN or PPO.
@@ -1755,6 +2075,8 @@ if __name__ == "__main__":
     print(results)  # replace with saving to JSON if you like
 
 
+
+{::nomarkdown}
 <!doctype html>
   
 <div class="wrap">
@@ -1812,8 +2134,12 @@ if __name__ == "__main__":
 </div>
 
 <p class="note">
+{:/nomarkdown}
+
           Notes: These numbers are sample results from 30 episodes with random actions and 
 <code>max_cycles=50</code>. Expect negative rewards in cooperative MPE when agents wander.
+
+{::nomarkdown}
 </p>
 </div>
 
@@ -1828,6 +2154,8 @@ if __name__ == "__main__":
 </div>
 </div>
 </div>
+{:/nomarkdown}
+
 
 
 Explanation (what’s happening)
@@ -1843,9 +2171,13 @@ PettingZoo uses an Agent-Environment-Cycle (AEC) API: agents act in turns within
   
   
 
+
+{::nomarkdown}
 <h3><strong>DQN – good for discrete actions</strong></h3>
 
 <p>
+{:/nomarkdown}
+
 Deep Q-Networks (DQN) extend classic Q-learning to high-dimensional observations by replacing the tabular $Q(s,a)$ with a deep network $Q_{\\theta}(s,a)$. At its core, DQN seeks parameters $\\theta$ that minimize the temporal-difference (TD) regression to the Bellman optimality target. For a transition $(s,a,r,s')$, the target is $y=r+\\gamma\\,\\max_{a'}Q_{\\theta^-}(s',a')$, where $\\theta^-$ are the “target network” parameters held fixed for several updates to stabilize training. The loss on a mini-batch $\\mathcal{B}$ is
 \\[
 \\mathcal{L}(\\theta)=\\frac{1}{|\\mathcal{B}|} \\sum_{(s,a,r,s')\\in\\mathcal{B}}\\Big( y - Q_{\\theta}(s,a) \\Big)^2,
@@ -1853,9 +2185,13 @@ Deep Q-Networks (DQN) extend classic Q-learning to high-dimensional observations
 y=r+\\gamma\\,\\max_{a'}Q_{\\theta^-}(s',a').
 \\]
 Two key engineering ideas make DQN work in practice on discrete-action problems like Atari: an experience replay buffer $\\mathcal{D}$ that breaks temporal correlations by sampling uniformly from stored transitions, and a separate target network $Q_{\\theta^-}$ that slows the drift of targets. Agents explore with $\\varepsilon$-greedy behavior, decaying $\\varepsilon$ from near $1$ to a small floor so that $\\Pr(a=\\arg\\max_a Q_{\\theta}(s,a))$ increases over time. Stabilizers such as reward clipping (e.g., $r\\leftarrow\\mathrm{clip}(r,-1,1)$), observation preprocessing (grayscale, resize, frame-stacking), gradient clipping, and periodic target updates every $C$ steps keep the learning signal well-behaved. While vanilla DQN can overestimate values due to the $\\max$ operator, the Double DQN variant replaces the target with $y=r+\\gamma\\,Q_{\\theta^-}\\big(s',\\arg\\max_{a'} Q_{\\theta}(s',a')\\big)$ to reduce positive bias; prioritized replay further improves sample efficiency by sampling transitions with large TD errors more often. DQN shines when actions are discrete and moderate in number (e.g., up/down/left/right/jump), offering a clean path from pixels-to-actions; for continuous actions, policy-gradient or actor–critic methods are usually preferred.
+
+{::nomarkdown}
 </p>
 
 <pre><code>// Pseudocode: Deep Q-Network (DQN) for discrete actions
+{:/nomarkdown}
+
 
 Initialize Q-network parameters θ randomly
 Initialize target network parameters θ⁻ ← θ
@@ -1890,6 +2226,8 @@ for episode = 1 ... M:
         Every C steps: θ⁻ ← θ  // target network update
         Decay ε toward ε_min
         if done: break
+
+{::nomarkdown}
 </code></pre>
 
 <p class="note">
@@ -1899,6 +2237,8 @@ for episode = 1 ... M:
 <p>
 <strong>References.</strong> [1] Mnih, V. et&nbsp;al. “Human-level control through deep reinforcement learning,” <em>Nature</em>, 518, 2015. <a href="https://doi.org/10.1038/nature14236">doi:10.1038/nature14236</a>. [2] Van Hasselt, H., Guez, A., Silver, D. “Deep Reinforcement Learning with Double Q-learning,” <em>AAAI</em>, 2016. <a href="https://arxiv.org/abs/1509.06461">arXiv:1509.06461</a>. [3] Schaul, T., Quan, J., Antonoglou, I., Silver, D. “Prioritized Experience Replay,” <em>ICLR</em>, 2016. <a href="https://arxiv.org/abs/1511.05952">arXiv:1511.05952</a>.
 </p>
+{:/nomarkdown}
+
 
 
   <!-- MathJax for LaTeX math -->
@@ -1906,9 +2246,13 @@ for episode = 1 ... M:
   
   
 
+
+{::nomarkdown}
 <h3><strong>Double DQN – solves overestimation bias</strong></h3>
 
 <p>
+{:/nomarkdown}
+
 Double DQN fixes a systematic <em>overestimation</em> in vanilla DQN that comes from using the same value function both to <em>select</em> and to <em>evaluate</em> the bootstrapped action at the next state. In standard DQN, the target is $y=r+\\gamma\\max_{a'}Q_{\\theta^-}(s',a')$; the noisy max operator tends to overestimate the true value because $\\mathbb{E}[\\max_i X_i]\\ge\\max_i\\mathbb{E}[X_i]$ when the estimates $X_i$ contain noise. Double DQN decouples selection and evaluation by using the online network $Q_{\\theta}$ to pick the greedy action and the target network $Q_{\\theta^-}$ to score it:
 \\[
 y\\_{\\text{Double}}\\;=\\;r\\; +\\; \\gamma\\; Q\\_{\\theta^-}\\!\\big(s',\\;\\arg\\max\\_{a'} Q\\_{\\theta}(s',a')\\big).
@@ -1919,9 +2263,13 @@ This small change reduces positive bias without increasing computational cost, w
 \\qquad
 y\\_{\\text{Double}}=r+\\gamma\\,Q\\_{\\theta^-}\\big(s',\\arg\\max\\_{a'}Q\\_{\\theta}(s',a')\\big).
 \\]
+
+{::nomarkdown}
 </p>
 
 <pre><code>// Pseudocode: Double DQN (discrete actions)
+{:/nomarkdown}
+
 
 Initialize online network parameters θ
 Initialize target network parameters θ⁻ ← θ
@@ -1955,6 +2303,8 @@ for episode = 1 ... M:
         Every C steps: θ⁻ ← θ           // refresh target network
         Decay ε toward ε_min
         if done: break
+
+{::nomarkdown}
 </code></pre>
 
 <p class="note">
@@ -1964,24 +2314,48 @@ for episode = 1 ... M:
 <p>
 <strong>References.</strong> [1] Van Hasselt, H. “Double Q-learning,” <em>NIPS</em>, 2010. <a href="https://proceedings.neurips.cc/paper/2010/hash/091d584fced301b442654dd8c23b3fc9-Abstract.html">NeurIPS 2010</a>. [2] Van Hasselt, H., Guez, A., Silver, D. “Deep Reinforcement Learning with Double Q-learning,” <em>AAAI</em>, 2016. <a href="https://arxiv.org/abs/1509.06461">arXiv:1509.06461</a>. [3] Mnih, V. et&nbsp;al. “Human-level control through deep reinforcement learning,” <em>Nature</em>, 518, 2015. <a href="https://doi.org/10.1038/nature14236">doi:10.1038/nature14236</a>.
 </p>
+{:/nomarkdown}
+
 
 
   
 
+
+{::nomarkdown}
 <h3><strong>A3C / A2C – parallel actor-learners</strong></h3>
 
 <p>
+{:/nomarkdown}
+
 Asynchronous Advantage Actor–Critic (A3C) accelerates and stabilizes training by running many lightweight actor-learners in parallel environments, each with its own copy of parameters θ (policy) and θᵥ (value). Each worker collects short on-policy rollouts, computes multi-step returns and advantages
+
+{::nomarkdown}
 <span class="label">A<sub>t</sub> = &sum;<sub>k=0</sub><sup>n−1</sup> γ<sup>k</sup> r<sub>{t+k}</sub> + γ<sup>n</sup> V<sub>θᵥ</sub>(s<sub>{t+n}</sub>) − V<sub>θᵥ</sub>(s<sub>t</sub>)</span>,
+{:/nomarkdown}
+
 and then pushes <em>asynchronous</em> gradients to shared parameters (often via a Hogwild-style update) so exploration decorrelates naturally across threads. The policy is optimized by maximizing the entropy-regularized objective
+
+{::nomarkdown}
 <span class="label">J(θ) = E[&sum;<sub>t</sub> log&nbsp;π<sub>θ</sub>(a<sub>t</sub> | s<sub>t</sub>) · Â<sub>t</sub> + β · H(π<sub>θ</sub>(&middot; | s<sub>t</sub>))]</span>,
+{:/nomarkdown}
+
 while the critic minimizes
+
+{::nomarkdown}
 <span class="label">&sum;<sub>t</sub>(R<sub>t</sub> − V<sub>θᵥ</sub>(s<sub>t</sub>))<sup>2</sup></span>.
+{:/nomarkdown}
+
 Advantage Actor–Critic (A2C) is the <em>synchronous</em> variant: it runs the same parallel rollout collection but averages gradients across workers and applies a single update step per cycle. In practice, A3C/A2C are strong choices for discrete or continuous actions, scale well on CPUs, and learn robust behaviors without replay buffers. Key knobs are the rollout length n, entropy weight β, learning rate, and the balance of workers and envs per worker.
+
+{::nomarkdown}
 </p>
 
 <figure>
+{:/nomarkdown}
+
   <!-- Inline SVG figure: parallel workers pushing grads to shared params -->
+
+{::nomarkdown}
 <svg viewBox="0 0 820 280" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A3C/A2C architecture diagram">
 <defs>
       
@@ -1989,13 +2363,21 @@ Advantage Actor–Critic (A2C) is the <em>synchronous</em> variant: it runs the 
 <polygon points="0 0, 10 3.5, 0 7" fill="#374151"></polygon>
 </marker>
 </defs>
+{:/nomarkdown}
+
 
 <!-- Shared params -->
+
+{::nomarkdown}
 <rect x="340" y="20" width="140" height="70" rx="10" class="box"></rect>
 <text x="410" y="48" text-anchor="middle" class="label">Shared Params</text>
 <text x="410" y="68" text-anchor="middle" class="small">θ (policy) &amp; θᵥ (value)</text>
+{:/nomarkdown}
+
 
 <!-- Workers -->
+
+{::nomarkdown}
 <rect x="40" y="150" width="190" height="90" rx="10" class="box"></rect>
 <text x="135" y="178" text-anchor="middle" class="label">Worker 1</text>
 <text x="135" y="198" text-anchor="middle" class="small">env rollouts → Aₜ</text>
@@ -2010,18 +2392,30 @@ Advantage Actor–Critic (A2C) is the <em>synchronous</em> variant: it runs the 
 <text x="685" y="178" text-anchor="middle" class="label">Worker 3</text>
 <text x="685" y="198" text-anchor="middle" class="small">env rollouts → Aₜ</text>
 <text x="685" y="216" text-anchor="middle" class="small">∇θ, ∇θᵥ</text>
+{:/nomarkdown}
+
 
 <!-- Arrows up: grads -->
+
+{::nomarkdown}
 <path d="M135 150 L135 110" class="arrow"></path>
 <path d="M410 150 L410 110" class="arrow"></path>
 <path d="M685 150 L685 110" class="arrow"></path>
+{:/nomarkdown}
+
 
 <!-- Arrows down: params -->
+
+{::nomarkdown}
 <path d="M340 55 L230 55 L230 150" class="arrow"></path>
 <path d="M480 55 L590 55 L590 150" class="arrow"></path>
 <path d="M410 90 L410 150" class="arrow"></path>
+{:/nomarkdown}
+
 
 <!-- Labels -->
+
+{::nomarkdown}
 <text x="230" y="48" text-anchor="middle" class="small">sync/clone θ, θᵥ</text>
 <text x="590" y="48" text-anchor="middle" class="small">sync/clone θ, θᵥ</text>
 <text x="135" y="125" text-anchor="middle" class="small">push ∇</text>
@@ -2032,6 +2426,8 @@ Advantage Actor–Critic (A2C) is the <em>synchronous</em> variant: it runs the 
 </figure>
 
 <pre><code>// Pseudocode: A3C / A2C (parallel actor–critics)
+{:/nomarkdown}
+
 
 Shared parameters: θ (policy), θᵥ (value)
 Spawn W workers (threads or processes)
@@ -2058,10 +2454,14 @@ For each worker w in parallel:
         // then average and apply once per cycle
 
 // Tune n (rollout length), β (entropy), c_v (value weight)
+
+{::nomarkdown}
 </code></pre>
 
 <p class="note">
 <strong>Why parallelism helps.</strong> Multiple actors diversify trajectories and decorrelate updates without a replay buffer. Short n-step returns reduce bias/variance trade-offs, entropy β·H(π) sustains exploration, and CPU-friendly threads scale easily. A2C’s synchronized averaging often improves stability on GPUs; A3C’s async updates can be faster on many-core CPUs. Typical heads share a convolutional (or MLP) torso with two output branches: π<sub>θ</sub>(a | s) an
+{:/nomarkdown}
+
 
 
   <!-- MathJax for LaTeX math -->
@@ -2069,9 +2469,13 @@ For each worker w in parallel:
   
   
 
+
+{::nomarkdown}
 <h3><strong>PPO – stable, scalable</strong></h3>
 
 <p>
+{:/nomarkdown}
+
 Proximal Policy Optimization (PPO) strikes a practical balance between stability and sample efficiency by applying multiple SGD epochs on recent on-policy data while constraining each update to stay “proximal” to the behavior policy. Let $r_t(\\theta)=\\frac{\\pi_{\\theta}(a_t\\mid s_t)}{\\pi_{\\theta_{\\text{old}}}(a_t\\mid s_t)}$ be the probability ratio and $\\hat A_t$ an advantage estimate (often GAE). The clipped surrogate maximizes the lower bound
 \\[
 L^{\\text{CLIP}}(\\theta)
@@ -2082,10 +2486,16 @@ penalizing steps that would push $r_t$ outside $[1-\\epsilon,1+\\epsilon]$. A ty
 \\mathcal{L}(\\theta)= -L^{\\text{CLIP}}(\\theta) \\, + \\, c_v\\,\\mathbb{E}_t\\big(V_{\\theta}(s_t)-\\hat V_t\\big)^2 \\, - \\, c_e\\,\\mathbb{E}_t\\,\\mathcal{H}\\big(\\pi_{\\theta}(\\cdot\\mid s_t)\\big),
 \\]
 yielding robust improvements with simple hyperparameters (clip $\\epsilon\\approx0.1$–$0.3$, 3–10 epochs, minibatches over the rollout buffer). PPO scales cleanly on CPUs/GPUs, works for discrete and continuous actions, and has powered many large-scale applications because its update rule remains stable even under aggressive optimization.
+
+{::nomarkdown}
 </p>
 
 <figure aria-label="PPO clipping intuition">
+{:/nomarkdown}
+
   <!-- Inline SVG: PPO clipping of probability ratio -->
+
+{::nomarkdown}
 <svg viewBox="0 0 860 280" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img">
 <defs>
 <marker id="arrow" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
@@ -2093,32 +2503,52 @@ yielding robust improvements with simple hyperparameters (clip $\\epsilon\\appro
 </marker>
       
 </defs>
+{:/nomarkdown}
+
 
 <!-- Axes -->
+
+{::nomarkdown}
 <line x1="60" y1="230" x2="820" y2="230" class="axis"/>
 <line x1="60" y1="230" x2="60" y2="30" class="axis"/>
 <text x="825" y="230" class="small">r</text>
 <text x="40" y="36" class="small">objective</text>
+{:/nomarkdown}
+
 
 <!-- Vertical clip lines at 1-ε and 1+ε -->
+
+{::nomarkdown}
 <line x1="300" y1="50" x2="300" y2="230" class="vline"/>
 <line x1="580" y1="50" x2="580" y2="230" class="vline"/>
 <text x="290" y="245" class="small">1−ε</text>
 <text x="572" y="245" class="small">1+ε</text>
 <text x="420" y="245" class="small">1.0</text>
 <line x1="440" y1="230" x2="440" y2="238" class="tick"/>
+{:/nomarkdown}
+
 
 <!-- Unclipped linear objective (for A>0): y ∝ r -->
+
+{::nomarkdown}
 <path d="M 120 210 L 780 60" class="curve"/>
 <text x="640" y="72" class="small">unclipped (A&gt;0)</text>
+{:/nomarkdown}
+
 
 <!-- Clipped flat regions (A>0): -->
+
+{::nomarkdown}
 <path d="M 580 100 L 780 100" class="clipcurve"/>
 <path d="M 120 200 L 300 200" class="clipcurve"/>
 <text x="600" y="118" class="small">clipped beyond 1+ε</text>
 <text x="120" y="217" class="small">clipped below 1−ε</text>
+{:/nomarkdown}
+
 
 <!-- Labels -->
+
+{::nomarkdown}
 <text x="120" y="255" class="small">r = πθ(a|s)/πθ_old(a|s)</text>
 <text x="300" y="40" class="small">trust-region window</text>
 <text x="115" y="28" class="small">min( r·A, clip(r)·A )</text>
@@ -2127,6 +2557,8 @@ yielding robust improvements with simple hyperparameters (clip $\\epsilon\\appro
 </figure>
 
 <pre><code>// Pseudocode: PPO-Clip with GAE (discrete or continuous actions)
+{:/nomarkdown}
+
 
 Initialize policy/value network parameters θ (shared torso; policy & value heads)
 Repeat for iterations k = 1…K:
@@ -2155,6 +2587,8 @@ Repeat for iterations k = 1…K:
     Optionally: clip value updates or use separate value lr
 
 // Typical: ε∈[0.1,0.3], λ≈0.95, γ≈0.99, E∈[3,10], minibatch size 2–8k
+
+{::nomarkdown}
 </code></pre>
 
 <p>
@@ -2164,6 +2598,8 @@ Repeat for iterations k = 1…K:
 <p>
 <strong>References.</strong> [1] Schulman, J. et&nbsp;al. “Proximal Policy Optimization Algorithms,” 2017. <a href="https://arxiv.org/abs/1707.06347">arXiv:1707.06347</a>. [2] Schulman, J. et&nbsp;al. “High-Dimensional Continuous Control Using Generalized Advantage Estimation,” 2016. <a href="https://arxiv.org/abs/1506.02438">arXiv:1506.02438</a>. [3] OpenAI Spinning Up, “PPO.” <a href="https://spinningup.openai.com/en/latest/algorithms/ppo.html">overview and tips</a>.
 </p>
+{:/nomarkdown}
+
 
 
 When to Use What
@@ -2177,6 +2613,8 @@ Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overesti
 
   
 
+
+{::nomarkdown}
 <h2><strong>RL Projects &amp; Applications — Training an Atari Agent (DQN, PyTorch)</strong></h2>
 
 <p><strong>Overview.</strong> In this project we implemented a classic Deep Q-Learning (DQN) agent in PyTorch and trained it on Atari environments exposed through the Gym interface. The goal is to learn a policy that maximizes long-term score directly from pixels. We follow the canonical DQN recipe—frame preprocessing and stacking, ε-greedy exploration, an experience replay buffer, a periodically updated target network, and Huber loss. The result is a compact, reproducible pipeline that learns meaningful strategies on games like <em>Breakout</em> and <em>Pong</em>.</p>
@@ -2187,6 +2625,8 @@ Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overesti
 <h3><strong>Q-Learning with a Deep Network</strong></h3>
 <p>The agent approximates the optimal action-value function \(Q^\*(s,a)\) with a convolutional network \(Q_\theta(s,a)\). For each sampled transition \((s,a,r,s',\text{done})\) from the replay buffer, we form the target with a lagged copy of the network \(Q_{\theta^-}\):</p>
 <p>
+{:/nomarkdown}
+
     \[
       y = 
       \begin{cases}
@@ -2194,20 +2634,30 @@ Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overesti
         r + \gamma \max_{a'} Q_{\theta^-}(s',a') & \text{otherwise.}
       \end{cases}
     \]
+
+{::nomarkdown}
 </p>
 <p>We minimize a robust Huber loss
+{:/nomarkdown}
+
     \[
       \mathcal{L}(\theta)=\mathbb{E}\big[\mathrm{Huber}\big(y - Q_\theta(s,a)\big)\big],
     \]
     and update parameters with Adam/RMSProp. Every \(C\) gradient steps we copy weights from the online network to the target network, \( \theta^- \leftarrow \theta \), to avoid chasing a moving target.
+
+{::nomarkdown}
 </p>
 
 <h3><strong>Exploration &amp; Replay</strong></h3>
 <p>Actions are selected by an ε-greedy policy. We linearly decay \(\varepsilon\) from a high initial value to a small floor to transition from exploration to exploitation:
+{:/nomarkdown}
+
     \[
       \varepsilon(t) = \max\!\big(\varepsilon_{\min},\, \varepsilon_{\max} - \alpha t\big).
     \]
     Experience replay stores the last \(N\) transitions; each update draws a mini-batch uniformly to break temporal correlations and make the stochastic gradient a better estimator of the Bellman error expectation.
+
+{::nomarkdown}
 </p>
 
 <h3><strong>Network Architecture</strong></h3>
@@ -2215,6 +2665,8 @@ Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overesti
 
 <h3><strong>Training Loop (Conceptual)</strong></h3>
 <pre><code># Pseudocode (PyTorch-style) — white background, black text
+{:/nomarkdown}
+
 for episode in range(num_episodes):
     s = env.reset()                      # stacked frames
     for t in range(max_steps):
@@ -2236,6 +2688,8 @@ for episode in range(num_episodes):
 
         if done: break
     eps = max(eps_min, eps - eps_decay)
+
+{::nomarkdown}
 </code></pre>
 
 <h3><strong>Evaluation Protocol</strong></h3>
@@ -2266,6 +2720,8 @@ for episode in range(num_episodes):
 </div>
 
 <p><strong>Code &amp; repository:</strong> <a href="https://github.com/jasonbian97/Deep-Q-Learning-Atari-Pytorch" target="_blank" rel="noopener">github.com/mohammed840/Reinforcement-Learning-on-Atari-Games.</a></p>
+{:/nomarkdown}
+
 
 
   <!-- MathJax for equations on Wix/Six -->
@@ -2274,6 +2730,8 @@ for episode in range(num_episodes):
 
   
 
+
+{::nomarkdown}
 <h2><strong>RL Projects &amp; Applications — Reinforcement-Learning-based Movie Recommendation</strong></h2>
 
 <p><strong>Overview.</strong> This project reproduces a movie recommender using two reinforcement-learning strategies: (1) a <em>Multi-Armed Bandits</em> (MAB) recommender that learns which items to show by trading off exploration vs exploitation, and (2) an <em>Actor–Critic</em> deep RL recommender that models recommendation as a sequential decision problem where user interactions are the environment’s feedback. The repository includes a MovieLens dataset folder (<code>data/ml-1m</code>) and two notebooks: <code>RL_BanditsCode.ipynb</code> and <code>ActorCritic_DeepRL_RecommenderSystem.ipynb</code>. :contentReference[oaicite:0]{index=0}</p>
@@ -2281,15 +2739,21 @@ for episode in range(num_episodes):
 <h3><strong>Problem setup: recommendations as an RL loop</strong></h3>
 <p>At time \(t\), the system observes a (possibly partial) user state \(s_t\) (e.g., user &amp; context features, history summary) and recommends an item \(a_t\) (a movie). The user response provides reward \(r_t\) (e.g., click, watch, rating), and the session updates to \(s_{t+1}\). Over many interactions, we learn a policy \(\pi(a\mid s)\) that maximizes expected long-term engagement:</p>
 <p>\[
+{:/nomarkdown}
+
     \max_{\pi}\; \mathbb{E}_\pi \Big[ \sum_{t\ge 0} \gamma^t\, r_t \Big].
   \]</p>
 
+
+{::nomarkdown}
 <h3><strong>Part 1 — Multi-Armed Bandits recommender</strong></h3>
 <p>In the MAB framing, each candidate movie (or strategy for choosing a movie) is an “arm.” With no explicit state dynamics, the agent learns a value estimate \(\hat{\mu}_i\) per arm \(i\) and chooses arms that look best while still exploring alternatives. Common choices are \(\varepsilon\)-greedy, UCB, or Thompson Sampling. This baseline is simple and effective for <em>cold-start</em> traffic or short sessions because it requires minimal modeling assumptions and updates online from immediate rewards.</p>
 
 <h3><strong>Part 2 — Actor–Critic deep RL recommender</strong></h3>
 <p>The Actor–Critic notebook frames recommendation as a Markov Decision Process with function approximation. The <em>critic</em> estimates \(V_\phi(s)\) or \(Q_\phi(s,a)\), while the <em>actor</em> parameterizes a stochastic policy \(\pi_\theta(a\mid s)\). A standard advantage-based update looks like:</p>
 <p>\[
+{:/nomarkdown}
+
     \theta \leftarrow \theta
       + \eta \,\widehat{\mathbb{E}}\Big[\nabla_\theta \log \pi_\theta(a_t\!\mid\! s_t)\; A_t\Big],
       \quad
@@ -2299,6 +2763,8 @@ for episode in range(num_episodes):
     \phi \leftarrow \phi
       - \eta_v \,\widehat{\mathbb{E}}\big[ (r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t))^2 \big].
   \]
+
+{::nomarkdown}
 </p>
 <p>In practice, the state can embed user history (e.g., a learned representation of past views/ratings), the action can be an item ID or a slate selection strategy, and the reward blends implicit signals (click, watch-time) with explicit ratings to reflect quality and satisfaction over the session. The repository’s README explicitly lists both “Multi Armed Bandits” and an “Actor-Critic based recommender framework” as implemented strategies. :contentReference[oaicite:1]{index=1}</p>
 
@@ -2319,6 +2785,8 @@ for episode in range(num_episodes):
 
 <h3><strong>Pseudocode — Bandits then Actor–Critic (white background)</strong></h3>
 <pre><code># Stage 1: Multi-Armed Bandit (epsilon-greedy)
+{:/nomarkdown}
+
 init Q = zeros(num_items); N = zeros(num_items); eps = eps0
 for t in 1..T:
     if rand() &lt; eps:  a = random_item()
@@ -2338,6 +2806,8 @@ for epoch in 1..E:
         loss_critic = (A.detach() ** 2).mean()
         (loss_actor + beta * loss_critic).backward()
         optimizer.step(); optimizer.zero_grad()
+
+{::nomarkdown}
 </code></pre>
 
 <h3><strong>Design choices that mattered</strong></h3>
@@ -2354,9 +2824,15 @@ for epoch in 1..E:
 
 <p><strong>Code &amp; repository:</strong>
 <a href="https://github.com/ShreenidhiN/Reinforcement-Learning-based-Movie-Recommendation" target="_blank" rel="noopener">
+{:/nomarkdown}
+
       github.com/mohammed840/MOVIE-RECOMMENDATION-SYSTEM-USING-DEEP-REINFORCEMENT-LEARNING
+
+{::nomarkdown}
 </a>
 </p>
+{:/nomarkdown}
+
 
 
 # Conclusion
