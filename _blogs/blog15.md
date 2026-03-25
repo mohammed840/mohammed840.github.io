@@ -9,7 +9,6 @@ MCP (Model Context Protocol) is a new open protocol designed to standardize how 
 
 This post breaks down MCP, clearly explaining its value, architecture, and how it differs from traditional APIs.
 
----
 
 # What is MCP?
 
@@ -19,7 +18,6 @@ The Model Context Protocol (MCP) is a standardized protocol that connects AI age
 
 Just as USB-C simplifies how you connect different devices to your computer, MCP simplifies how AI models interact with your data, tools, and services.
 
----
 
 # Why use MCP instead of traditional APIs?
 
@@ -29,7 +27,6 @@ Metaphorically speaking: APIs are like individual doors — each door has its ow
 
 ![Traditional APIs require custom integrations for every service](https://static.wixstatic.com/media/ffcc74_08bfa8db89994b80af6178633144b093~mv2.png/v1/fill/w_1480,h_832,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/ffcc74_08bfa8db89994b80af6178633144b093~mv2.png)
 
----
 
 # Who's behind MCP?
 
@@ -37,7 +34,6 @@ MCP started as a project by Anthropic to make it easier for AI models — like C
 
 The official MCP spec and ongoing development can be found at [modelcontextprotocol.io](https://modelcontextprotocol.io).
 
----
 
 # MCP vs. API: Quick Comparison
 
@@ -49,7 +45,6 @@ The official MCP spec and ongoing development can be found at [modelcontextproto
 | Scalability | Easy (plug-and-play) | Requires additional integrations |
 | Security & Control | Consistent across tools | Varies by API |
 
----
 
 # Key Differences Between MCP and Traditional APIs
 
@@ -61,7 +56,6 @@ The official MCP spec and ongoing development can be found at [modelcontextproto
 
 Pull data: the LLM queries servers for context (e.g., checking your calendar). Trigger actions: the LLM instructs servers to take actions (e.g., rescheduling meetings, sending emails).
 
----
 
 # How MCP Works: The Architecture
 
@@ -81,13 +75,11 @@ MCP follows a simple client-server architecture:
 
 MCP doesn't handle heavy logic itself — it simply coordinates the flow of data and instructions between AI models and tools.
 
----
 
 # An MCP Client in Practice
 
 In practice, an MCP client (e.g., a Python script) communicates with MCP servers that manage interactions with specific tools like Gmail, Slack, or calendar apps. This standardization removes complexity, letting developers quickly enable sophisticated interactions.
 
----
 
 # MCP Examples: When to Use MCP?
 
@@ -109,7 +101,6 @@ Using APIs: You manually manage connections with each database and data visualiz
 
 Using MCP: Your AI analytics platform autonomously discovers and interacts with multiple databases, visualizations, and simulations through a unified MCP layer.
 
----
 
 # Benefits of Implementing MCP
 
@@ -123,7 +114,6 @@ Using MCP: Your AI analytics platform autonomously discovers and interacts with 
 
 **Scalability** — Easily add new capabilities as your AI ecosystem grows — simply connect another MCP server.
 
----
 
 # When Are Traditional APIs Better?
 
@@ -131,7 +121,6 @@ If your use case demands precise, predictable interactions with strict limits, t
 
 Fine-grained control and highly-specific, restricted functionalities are needed — you prefer tight coupling for performance optimization — you want maximum predictability with minimal context autonomy.
 
----
 
 # Getting Started with MCP
 
@@ -145,7 +134,6 @@ Fine-grained control and highly-specific, restricted functionalities are needed 
 
 **Set up clients** — Establish secure and stable connections between your MCP servers and clients.
 
----
 
 # Summary
 
