@@ -436,13 +436,13 @@ This was the first demonstration that a general RL agent could learn complex tas
 
 DQN’s success sparked a wave of descendants that remain core to modern AI systems:
 
-\mid Successor \mid Core Idea \mid Year \mid
-\mid---\mid---\mid---\mid
-\mid Double DQN \mid Decouples action selection and evaluation to reduce over-estimation bias \mid 2016 \mid
-\mid Dueling DQN \mid Separates state value and advantage streams for better generalization \mid 2016 \mid
-\mid Prioritized Replay \mid Samples high-TD-error experiences more often \mid 2016 \mid
-\mid Rainbow DQN \mid Combines six improvements (Double, Dueling, NoisyNets, etc.) \mid 2017 \mid
-\mid AlphaGo / AlphaZero / MuZero \mid Integrate Q-value estimation into Monte Carlo Tree Search \mid — \mid
+| Successor | Core Idea | Year |
+|---|---|---|
+| Double DQN | Decouples action selection and evaluation to reduce over-estimation bias | 2016 |
+| Dueling DQN | Separates state value and advantage streams for better generalization | 2016 |
+| Prioritized Replay | Samples high-TD-error experiences more often | 2016 |
+| Rainbow DQN | Combines six improvements (Double, Dueling, NoisyNets, etc.) | 2017 |
+| AlphaGo / AlphaZero / MuZero | Integrate Q-value estimation into Monte Carlo Tree Search | — |
 
 These models now power applications in robotics, game AI, finance, and autonomous control.
 
