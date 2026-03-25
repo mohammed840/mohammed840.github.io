@@ -1131,7 +1131,7 @@ Reinforcement Learning (RL) studies how an agent should act in an environment to
 
 <!-- KaTeX (loads fast) -->
 <div id="mdp-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
-  <p>
+<p>
     An RL problem is modeled as a Markov Decision Process, written as
     $\text{MDP}=(S,A,P,R,\gamma)$. Here $S$ is the set of states, $A$ the actions,
     $P(s' \mid s,a)$ the transition law, $R(s,a)$ the reward, and
@@ -1142,7 +1142,7 @@ Reinforcement Learning (RL) studies how an agent should act in an environment to
     Formally, we seek a policy $\pi^*$ that maximizes
     $J(\pi)=\mathbb{E}_{\pi}\!\left[\sum_{t\ge0}\gamma^t r_{t+1}\right]$
     under the environment dynamics.
-  </p>
+</p>
 </div>
 
 
@@ -1154,18 +1154,18 @@ How to solve it (conceptually): specify S,A,P,R,γS,A,P,R,γ for your task; choo
 <!-- KaTeX (loads fast) -->
 
 <div id="bellman-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
-  <p>For a fixed policy $\pi$, the state-value function satisfies</p>
-  <p>$$
+<p>For a fixed policy $\pi$, the state-value function satisfies</p>
+<p>$$
     V^{\pi}(s) = \mathbb{E}_{a\sim\pi,\, s'\sim P}\!\left[r(s,a) + \gamma\, V^{\pi}(s')\right].
   $$</p>
 
-  <p>The action-value function satisfies</p>
-  <p>$$
+<p>The action-value function satisfies</p>
+<p>$$
     Q^{\pi}(s,a) = \mathbb{E}_{s'\sim P}\!\left[r(s,a) + \gamma\, \mathbb{E}_{a'\sim\pi}Q^{\pi}(s',a')\right].
   $$</p>
 
-  <p>For optimal control (Bellman optimality), remove $\pi$ by taking a max:</p>
-  <p>$$
+<p>For optimal control (Bellman optimality), remove $\pi$ by taking a max:</p>
+<p>$$
     V^*(s) = \max_{a}\, \mathbb{E}_{s'\sim P}\!\left[r(s,a) + \gamma\, V^*(s')\right],
     \qquad
     Q^*(s,a) = \mathbb{E}_{s'\sim P}\!\left[r(s,a) + \gamma\, \max_{a'} Q^*(s',a')\right].
@@ -1178,72 +1178,72 @@ These recursions express a simple intuition: the value of “here” equals rewa
 <!-- KaTeX (fast) -->
 
 <div id="dp-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
-  <p>
-    <em>How to solve it in practice:</em> if the model $P$ is known, you can iterate to convergence.
+<p>
+<em>How to solve it in practice:</em> if the model $P$ is known, you can iterate to convergence.
     For policy evaluation, initialize $V_0$ arbitrarily and update
-  </p>
+</p>
 
-  <p>$$
+<p>$$
     V_{k+1}(s)=\sum_{a}\pi(a\mid s)\sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big].
   $$</p>
 
-  <p>
+<p>
     Improve the policy greedily via
-  </p>
+</p>
 
-  <p>$$
+<p>$$
     \pi_{k+1}(s)=\arg\max_{a}\ \sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big],
   $$</p>
 
-  <p>
+<p>
     and alternate these two steps (policy iteration). Or collapse them into value iteration:
-  </p>
+</p>
 
-  <p>$$
+<p>$$
     V_{k+1}(s)=\max_{a}\ \sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big]
   $$</p>
 
-  <p>
+<p>
     until changes fall below a tolerance; then act greedily with respect to $V$.
     With grids and tic-tac-toe, this converges quickly and matches intuition:
     the closer to winning, the higher the value.
-  </p>
+</p>
 </div>
 
 
 <!-- KaTeX (fast) -->
 
 <div id="dp-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
-  <p>
-    <em>How to solve it in practice:</em> if the model $P$ is known, you can iterate to convergence.
+<p>
+<em>How to solve it in practice:</em> if the model $P$ is known, you can iterate to convergence.
     For policy evaluation, initialize $V_0$ arbitrarily and update
-  </p>
+</p>
 
-  <p>$$
+<p>$$
     V_{k+1}(s)=\sum_{a}\pi(a\mid s)\sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big].
   $$</p>
 
-  <p>
+<p>
     Improve the policy greedily via
-  </p>
+</p>
 
-  <p>$$
+<p>$$
     \pi_{k+1}(s)=\arg\max_{a}\ \sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big],
   $$</p>
 
-  <p>
+<p>
     and alternate these two steps (policy iteration). Or collapse them into value iteration:
-  </p>
+</p>
 
-  <p>$$
+<p>$$
     V_{k+1}(s)=\max_{a}\ \sum_{s'} P(s'\mid s,a)\,\big[\,R(s,a)+\gamma\,V_k(s')\,\big]
   $$</p>
 
-  <p>
+<p>
     until changes fall below a tolerance; then act greedily with respect to $V$.
     With grids and tic-tac-toe, this converges quickly and matches intuition:
     the closer to winning, the higher the value.
-  </p>
+</p>
 </div>
 
 
@@ -1252,40 +1252,40 @@ These recursions express a simple intuition: the value of “here” equals rewa
 <!-- KaTeX (fast) -->
 
 <div id="qlearning-para" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
-  <p>
+<p>
     When the dynamics $P$ are unknown, Watkins’ Q-Learning learns $Q^*(s,a)$ directly from trajectories.
     The canonical update is
-  </p>
+</p>
 
-  <p>$$
+<p>$$
     Q(s,a) \leftarrow Q(s,a) + \alpha\Big[\, r + \gamma \max_{a'} Q(s',a') - Q(s,a) \,\Big],
   $$</p>
 
-  <p>
+<p>
     with learning rate $\alpha \in (0,1]$. The agent typically uses $\epsilon$-greedy exploration:
     with probability $1-\epsilon$ it selects $\arg\max_a Q(s,a)$, and with probability $\epsilon$
     it explores a random action. Over repeated visits, actions that ultimately lead to high returns
     accumulate larger $Q$-values; poor actions decay.
-  </p>
+</p>
 
-  <p><em>How to solve it step by step:</em> initialize $Q(s,a)$ (often to zero). For each episode,
+<p><em>How to solve it step by step:</em> initialize $Q(s,a)$ (often to zero). For each episode,
     start in some $s$; at each step pick an action via $\epsilon$-greedy, observe reward $r$ and next
     state $s'$, apply the update above, then move to $s'$. Anneal $\epsilon$ over time and stop when
     $Q$ stabilizes or your target performance is reached.</p>
 
-  <p>
+<p>
     With function approximation (e.g., a neural network $\hat Q_\theta$), minimize the squared TD error
-  </p>
+</p>
 
-  <p>$$
+<p>$$
     \mathcal{L}_{\text{DQN}} =
     \Big( r + \gamma \max_{a'} \hat Q_{\theta^-}(s',a') - \hat Q_\theta(s,a) \Big)^2,
   $$</p>
 
-  <p>
+<p>
     using gradient descent; DQN stabilizes training with experience replay and a target network
     (parameters $\theta^-$) updated periodically.
-  </p>
+</p>
 </div>
 
 
@@ -1299,17 +1299,17 @@ Policy gradient methods skip value maximization and adjust a parameterized polic
 
 <div id="pg-centered" style="font-size:18px; line-height:1.7; max-width:900px; margin:auto">
   <!-- Objective (centered) -->
-  <p class="eq">
+<p class="eq">
     $$J(\theta)=\mathbb{E}_{\tau\sim\pi_\theta}\!\left[\sum_{t\ge 0}\gamma^t r_{t+1}\right]$$
-  </p>
+</p>
 
   <!-- Sentence, then the centered equation directly under it -->
-  <p>Using the likelihood-ratio trick (REINFORCE), the gradient becomes</p>
-  <p class="eq">
+<p>Using the likelihood-ratio trick (REINFORCE), the gradient becomes</p>
+<p class="eq">
     $$\nabla_\theta J(\theta)
       = \mathbb{E}_{\tau\sim\pi_\theta}\!\left[\sum_{t}
       \nabla_\theta \log \pi_\theta(a_t \mid s_t)\, G_t\right]$$
-  </p>
+</p>
 </div>
 
 
@@ -1317,69 +1317,69 @@ where GtGt​ is a return estimate from time tt. Intuitively, actions that led t
 
 
 <div id="steps-pg" style="max-width:900px; margin:auto">
-  <p>
-    <em>How to solve it step by step:</em> sample trajectories by running $\pi_\theta$ in the environment; 
+<p>
+<em>How to solve it step by step:</em> sample trajectories by running $\pi_\theta$ in the environment; 
     compute returns $G_t$ for each step (Monte-Carlo or bootstrapped estimates);
     form the stochastic gradient and apply the parameter update.
-  </p>
+</p>
 
   <!-- Stochastic gradient (centered) -->
-  <p class="eq">
+<p class="eq">
     $$\widehat{\nabla_\theta J(\theta)}=\sum_{t}\nabla_\theta \log \pi_\theta(a_t \mid s_t)\, G_t$$
-  </p>
+</p>
 
   <!-- Update rule (centered) -->
-  <p class="eq">
+<p class="eq">
     $$\theta \leftarrow \theta + \eta\, \widehat{\nabla_\theta J(\theta)}$$
-  </p>
+</p>
 
-  <p>
+<p>
     This naïve estimator is high-variance, so two refinements are essential in practice.
-  </p>
+</p>
 </div>
 
 
 <div id="ac-full" style="max-width:900px; margin:auto">
-  <p><strong>First, subtract a baseline</strong> $b(s_t)$ <strong>without biasing the gradient:</strong></p>
-  <p class="eq">
+<p><strong>First, subtract a baseline</strong> $b(s_t)$ <strong>without biasing the gradient:</strong></p>
+<p class="eq">
     $$\nabla_\theta J(\theta)
       = \mathbb{E}\!\left[\sum_t \nabla_\theta \log \pi_\theta(a_t \mid s_t)\,\big(G_t - b(s_t)\big)\right].$$
-  </p>
-  <p>Choosing $b(s)=V^\pi(s)$ yields the <em>advantage</em> $A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s)$, focusing the update on how much better an action was than typical for that state (A2C/A3C; Mnih et&nbsp;al., 2016).</p>
-  <p class="eq">
+</p>
+<p>Choosing $b(s)=V^\pi(s)$ yields the <em>advantage</em> $A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s)$, focusing the update on how much better an action was than typical for that state (A2C/A3C; Mnih et&nbsp;al., 2016).</p>
+<p class="eq">
     $$A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s).$$
-  </p>
+</p>
 
-  <p>A practical estimator uses the TD-error</p>
-  <p class="eq">
+<p>A practical estimator uses the TD-error</p>
+<p class="eq">
     $$\delta_t = r_{t+1} + \gamma\, V_\phi(s_{t+1}) - V_\phi(s_t),$$
-  </p>
-  <p>and its exponentially-weighted sums. Schulman et&nbsp;al. (2016) popularized <strong>Generalized Advantage Estimation (GAE)</strong>:</p>
-  <p class="eq">
+</p>
+<p>and its exponentially-weighted sums. Schulman et&nbsp;al. (2016) popularized <strong>Generalized Advantage Estimation (GAE)</strong>:</p>
+<p class="eq">
     $$\hat A_t=\sum_{\ell=0}^{\infty}(\gamma\lambda)^{\ell}\,\delta_{t+\ell},\qquad \lambda\in[0,1].$$
-  </p>
+</p>
 
-  <p><strong>Second, encourage exploration by adding entropy regularization.</strong> Augment the objective with</p>
-  <p class="eq">
+<p><strong>Second, encourage exploration by adding entropy regularization.</strong> Augment the objective with</p>
+<p class="eq">
     $$J_{\text{ent}}(\theta)=\beta\,\mathbb{E}_s\!\left[\,H\!\big(\pi_\theta(\cdot\mid s)\big)\right],$$
-  </p>
-  <p>where $H(\cdot)$ is the categorical entropy and $\beta>0$ controls strength. The resulting actor loss adds the entropy term, resisting premature collapse to deterministic policies and often improving robustness.</p>
+</p>
+<p>where $H(\cdot)$ is the categorical entropy and $\beta>0$ controls strength. The resulting actor loss adds the entropy term, resisting premature collapse to deterministic policies and often improving robustness.</p>
 
-  <h4 style="margin-top:1em;">How to solve it end-to-end (actor–critic loop)</h4>
-  <p>Initialize policy parameters $\theta$ and value-function parameters $\phi$. Roll out the policy to collect batches of $(s_t,a_t,r_{t+1},s_{t+1})$. Compute value targets $\hat V_{\text{target},t}$ and advantages $\hat A_t$ (via TD-errors or GAE). Update the critic and actor as follows, then repeat until returns plateau.</p>
+<h4 style="margin-top:1em;">How to solve it end-to-end (actor–critic loop)</h4>
+<p>Initialize policy parameters $\theta$ and value-function parameters $\phi$. Roll out the policy to collect batches of $(s_t,a_t,r_{t+1},s_{t+1})$. Compute value targets $\hat V_{\text{target},t}$ and advantages $\hat A_t$ (via TD-errors or GAE). Update the critic and actor as follows, then repeat until returns plateau.</p>
 
-  <p class="eq">
+<p class="eq">
     $$\mathcal{L}_{\text{critic}}=\sum_t\Big(\hat V_{\text{target},t}-V_\phi(s_t)\Big)^2$$
-  </p>
-  <p class="eq">
+</p>
+<p class="eq">
     $$\mathcal{L}_{\text{actor}}=-\sum_t \log \pi_\theta(a_t\mid s_t)\,\hat A_t\;-\;\beta\, H\!\big(\pi_\theta(\cdot\mid s_t)\big)$$
-  </p>
-  <p class="eq">
+</p>
+<p class="eq">
     $$\theta \leftarrow \theta - \eta\,\nabla_\theta \mathcal{L}_{\text{actor}},\qquad
       \phi \leftarrow \phi - \eta_V\, \nabla_\phi \mathcal{L}_{\text{critic}}.$$
-  </p>
+</p>
 
-  <p><strong>PPO</strong> keeps the same advantage-based objective but constrains each policy update to stay near the old policy by clipping the probability ratio, which stabilizes training (Schulman et&nbsp;al., 2017).</p>
+<p><strong>PPO</strong> keeps the same advantage-based objective but constrains each policy update to stay near the old policy by clipping the probability ratio, which stabilizes training (Schulman et&nbsp;al., 2017).</p>
 </div>
 
 
@@ -1647,42 +1647,42 @@ if __name__ == "__main__":
 <!-- results.html -->
 
 <header>
-  <h1>RL Playground Results</h1>
-  <p class="lead">Quick diagnostics from Gymnasium environments. Run the Python script to regenerate <code>results.json</code>, then refresh this page.</p>
+<h1>RL Playground Results</h1>
+<p class="lead">Quick diagnostics from Gymnasium environments. Run the Python script to regenerate <code>results.json</code>, then refresh this page.</p>
 </header>
 <main>
-  <section class="card">
-    <div class="grid">
-      <div>
-        <h3 style="margin:6px 0 8px">How to read these numbers</h3>
-        <p><b>Average return</b> is the mean episodic reward; higher is better on CartPole (target ≈ 200), while less negative is better on MountainCar (−1 per step until the flag). <b>Best return</b> is your strongest episode and can reveal outliers when learning is noisy. Use these metrics to sanity-check changes to exploration, learning rates, or reward shaping before you invest in longer training runs.</p>
-        <p>CartPole rewards sustained balance and should improve quickly even with simple policies. MountainCar is sparse-reward and needs momentum; a velocity-sign heuristic already beats random. If you enable LunarLander (Box2D), expect higher variance—good for testing stability knobs.</p>
-      </div>
-      <div>
-        <div class="metric">
-          <span class="chip">Generated: <span id="gen" class="nowrap">—</span></span>
-          <span class="chip">Episodes/env: <span id="eps">—</span></span>
-          <span class="chip">Policy: <span id="pol">—</span></span>
-        </div>
-        <div class="controls" style="margin-top:10px">
-          <button id="view-avg">View Average Return</button>
-          <button id="view-best">View Best Return</button>
-          <span class="badge">Interactive</span>
-        </div>
-      </div>
-    </div>
-  </section>
+<section class="card">
+<div class="grid">
+<div>
+<h3 style="margin:6px 0 8px">How to read these numbers</h3>
+<p><b>Average return</b> is the mean episodic reward; higher is better on CartPole (target ≈ 200), while less negative is better on MountainCar (−1 per step until the flag). <b>Best return</b> is your strongest episode and can reveal outliers when learning is noisy. Use these metrics to sanity-check changes to exploration, learning rates, or reward shaping before you invest in longer training runs.</p>
+<p>CartPole rewards sustained balance and should improve quickly even with simple policies. MountainCar is sparse-reward and needs momentum; a velocity-sign heuristic already beats random. If you enable LunarLander (Box2D), expect higher variance—good for testing stability knobs.</p>
+</div>
+<div>
+<div class="metric">
+<span class="chip">Generated: <span id="gen" class="nowrap">—</span></span>
+<span class="chip">Episodes/env: <span id="eps">—</span></span>
+<span class="chip">Policy: <span id="pol">—</span></span>
+</div>
+<div class="controls" style="margin-top:10px">
+<button id="view-avg">View Average Return</button>
+<button id="view-best">View Best Return</button>
+<span class="badge">Interactive</span>
+</div>
+</div>
+</div>
+</section>
 
-  <section class="card">
-    <h3 style="margin:6px 0 8px">Environment summaries</h3>
-    <div id="envcards" class="envcards"></div>
-    <div class="footer">Tip: regenerate with <code>python run_playgrounds.py --episodes 10</code>. To include <code>LunarLander-v2</code>, install Box2D and add it to the env list in the script.</div>
-  </section>
+<section class="card">
+<h3 style="margin:6px 0 8px">Environment summaries</h3>
+<div id="envcards" class="envcards"></div>
+<div class="footer">Tip: regenerate with <code>python run_playgrounds.py --episodes 10</code>. To include <code>LunarLander-v2</code>, install Box2D and add it to the env list in the script.</div>
+</section>
 
-  <section class="card">
-    <h3 style="margin:6px 0 8px">Raw table</h3>
-    <table id="tbl"><thead><tr><th>Environment</th><th>Policy</th><th>Episodes</th><th>Avg Return</th><th>Best Return</th></tr></thead><tbody></tbody></table>
-  </section>
+<section class="card">
+<h3 style="margin:6px 0 8px">Raw table</h3>
+<table id="tbl"><thead><tr><th>Environment</th><th>Policy</th><th>Episodes</th><th>Avg Return</th><th>Best Return</th></tr></thead><tbody></tbody></table>
+</section>
 </main>
 
 
@@ -1755,79 +1755,79 @@ if __name__ == "__main__":
     print(results)  # replace with saving to JSON if you like
 
 
-    <!doctype html>
+<!doctype html>
   
-  <div class="wrap">
-    <div class="hero">
-      <span class="badge">PettingZoo • MPE <span class="pill">simple_v3</span></span>
-    </div>
-    <h1>Multi-Agent Rollout Results (Random Policies)</h1>
+<div class="wrap">
+<div class="hero">
+<span class="badge">PettingZoo • MPE <span class="pill">simple_v3</span></span>
+</div>
+<h1>Multi-Agent Rollout Results (Random Policies)</h1>
 
-    <div class="grid">
-      <div class="card">
-        <table aria-label="Per-agent results">
-          <thead>
-            <tr>
-              <th>Agent</th>
-              <th>Steps Logged</th>
-              <th>Avg Reward / Step</th>
-              <th>Sum Reward</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>agent_0</td>
-              <td>1500</td>
-              <td>-0.031</td>
-              <td>-46.5</td>
-            </tr>
-            <tr>
-              <td>agent_1</td>
-              <td>1500</td>
-              <td>-0.028</td>
-              <td>-42.0</td>
-            </tr>
-            <tr>
-              <td>agent_2</td>
-              <td>1500</td>
-              <td>-0.030</td>
-              <td>-45.1</td>
-            </tr>
-          </tbody>
-        </table>
+<div class="grid">
+<div class="card">
+<table aria-label="Per-agent results">
+<thead>
+<tr>
+<th>Agent</th>
+<th>Steps Logged</th>
+<th>Avg Reward / Step</th>
+<th>Sum Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>agent_0</td>
+<td>1500</td>
+<td>-0.031</td>
+<td>-46.5</td>
+</tr>
+<tr>
+<td>agent_1</td>
+<td>1500</td>
+<td>-0.028</td>
+<td>-42.0</td>
+</tr>
+<tr>
+<td>agent_2</td>
+<td>1500</td>
+<td>-0.030</td>
+<td>-45.1</td>
+</tr>
+</tbody>
+</table>
 
-        <div class="kpi">
-          <div>
-            <div class="val">30</div>
-            <div class="lbl">Episodes</div>
-          </div>
-          <div>
-            <div class="val">~150</div>
-            <div class="lbl">Avg steps / episode (all agent turns)</div>
-          </div>
-          <div>
-            <div class="val">Random</div>
-            <div class="lbl">Policy</div>
-          </div>
-        </div>
+<div class="kpi">
+<div>
+<div class="val">30</div>
+<div class="lbl">Episodes</div>
+</div>
+<div>
+<div class="val">~150</div>
+<div class="lbl">Avg steps / episode (all agent turns)</div>
+</div>
+<div>
+<div class="val">Random</div>
+<div class="lbl">Policy</div>
+</div>
+</div>
 
-        <p class="note">
+<p class="note">
           Notes: These numbers are sample results from 30 episodes with random actions and 
-          <code>max_cycles=50</code>. Expect negative rewards in cooperative MPE when agents wander.
-        </p>
-      </div>
+<code>max_cycles=50</code>. Expect negative rewards in cooperative MPE when agents wander.
+</p>
+</div>
 
-      <div class="card">
-        <h3 style="margin-top:0;">How to reproduce</h3>
-        <ol style="margin:0 0 8px 18px;">
-          <li>Install: <code>pip install pettingzoo gymnasium numpy</code></li>
-          <li>Run the Python script to print a JSON-like summary.</li>
-          <li>Swap the random policy with your MARL algorithm (e.g., IQL, MADDPG).</li>
-        </ol>
-        <p class="note">Tip: For training, wrap the AEC env with PettingZoo’s parallel API and vectorize rollouts.</p>
-      </div>
-    </div>
-  </div>
+<div class="card">
+<h3 style="margin-top:0;">How to reproduce</h3>
+<ol style="margin:0 0 8px 18px;">
+<li>Install: <code>pip install pettingzoo gymnasium numpy</code></li>
+<li>Run the Python script to print a JSON-like summary.</li>
+<li>Swap the random policy with your MARL algorithm (e.g., IQL, MADDPG).</li>
+</ol>
+<p class="note">Tip: For training, wrap the AEC env with PettingZoo’s parallel API and vectorize rollouts.</p>
+</div>
+</div>
+</div>
 
 
 Explanation (what’s happening)
@@ -1982,53 +1982,53 @@ Advantage Actor–Critic (A2C) is the <em>synchronous</em> variant: it runs the 
 
 <figure>
   <!-- Inline SVG figure: parallel workers pushing grads to shared params -->
-  <svg viewBox="0 0 820 280" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A3C/A2C architecture diagram">
-    <defs>
+<svg viewBox="0 0 820 280" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A3C/A2C architecture diagram">
+<defs>
       
-      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-        <polygon points="0 0, 10 3.5, 0 7" fill="#374151"></polygon>
-      </marker>
-    </defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#374151"></polygon>
+</marker>
+</defs>
 
-    <!-- Shared params -->
-    <rect x="340" y="20" width="140" height="70" rx="10" class="box"></rect>
-    <text x="410" y="48" text-anchor="middle" class="label">Shared Params</text>
-    <text x="410" y="68" text-anchor="middle" class="small">θ (policy) &amp; θᵥ (value)</text>
+<!-- Shared params -->
+<rect x="340" y="20" width="140" height="70" rx="10" class="box"></rect>
+<text x="410" y="48" text-anchor="middle" class="label">Shared Params</text>
+<text x="410" y="68" text-anchor="middle" class="small">θ (policy) &amp; θᵥ (value)</text>
 
-    <!-- Workers -->
-    <rect x="40" y="150" width="190" height="90" rx="10" class="box"></rect>
-    <text x="135" y="178" text-anchor="middle" class="label">Worker 1</text>
-    <text x="135" y="198" text-anchor="middle" class="small">env rollouts → Aₜ</text>
-    <text x="135" y="216" text-anchor="middle" class="small">∇θ, ∇θᵥ</text>
+<!-- Workers -->
+<rect x="40" y="150" width="190" height="90" rx="10" class="box"></rect>
+<text x="135" y="178" text-anchor="middle" class="label">Worker 1</text>
+<text x="135" y="198" text-anchor="middle" class="small">env rollouts → Aₜ</text>
+<text x="135" y="216" text-anchor="middle" class="small">∇θ, ∇θᵥ</text>
 
-    <rect x="315" y="150" width="190" height="90" rx="10" class="box"></rect>
-    <text x="410" y="178" text-anchor="middle" class="label">Worker 2</text>
-    <text x="410" y="198" text-anchor="middle" class="small">env rollouts → Aₜ</text>
-    <text x="410" y="216" text-anchor="middle" class="small">∇θ, ∇θᵥ</text>
+<rect x="315" y="150" width="190" height="90" rx="10" class="box"></rect>
+<text x="410" y="178" text-anchor="middle" class="label">Worker 2</text>
+<text x="410" y="198" text-anchor="middle" class="small">env rollouts → Aₜ</text>
+<text x="410" y="216" text-anchor="middle" class="small">∇θ, ∇θᵥ</text>
 
-    <rect x="590" y="150" width="190" height="90" rx="10" class="box"></rect>
-    <text x="685" y="178" text-anchor="middle" class="label">Worker 3</text>
-    <text x="685" y="198" text-anchor="middle" class="small">env rollouts → Aₜ</text>
-    <text x="685" y="216" text-anchor="middle" class="small">∇θ, ∇θᵥ</text>
+<rect x="590" y="150" width="190" height="90" rx="10" class="box"></rect>
+<text x="685" y="178" text-anchor="middle" class="label">Worker 3</text>
+<text x="685" y="198" text-anchor="middle" class="small">env rollouts → Aₜ</text>
+<text x="685" y="216" text-anchor="middle" class="small">∇θ, ∇θᵥ</text>
 
-    <!-- Arrows up: grads -->
-    <path d="M135 150 L135 110" class="arrow"></path>
-    <path d="M410 150 L410 110" class="arrow"></path>
-    <path d="M685 150 L685 110" class="arrow"></path>
+<!-- Arrows up: grads -->
+<path d="M135 150 L135 110" class="arrow"></path>
+<path d="M410 150 L410 110" class="arrow"></path>
+<path d="M685 150 L685 110" class="arrow"></path>
 
-    <!-- Arrows down: params -->
-    <path d="M340 55 L230 55 L230 150" class="arrow"></path>
-    <path d="M480 55 L590 55 L590 150" class="arrow"></path>
-    <path d="M410 90 L410 150" class="arrow"></path>
+<!-- Arrows down: params -->
+<path d="M340 55 L230 55 L230 150" class="arrow"></path>
+<path d="M480 55 L590 55 L590 150" class="arrow"></path>
+<path d="M410 90 L410 150" class="arrow"></path>
 
-    <!-- Labels -->
-    <text x="230" y="48" text-anchor="middle" class="small">sync/clone θ, θᵥ</text>
-    <text x="590" y="48" text-anchor="middle" class="small">sync/clone θ, θᵥ</text>
-    <text x="135" y="125" text-anchor="middle" class="small">push ∇</text>
-    <text x="410" y="125" text-anchor="middle" class="small">push ∇</text>
-    <text x="685" y="125" text-anchor="middle" class="small">push ∇</text>
-  </svg>
-  <figcaption>Figure: Parallel actor-learners collect rollouts, compute advantages, and push gradients to shared parameters. A3C updates asynchronously; A2C aggregates synchronously.</figcaption>
+<!-- Labels -->
+<text x="230" y="48" text-anchor="middle" class="small">sync/clone θ, θᵥ</text>
+<text x="590" y="48" text-anchor="middle" class="small">sync/clone θ, θᵥ</text>
+<text x="135" y="125" text-anchor="middle" class="small">push ∇</text>
+<text x="410" y="125" text-anchor="middle" class="small">push ∇</text>
+<text x="685" y="125" text-anchor="middle" class="small">push ∇</text>
+</svg>
+<figcaption>Figure: Parallel actor-learners collect rollouts, compute advantages, and push gradients to shared parameters. A3C updates asynchronously; A2C aggregates synchronously.</figcaption>
 </figure>
 
 <pre><code>// Pseudocode: A3C / A2C (parallel actor–critics)
@@ -2086,44 +2086,44 @@ yielding robust improvements with simple hyperparameters (clip $\\epsilon\\appro
 
 <figure aria-label="PPO clipping intuition">
   <!-- Inline SVG: PPO clipping of probability ratio -->
-  <svg viewBox="0 0 860 280" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img">
-    <defs>
-      <marker id="arrow" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-        <polygon points="0 0, 10 3.5, 0 7" fill="#374151"/>
-      </marker>
+<svg viewBox="0 0 860 280" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img">
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#374151"/>
+</marker>
       
-    </defs>
+</defs>
 
-    <!-- Axes -->
-    <line x1="60" y1="230" x2="820" y2="230" class="axis"/>
-    <line x1="60" y1="230" x2="60" y2="30" class="axis"/>
-    <text x="825" y="230" class="small">r</text>
-    <text x="40" y="36" class="small">objective</text>
+<!-- Axes -->
+<line x1="60" y1="230" x2="820" y2="230" class="axis"/>
+<line x1="60" y1="230" x2="60" y2="30" class="axis"/>
+<text x="825" y="230" class="small">r</text>
+<text x="40" y="36" class="small">objective</text>
 
-    <!-- Vertical clip lines at 1-ε and 1+ε -->
-    <line x1="300" y1="50" x2="300" y2="230" class="vline"/>
-    <line x1="580" y1="50" x2="580" y2="230" class="vline"/>
-    <text x="290" y="245" class="small">1−ε</text>
-    <text x="572" y="245" class="small">1+ε</text>
-    <text x="420" y="245" class="small">1.0</text>
-    <line x1="440" y1="230" x2="440" y2="238" class="tick"/>
+<!-- Vertical clip lines at 1-ε and 1+ε -->
+<line x1="300" y1="50" x2="300" y2="230" class="vline"/>
+<line x1="580" y1="50" x2="580" y2="230" class="vline"/>
+<text x="290" y="245" class="small">1−ε</text>
+<text x="572" y="245" class="small">1+ε</text>
+<text x="420" y="245" class="small">1.0</text>
+<line x1="440" y1="230" x2="440" y2="238" class="tick"/>
 
-    <!-- Unclipped linear objective (for A>0): y ∝ r -->
-    <path d="M 120 210 L 780 60" class="curve"/>
-    <text x="640" y="72" class="small">unclipped (A&gt;0)</text>
+<!-- Unclipped linear objective (for A>0): y ∝ r -->
+<path d="M 120 210 L 780 60" class="curve"/>
+<text x="640" y="72" class="small">unclipped (A&gt;0)</text>
 
-    <!-- Clipped flat regions (A>0): -->
-    <path d="M 580 100 L 780 100" class="clipcurve"/>
-    <path d="M 120 200 L 300 200" class="clipcurve"/>
-    <text x="600" y="118" class="small">clipped beyond 1+ε</text>
-    <text x="120" y="217" class="small">clipped below 1−ε</text>
+<!-- Clipped flat regions (A>0): -->
+<path d="M 580 100 L 780 100" class="clipcurve"/>
+<path d="M 120 200 L 300 200" class="clipcurve"/>
+<text x="600" y="118" class="small">clipped beyond 1+ε</text>
+<text x="120" y="217" class="small">clipped below 1−ε</text>
 
-    <!-- Labels -->
-    <text x="120" y="255" class="small">r = πθ(a|s)/πθ_old(a|s)</text>
-    <text x="300" y="40" class="small">trust-region window</text>
-    <text x="115" y="28" class="small">min( r·A, clip(r)·A )</text>
-  </svg>
-  <figcaption>Figure: PPO maximizes a clipped surrogate. Ratios outside $[1-\\epsilon,\\,1+\\epsilon]$ are flattened, preventing excessively large policy updates while still improving when $\\hat A_t$ is positive.</figcaption>
+<!-- Labels -->
+<text x="120" y="255" class="small">r = πθ(a|s)/πθ_old(a|s)</text>
+<text x="300" y="40" class="small">trust-region window</text>
+<text x="115" y="28" class="small">min( r·A, clip(r)·A )</text>
+</svg>
+<figcaption>Figure: PPO maximizes a clipped surrogate. Ratios outside $[1-\\epsilon,\\,1+\\epsilon]$ are flattened, preventing excessively large policy updates while still improving when $\\hat A_t$ is positive.</figcaption>
 </figure>
 
 <pre><code>// Pseudocode: PPO-Clip with GAE (discrete or continuous actions)
@@ -2177,16 +2177,16 @@ Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overesti
 
   
 
-  <h2><strong>RL Projects &amp; Applications — Training an Atari Agent (DQN, PyTorch)</strong></h2>
+<h2><strong>RL Projects &amp; Applications — Training an Atari Agent (DQN, PyTorch)</strong></h2>
 
-  <p><strong>Overview.</strong> In this project we implemented a classic Deep Q-Learning (DQN) agent in PyTorch and trained it on Atari environments exposed through the Gym interface. The goal is to learn a policy that maximizes long-term score directly from pixels. We follow the canonical DQN recipe—frame preprocessing and stacking, ε-greedy exploration, an experience replay buffer, a periodically updated target network, and Huber loss. The result is a compact, reproducible pipeline that learns meaningful strategies on games like <em>Breakout</em> and <em>Pong</em>.</p>
+<p><strong>Overview.</strong> In this project we implemented a classic Deep Q-Learning (DQN) agent in PyTorch and trained it on Atari environments exposed through the Gym interface. The goal is to learn a policy that maximizes long-term score directly from pixels. We follow the canonical DQN recipe—frame preprocessing and stacking, ε-greedy exploration, an experience replay buffer, a periodically updated target network, and Huber loss. The result is a compact, reproducible pipeline that learns meaningful strategies on games like <em>Breakout</em> and <em>Pong</em>.</p>
 
-  <h3><strong>From Pixels to Actions: Data Pipeline</strong></h3>
-  <p>Each raw 210×160 RGB frame is converted to grayscale, resized (e.g., 84×84), and normalized. To give the agent a sense of velocity, we stack the most recent \(k\) frames (commonly \(k=4\)) into a single observation tensor \(\in \mathbb{R}^{k \times 84 \times 84}\). Atari wrappers apply frame-skipping and max-pooling to reduce flicker and speed up training; reward clipping maps dense rewards into \(\{-1,0,1\}\), which stabilizes gradients across different games with very different score scales.</p>
+<h3><strong>From Pixels to Actions: Data Pipeline</strong></h3>
+<p>Each raw 210×160 RGB frame is converted to grayscale, resized (e.g., 84×84), and normalized. To give the agent a sense of velocity, we stack the most recent \(k\) frames (commonly \(k=4\)) into a single observation tensor \(\in \mathbb{R}^{k \times 84 \times 84}\). Atari wrappers apply frame-skipping and max-pooling to reduce flicker and speed up training; reward clipping maps dense rewards into \(\{-1,0,1\}\), which stabilizes gradients across different games with very different score scales.</p>
 
-  <h3><strong>Q-Learning with a Deep Network</strong></h3>
-  <p>The agent approximates the optimal action-value function \(Q^\*(s,a)\) with a convolutional network \(Q_\theta(s,a)\). For each sampled transition \((s,a,r,s',\text{done})\) from the replay buffer, we form the target with a lagged copy of the network \(Q_{\theta^-}\):</p>
-  <p>
+<h3><strong>Q-Learning with a Deep Network</strong></h3>
+<p>The agent approximates the optimal action-value function \(Q^\*(s,a)\) with a convolutional network \(Q_\theta(s,a)\). For each sampled transition \((s,a,r,s',\text{done})\) from the replay buffer, we form the target with a lagged copy of the network \(Q_{\theta^-}\):</p>
+<p>
     \[
       y = 
       \begin{cases}
@@ -2194,27 +2194,27 @@ Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overesti
         r + \gamma \max_{a'} Q_{\theta^-}(s',a') & \text{otherwise.}
       \end{cases}
     \]
-  </p>
-  <p>We minimize a robust Huber loss
+</p>
+<p>We minimize a robust Huber loss
     \[
       \mathcal{L}(\theta)=\mathbb{E}\big[\mathrm{Huber}\big(y - Q_\theta(s,a)\big)\big],
     \]
     and update parameters with Adam/RMSProp. Every \(C\) gradient steps we copy weights from the online network to the target network, \( \theta^- \leftarrow \theta \), to avoid chasing a moving target.
-  </p>
+</p>
 
-  <h3><strong>Exploration &amp; Replay</strong></h3>
-  <p>Actions are selected by an ε-greedy policy. We linearly decay \(\varepsilon\) from a high initial value to a small floor to transition from exploration to exploitation:
+<h3><strong>Exploration &amp; Replay</strong></h3>
+<p>Actions are selected by an ε-greedy policy. We linearly decay \(\varepsilon\) from a high initial value to a small floor to transition from exploration to exploitation:
     \[
       \varepsilon(t) = \max\!\big(\varepsilon_{\min},\, \varepsilon_{\max} - \alpha t\big).
     \]
     Experience replay stores the last \(N\) transitions; each update draws a mini-batch uniformly to break temporal correlations and make the stochastic gradient a better estimator of the Bellman error expectation.
-  </p>
+</p>
 
-  <h3><strong>Network Architecture</strong></h3>
-  <p>The model mirrors the original DQN CNN: several convolutional layers extract spatio-temporal features from stacked frames, followed by fully connected layers that produce one Q-value per discrete action (e.g., <span class="kbd">NOOP</span>, <span class="kbd">LEFT</span>, <span class="kbd">RIGHT</span>, <span class="kbd">FIRE</span>). During evaluation we act greedily \(a_t=\arg\max_a Q_\theta(s_t,a)\); during training we sample ε-greedy to keep discovering better trajectories.</p>
+<h3><strong>Network Architecture</strong></h3>
+<p>The model mirrors the original DQN CNN: several convolutional layers extract spatio-temporal features from stacked frames, followed by fully connected layers that produce one Q-value per discrete action (e.g., <span class="kbd">NOOP</span>, <span class="kbd">LEFT</span>, <span class="kbd">RIGHT</span>, <span class="kbd">FIRE</span>). During evaluation we act greedily \(a_t=\arg\max_a Q_\theta(s_t,a)\); during training we sample ε-greedy to keep discovering better trajectories.</p>
 
-  <h3><strong>Training Loop (Conceptual)</strong></h3>
-  <pre><code># Pseudocode (PyTorch-style) — white background, black text
+<h3><strong>Training Loop (Conceptual)</strong></h3>
+<pre><code># Pseudocode (PyTorch-style) — white background, black text
 for episode in range(num_episodes):
     s = env.reset()                      # stacked frames
     for t in range(max_steps):
@@ -2238,34 +2238,34 @@ for episode in range(num_episodes):
     eps = max(eps_min, eps - eps_decay)
 </code></pre>
 
-  <h3><strong>Evaluation Protocol</strong></h3>
-  <p>We periodically run evaluation episodes with \(\varepsilon=0\) and record average score, win/loss ratio (for games like <em>Pong</em>), and episode length. Because Atari scores can be bursty, we track moving averages and visualize learning curves to ensure improvements are not one-off lucky runs. Seeding the environment and PyTorch gives reproducible baselines for A/B tweaks.</p>
+<h3><strong>Evaluation Protocol</strong></h3>
+<p>We periodically run evaluation episodes with \(\varepsilon=0\) and record average score, win/loss ratio (for games like <em>Pong</em>), and episode length. Because Atari scores can be bursty, we track moving averages and visualize learning curves to ensure improvements are not one-off lucky runs. Seeding the environment and PyTorch gives reproducible baselines for A/B tweaks.</p>
 
-  <h3><strong>Outcomes &amp; Behaviors Learned</strong></h3>
-  <p>After sufficient replay warm-up and ε-decay, the agent exhibits recognizable and repeatable strategies. On <em>Breakout</em> it aligns the paddle under predicted ball landings, learns to create side tunnels, and exploits back-wall bounces for rapid scoring. On <em>Pong</em> it anticipates ball trajectories earlier in volleys, gaining consistent winning margins. Qualitatively, trajectories become smooth and purposeful; quantitatively, evaluation averages stabilize and surpass random and naive baselines.</p>
+<h3><strong>Outcomes &amp; Behaviors Learned</strong></h3>
+<p>After sufficient replay warm-up and ε-decay, the agent exhibits recognizable and repeatable strategies. On <em>Breakout</em> it aligns the paddle under predicted ball landings, learns to create side tunnels, and exploits back-wall bounces for rapid scoring. On <em>Pong</em> it anticipates ball trajectories earlier in volleys, gaining consistent winning margins. Qualitatively, trajectories become smooth and purposeful; quantitatively, evaluation averages stabilize and surpass random and naive baselines.</p>
 
-  <div class="figure">
-    <div class="gif-grid">
-      <img src="https://raw.githubusercontent.com/mohammed840/Reinforcement-Learning-on-Atari-Games./refs/heads/main/figures_for_README/Pong_21.gif" alt="DQN Breakout demo gif">
-      <img src="https://raw.githubusercontent.com/mohammed840/Reinforcement-Learning-on-Atari-Games./refs/heads/main/figures_for_README/Breakout_756.gif" alt="DQN Pong demo gif">
-    </div>
-    <div class="caption">Figure: DQN agents in action on <em>Breakout</em> (left) and <em>Pong</em> (right), taken from the project’s README figures.</div>
-  </div>
+<div class="figure">
+<div class="gif-grid">
+<img src="https://raw.githubusercontent.com/mohammed840/Reinforcement-Learning-on-Atari-Games./refs/heads/main/figures_for_README/Pong_21.gif" alt="DQN Breakout demo gif">
+<img src="https://raw.githubusercontent.com/mohammed840/Reinforcement-Learning-on-Atari-Games./refs/heads/main/figures_for_README/Breakout_756.gif" alt="DQN Pong demo gif">
+</div>
+<div class="caption">Figure: DQN agents in action on <em>Breakout</em> (left) and <em>Pong</em> (right), taken from the project’s README figures.</div>
+</div>
 
-  <h3><strong>Key Hyperparameters (What Mattered)</strong></h3>
-  <p><em>Replay size</em> large enough to cover diverse contexts; <em>batch size</em> balancing stability and throughput; <em>learning rate</em> tuned to avoid value explosion; <em>target update period</em> \(C\) that is neither too fast (chasing noise) nor too slow (stale targets); <em>ε schedule</em> that decays slowly enough to keep discovering new strategies; <em>reward clipping</em> and <em>gradient clipping</em> to control outliers. Small shifts in any of these show up clearly in the evaluation curves.</p>
+<h3><strong>Key Hyperparameters (What Mattered)</strong></h3>
+<p><em>Replay size</em> large enough to cover diverse contexts; <em>batch size</em> balancing stability and throughput; <em>learning rate</em> tuned to avoid value explosion; <em>target update period</em> \(C\) that is neither too fast (chasing noise) nor too slow (stale targets); <em>ε schedule</em> that decays slowly enough to keep discovering new strategies; <em>reward clipping</em> and <em>gradient clipping</em> to control outliers. Small shifts in any of these show up clearly in the evaluation curves.</p>
 
-  <h3><strong>Troubleshooting &amp; Diagnostics</strong></h3>
-  <p>If training plateaus early, verify that stacked frames truly change over time (no frozen observations), that the replay buffer warms up before updates begin, and that the target network is actually copied on schedule. Exploding values usually point to too-high learning rate, missing reward/grad clipping, or an ε that collapsed prematurely. Always sanity-check by rendering a few training episodes to confirm actions are being sampled and the paddle moves responsively.</p>
+<h3><strong>Troubleshooting &amp; Diagnostics</strong></h3>
+<p>If training plateaus early, verify that stacked frames truly change over time (no frozen observations), that the replay buffer warms up before updates begin, and that the target network is actually copied on schedule. Exploding values usually point to too-high learning rate, missing reward/grad clipping, or an ε that collapsed prematurely. Always sanity-check by rendering a few training episodes to confirm actions are being sampled and the paddle moves responsively.</p>
 
-  <h3><strong>Limitations &amp; Next Steps</strong></h3>
-  <p>Vanilla DQN can overestimate values due to the max in the target; Double DQN, prioritized replay, and dueling heads are common upgrades. For harder games or partial observability, frame stacks may still be insufficient—recurrent layers or attention can help. Finally, transfer to continuous control requires policy-gradient or actor–critic methods (e.g., PPO, SAC); Atari remains a great sandbox for value-based methods but is not the final word on real-world RL.</p>
+<h3><strong>Limitations &amp; Next Steps</strong></h3>
+<p>Vanilla DQN can overestimate values due to the max in the target; Double DQN, prioritized replay, and dueling heads are common upgrades. For harder games or partial observability, frame stacks may still be insufficient—recurrent layers or attention can help. Finally, transfer to continuous control requires policy-gradient or actor–critic methods (e.g., PPO, SAC); Atari remains a great sandbox for value-based methods but is not the final word on real-world RL.</p>
 
-  <div class="note">
-    <strong>Why this project matters.</strong> It’s an end-to-end template for discrete-action RL from pixels: define observations and actions, set up ε-greedy data collection, learn off-policy with replay and a target network, and evaluate greedily. Swap the environment and reward and you can reuse the loop for many applied problems—game agents, UI navigation, simple robotics with discrete controllers, and more.
-  </div>
+<div class="note">
+<strong>Why this project matters.</strong> It’s an end-to-end template for discrete-action RL from pixels: define observations and actions, set up ε-greedy data collection, learn off-policy with replay and a target network, and evaluate greedily. Swap the environment and reward and you can reuse the loop for many applied problems—game agents, UI navigation, simple robotics with discrete controllers, and more.
+</div>
 
-  <p><strong>Code &amp; repository:</strong> <a href="https://github.com/jasonbian97/Deep-Q-Learning-Atari-Pytorch" target="_blank" rel="noopener">github.com/mohammed840/Reinforcement-Learning-on-Atari-Games.</a></p>
+<p><strong>Code &amp; repository:</strong> <a href="https://github.com/jasonbian97/Deep-Q-Learning-Atari-Pytorch" target="_blank" rel="noopener">github.com/mohammed840/Reinforcement-Learning-on-Atari-Games.</a></p>
 
 
   <!-- MathJax for equations on Wix/Six -->
@@ -2274,22 +2274,22 @@ for episode in range(num_episodes):
 
   
 
-  <h2><strong>RL Projects &amp; Applications — Reinforcement-Learning-based Movie Recommendation</strong></h2>
+<h2><strong>RL Projects &amp; Applications — Reinforcement-Learning-based Movie Recommendation</strong></h2>
 
-  <p><strong>Overview.</strong> This project reproduces a movie recommender using two reinforcement-learning strategies: (1) a <em>Multi-Armed Bandits</em> (MAB) recommender that learns which items to show by trading off exploration vs exploitation, and (2) an <em>Actor–Critic</em> deep RL recommender that models recommendation as a sequential decision problem where user interactions are the environment’s feedback. The repository includes a MovieLens dataset folder (<code>data/ml-1m</code>) and two notebooks: <code>RL_BanditsCode.ipynb</code> and <code>ActorCritic_DeepRL_RecommenderSystem.ipynb</code>. :contentReference[oaicite:0]{index=0}</p>
+<p><strong>Overview.</strong> This project reproduces a movie recommender using two reinforcement-learning strategies: (1) a <em>Multi-Armed Bandits</em> (MAB) recommender that learns which items to show by trading off exploration vs exploitation, and (2) an <em>Actor–Critic</em> deep RL recommender that models recommendation as a sequential decision problem where user interactions are the environment’s feedback. The repository includes a MovieLens dataset folder (<code>data/ml-1m</code>) and two notebooks: <code>RL_BanditsCode.ipynb</code> and <code>ActorCritic_DeepRL_RecommenderSystem.ipynb</code>. :contentReference[oaicite:0]{index=0}</p>
 
-  <h3><strong>Problem setup: recommendations as an RL loop</strong></h3>
-  <p>At time \(t\), the system observes a (possibly partial) user state \(s_t\) (e.g., user &amp; context features, history summary) and recommends an item \(a_t\) (a movie). The user response provides reward \(r_t\) (e.g., click, watch, rating), and the session updates to \(s_{t+1}\). Over many interactions, we learn a policy \(\pi(a\mid s)\) that maximizes expected long-term engagement:</p>
-  <p>\[
+<h3><strong>Problem setup: recommendations as an RL loop</strong></h3>
+<p>At time \(t\), the system observes a (possibly partial) user state \(s_t\) (e.g., user &amp; context features, history summary) and recommends an item \(a_t\) (a movie). The user response provides reward \(r_t\) (e.g., click, watch, rating), and the session updates to \(s_{t+1}\). Over many interactions, we learn a policy \(\pi(a\mid s)\) that maximizes expected long-term engagement:</p>
+<p>\[
     \max_{\pi}\; \mathbb{E}_\pi \Big[ \sum_{t\ge 0} \gamma^t\, r_t \Big].
   \]</p>
 
-  <h3><strong>Part 1 — Multi-Armed Bandits recommender</strong></h3>
-  <p>In the MAB framing, each candidate movie (or strategy for choosing a movie) is an “arm.” With no explicit state dynamics, the agent learns a value estimate \(\hat{\mu}_i\) per arm \(i\) and chooses arms that look best while still exploring alternatives. Common choices are \(\varepsilon\)-greedy, UCB, or Thompson Sampling. This baseline is simple and effective for <em>cold-start</em> traffic or short sessions because it requires minimal modeling assumptions and updates online from immediate rewards.</p>
+<h3><strong>Part 1 — Multi-Armed Bandits recommender</strong></h3>
+<p>In the MAB framing, each candidate movie (or strategy for choosing a movie) is an “arm.” With no explicit state dynamics, the agent learns a value estimate \(\hat{\mu}_i\) per arm \(i\) and chooses arms that look best while still exploring alternatives. Common choices are \(\varepsilon\)-greedy, UCB, or Thompson Sampling. This baseline is simple and effective for <em>cold-start</em> traffic or short sessions because it requires minimal modeling assumptions and updates online from immediate rewards.</p>
 
-  <h3><strong>Part 2 — Actor–Critic deep RL recommender</strong></h3>
-  <p>The Actor–Critic notebook frames recommendation as a Markov Decision Process with function approximation. The <em>critic</em> estimates \(V_\phi(s)\) or \(Q_\phi(s,a)\), while the <em>actor</em> parameterizes a stochastic policy \(\pi_\theta(a\mid s)\). A standard advantage-based update looks like:</p>
-  <p>\[
+<h3><strong>Part 2 — Actor–Critic deep RL recommender</strong></h3>
+<p>The Actor–Critic notebook frames recommendation as a Markov Decision Process with function approximation. The <em>critic</em> estimates \(V_\phi(s)\) or \(Q_\phi(s,a)\), while the <em>actor</em> parameterizes a stochastic policy \(\pi_\theta(a\mid s)\). A standard advantage-based update looks like:</p>
+<p>\[
     \theta \leftarrow \theta
       + \eta \,\widehat{\mathbb{E}}\Big[\nabla_\theta \log \pi_\theta(a_t\!\mid\! s_t)\; A_t\Big],
       \quad
@@ -2299,26 +2299,26 @@ for episode in range(num_episodes):
     \phi \leftarrow \phi
       - \eta_v \,\widehat{\mathbb{E}}\big[ (r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t))^2 \big].
   \]
-  </p>
-  <p>In practice, the state can embed user history (e.g., a learned representation of past views/ratings), the action can be an item ID or a slate selection strategy, and the reward blends implicit signals (click, watch-time) with explicit ratings to reflect quality and satisfaction over the session. The repository’s README explicitly lists both “Multi Armed Bandits” and an “Actor-Critic based recommender framework” as implemented strategies. :contentReference[oaicite:1]{index=1}</p>
+</p>
+<p>In practice, the state can embed user history (e.g., a learned representation of past views/ratings), the action can be an item ID or a slate selection strategy, and the reward blends implicit signals (click, watch-time) with explicit ratings to reflect quality and satisfaction over the session. The repository’s README explicitly lists both “Multi Armed Bandits” and an “Actor-Critic based recommender framework” as implemented strategies. :contentReference[oaicite:1]{index=1}</p>
 
-  <h3><strong>Data &amp; features</strong></h3>
-  <p>The repo ships with a MovieLens directory (<code>data/ml-1m</code>), indicating experiments on the 1M-ratings split (users, items, ratings, timestamps). Typical preprocessing includes joining user/movie metadata, indexing IDs, constructing sparse interaction matrices, and creating per-user histories or session windows that feed the RL state encoder. (Presence of the <code>data/ml-1m</code> folder is visible in the repo file tree.) :contentReference[oaicite:2]{index=2}</p>
+<h3><strong>Data &amp; features</strong></h3>
+<p>The repo ships with a MovieLens directory (<code>data/ml-1m</code>), indicating experiments on the 1M-ratings split (users, items, ratings, timestamps). Typical preprocessing includes joining user/movie metadata, indexing IDs, constructing sparse interaction matrices, and creating per-user histories or session windows that feed the RL state encoder. (Presence of the <code>data/ml-1m</code> folder is visible in the repo file tree.) :contentReference[oaicite:2]{index=2}</p>
 
-  <h3><strong>Training dynamics &amp; evaluation</strong></h3>
-  <p><em>MAB stage.</em> Online (or simulated-online) learning picks an arm (movie) per impression and immediately observes reward; we track click-through-rate proxies, average reward, and regret curves vs. an oracle. Exploration controls (\(\varepsilon\), UCB confidence) determine how fast we converge and how robust we are to non-stationarity.</p>
-  <p><em>Actor–Critic stage.</em> We simulate user trajectories from MovieLens interactions. Mini-batches of transitions \((s_t,a_t,r_t,s_{t+1})\) update the critic (value regression) and the actor (policy-gradient). We monitor running averages of reward per step, policy entropy (to avoid collapse), and offline top-K ranking metrics like Precision@K/Recall@K or NDCG computed on held-out sessions. Where ratings exist, we can also report RMSE/MAE on predicted affinity but emphasize <em>sequence-level</em> success (e.g., session length, multi-step engagement).</p>
+<h3><strong>Training dynamics &amp; evaluation</strong></h3>
+<p><em>MAB stage.</em> Online (or simulated-online) learning picks an arm (movie) per impression and immediately observes reward; we track click-through-rate proxies, average reward, and regret curves vs. an oracle. Exploration controls (\(\varepsilon\), UCB confidence) determine how fast we converge and how robust we are to non-stationarity.</p>
+<p><em>Actor–Critic stage.</em> We simulate user trajectories from MovieLens interactions. Mini-batches of transitions \((s_t,a_t,r_t,s_{t+1})\) update the critic (value regression) and the actor (policy-gradient). We monitor running averages of reward per step, policy entropy (to avoid collapse), and offline top-K ranking metrics like Precision@K/Recall@K or NDCG computed on held-out sessions. Where ratings exist, we can also report RMSE/MAE on predicted affinity but emphasize <em>sequence-level</em> success (e.g., session length, multi-step engagement).</p>
 
-  <h3><strong>What we learned (outcomes)</strong></h3>
-  <ul>
-    <li><strong>Cold-start &amp; sparse data.</strong> Bandits quickly identify high-reward items with minimal history and serve as strong warm-up baselines before deploying heavier RL. They reduce early regret and stabilize early-life users.</li>
-    <li><strong>Session-aware optimization.</strong> Actor–Critic optimizes for multi-step objectives (not just one-shot ratings), improving the probability of sustained engagement across a session by using bootstrapped value estimates.</li>
-    <li><strong>Exploration that pays off.</strong> Both approaches incorporate explicit exploration; controlled exploration prevents popularity bias lock-in and helps discover long-tail movies that later drive higher cumulative reward.</li>
-    <li><strong>Personalization via state.</strong> Encoding user history into the state improves relevance; even simple history embeddings (e.g., recent-k items) noticeably lift top-K ranking metrics compared to stateless choices.</li>
-  </ul>
+<h3><strong>What we learned (outcomes)</strong></h3>
+<ul>
+<li><strong>Cold-start &amp; sparse data.</strong> Bandits quickly identify high-reward items with minimal history and serve as strong warm-up baselines before deploying heavier RL. They reduce early regret and stabilize early-life users.</li>
+<li><strong>Session-aware optimization.</strong> Actor–Critic optimizes for multi-step objectives (not just one-shot ratings), improving the probability of sustained engagement across a session by using bootstrapped value estimates.</li>
+<li><strong>Exploration that pays off.</strong> Both approaches incorporate explicit exploration; controlled exploration prevents popularity bias lock-in and helps discover long-tail movies that later drive higher cumulative reward.</li>
+<li><strong>Personalization via state.</strong> Encoding user history into the state improves relevance; even simple history embeddings (e.g., recent-k items) noticeably lift top-K ranking metrics compared to stateless choices.</li>
+</ul>
 
-  <h3><strong>Pseudocode — Bandits then Actor–Critic (white background)</strong></h3>
-  <pre><code># Stage 1: Multi-Armed Bandit (epsilon-greedy)
+<h3><strong>Pseudocode — Bandits then Actor–Critic (white background)</strong></h3>
+<pre><code># Stage 1: Multi-Armed Bandit (epsilon-greedy)
 init Q = zeros(num_items); N = zeros(num_items); eps = eps0
 for t in 1..T:
     if rand() &lt; eps:  a = random_item()
@@ -2340,23 +2340,23 @@ for epoch in 1..E:
         optimizer.step(); optimizer.zero_grad()
 </code></pre>
 
-  <h3><strong>Design choices that mattered</strong></h3>
-  <ul>
-    <li><em>Reward shaping.</em> Combining implicit signals (click/watch-time) and explicit ratings gives a more faithful objective; session bonuses (e.g., diversity/novelty rewards) prevent degenerate loops.</li>
-    <li><em>Candidate generation vs ranking.</em> In practice we sample a small candidate set per user (ANN vectors, metadata filters) and let the policy rank within that slate—keeps the action space tractable.</li>
-    <li><em>State representation.</em> Even simple recency-weighted embeddings outperform one-hot histories; recurrent/attention encoders help when sessions are long.</li>
-    <li><em>Exploration schedules.</em> Start with higher entropy (policy) or higher \(\varepsilon\) (bandit), cool slowly; track regret/entropy to avoid premature convergence.</li>
-  </ul>
+<h3><strong>Design choices that mattered</strong></h3>
+<ul>
+<li><em>Reward shaping.</em> Combining implicit signals (click/watch-time) and explicit ratings gives a more faithful objective; session bonuses (e.g., diversity/novelty rewards) prevent degenerate loops.</li>
+<li><em>Candidate generation vs ranking.</em> In practice we sample a small candidate set per user (ANN vectors, metadata filters) and let the policy rank within that slate—keeps the action space tractable.</li>
+<li><em>State representation.</em> Even simple recency-weighted embeddings outperform one-hot histories; recurrent/attention encoders help when sessions are long.</li>
+<li><em>Exploration schedules.</em> Start with higher entropy (policy) or higher \(\varepsilon\) (bandit), cool slowly; track regret/entropy to avoid premature convergence.</li>
+</ul>
 
-  <div class="note">
-    <strong>Repo pointers.</strong> The README lists both the MAB and Actor–Critic implementations; the root shows <code>data/ml-1m</code> and the two notebooks (<code>RL_BanditsCode.ipynb</code>, <code>ActorCritic_DeepRL_RecommenderSystem.ipynb</code>) for bandits and deep RL respectively. :contentReference[oaicite:3]{index=3}
-  </div>
+<div class="note">
+<strong>Repo pointers.</strong> The README lists both the MAB and Actor–Critic implementations; the root shows <code>data/ml-1m</code> and the two notebooks (<code>RL_BanditsCode.ipynb</code>, <code>ActorCritic_DeepRL_RecommenderSystem.ipynb</code>) for bandits and deep RL respectively. :contentReference[oaicite:3]{index=3}
+</div>
 
-  <p><strong>Code &amp; repository:</strong>
-    <a href="https://github.com/ShreenidhiN/Reinforcement-Learning-based-Movie-Recommendation" target="_blank" rel="noopener">
+<p><strong>Code &amp; repository:</strong>
+<a href="https://github.com/ShreenidhiN/Reinforcement-Learning-based-Movie-Recommendation" target="_blank" rel="noopener">
       github.com/mohammed840/MOVIE-RECOMMENDATION-SYSTEM-USING-DEEP-REINFORCEMENT-LEARNING
-    </a>
-  </p>
+</a>
+</p>
 
 
 # Conclusion
