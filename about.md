@@ -34,6 +34,6 @@ At **IBM**, I worked on the **Watsonx** team as a Multimodal AI Engineer, buildi
 
 ## What I Care About
 
-I care about going from research to production, taking **foundation models** and turning them into highly scalable, production ready systems. I'm especially interested in **evaluation** (if you can't measure it, you can't improve it), **closing tooling gaps** in underserved domains, **RL for language** (RLHF, RLVR, PPO, GRPO, reward modeling), and **reasoning models** where RL training enables models to develop stronger chain of thought and problem solving capabilities.
+I'm really interested in pushing the boundaries of AI, especially around extending what's possible beyond fixed context windows and using post-training to make models outperform closed-source systems. I focus on taking foundation models to production, building scalable systems, and using strong evaluation loops to actually improve them. A lot of my work sits around RL for language (RLHF, RLVR, PPO, GRPO) and reasoning, where training shapes real problem-solving ability. Lately, I've also been going deeper into the physics side, exploring how this translates into humanoid robotics and autonomous systems.
 
 
