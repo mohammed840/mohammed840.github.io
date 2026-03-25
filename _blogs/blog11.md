@@ -421,6 +421,7 @@ Initially, the agent flails randomly; after ~200 k steps it learns to hit the ba
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; margin: 1.5rem 0;">
 <iframe src="https://www.youtube-nocookie.com/embed/V1eYniJ0Rnk?modestbranding=1&rel=0" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+</div>
 
 Such emergent behavior illustrated that reward driven learning could produce human-like ingenuity.
 
