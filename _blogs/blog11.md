@@ -834,13 +834,13 @@ For practical implementations, you can explore the official PyTorch examples, wh
 
 GitHub Links:
 
-PyTorch: Actor–Critic Implementation https://github.com/pytorch/examples/tree/main/reinforcement_learning/actor_critic
+PyTorch: [Actor–Critic Implementation](https://github.com/pytorch/examples/tree/main/reinforcement_learning/actor_critic)
 
 DeepMind: A3C and ACER Repository 
-https://github.com/Kaixhin/ACER
+[https://github.com/Kaixhin/ACER](https://github.com/Kaixhin/ACER)
 
 OpenAI Baselines: A2C/A3C Implementation
-https://github.com/openai/baselines/tree/master/baselines/a2c
+[https://github.com/openai/baselines/tree/master/baselines/a2c](https://github.com/openai/baselines/tree/master/baselines/a2c)
 
 #  Proximal Policy Optimization (PPO, 2017)
 
@@ -1323,7 +1323,7 @@ print("Training complete.")
 
 If you prefer studying from existing, public code, the classic reference implementations and a Colab-backed tutorial are freely available. 
 
-Denny Britz’s Reinforcement Learning GitHub repository includes tabular algorithms like Q-Learning in clean NumPy form at https://github.com/dennybritz/reinforcement-learning, and the official PyTorch tutorial “Reinforcement Q-Learning” provides a step-by-step DQN notebook at https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html that you can open directly in Colab.
+Denny Britz's Reinforcement Learning GitHub repository includes tabular algorithms like Q-Learning in clean NumPy form at [github.com/dennybritz/reinforcement-learning](https://github.com/dennybritz/reinforcement-learning), and the official PyTorch tutorial "Reinforcement Q-Learning" provides a step-by-step DQN notebook at [pytorch.org/tutorials/…/reinforcement_q_learning](https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html) that you can open directly in Colab.
 
 # RL Playgrounds
 
@@ -1930,7 +1930,9 @@ PyTorch REINFORCE examples (CartPole & more). (GitHub)
 
 Mnih, V. et al. (2016). Asynchronous Methods for Deep Reinforcement Learning. ICML 2016.Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An Introduction (2nd Ed.). MIT Press.Schulman, J. et al. (2017). Proximal Policy Optimization Algorithms. arXiv:1707.06347.PyTorch (2024). Reinforcement Learning Examples: Actor–Critic.
 
-https://github.com/openai/baselines/tree/master/baselines/ppo2PyTorch Version: https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gailSpinning Up Docs: https://spinningup.openai.com/en/latest/algorithms/ppo.htm
+- [OpenAI Baselines PPO2](https://github.com/openai/baselines/tree/master/baselines/ppo2)
+- PyTorch Version: [pytorch-a2c-ppo-acktr-gail](https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail)
+- Spinning Up Docs: [spinningup.openai.com/…/ppo](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
 
 Schulman, J., Wolski, F., Dhariwal, P., Radford, A., & Klimov, O. (2017). Proximal Policy Optimization Algorithms.arXiv:1707.06347.OpenAI Blog (2017). PPO: A New Method for Reliable Reinforcement Learning.OpenAI Five (2018). Dota 2 with Large-Scale Deep Reinforcement Learning.Christiano, P. et al. (2017). Deep Reinforcement Learning from Human Preferences. NeurIPS.Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An Introduction (2nd Ed.). MIT Press.
 
