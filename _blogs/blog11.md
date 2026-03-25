@@ -891,21 +891,19 @@ Proximal Policy Optimization (PPO), proposed by John Schulman et al. (2017) at O
 
 #  The Core Idea
 
-<p>The goal of Proximal Policy Optimization (PPO) is to make policy updates trustworthy and consistent. Instead of taking large, unstable gradient steps, PPO restricts how much the new policy can deviate from the old one.</p>
+The goal of Proximal Policy Optimization (PPO) is to make policy updates trustworthy and consistent. Instead of taking large, unstable gradient steps, PPO restricts how much the new policy can deviate from the old one.
 
-<p>Let $\\pi_\\theta(a|s)$ be the current policy and $\\pi_{\\text{old}}(a|s)$ the previous policy. We define the probability ratio:</p>
+Let $\pi_\theta(a|s)$ be the current policy and $\pi_{\text{old}}(a|s)$ the previous policy. We define the probability ratio:
 
-<div class="eq">
-  $$r_t(\\theta) = \\frac{\\pi_\\theta(a_t|s_t)}{\\pi_{\\text{old}}(a_t|s_t)}.$$
+$$r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\text{old}}(a_t|s_t)}$$
 
-<p>This ratio measures how much the new policy has changed its probability of taking the same action in the same state. The objective is then to maximize the expected advantage, but with a clip to prevent too large of a policy shift:</p>
+This ratio measures how much the new policy has changed its probability of taking the same action in the same state. The objective is then to maximize the expected advantage, but with a clip to prevent too large of a policy shift:
 
-<div class="eq">
-  $$L^{\\text{CLIP}}(\\theta) = \\mathbb{E}_t\\!\\left[\\min\\left(r_t(\\theta) A_t, \\; \\text{clip}\\big(r_t(\\theta), 1 - \\epsilon, 1 + \\epsilon\\big) A_t\\right)\\right].$$
+$$L^{\text{CLIP}}(\theta) = \mathbb{E}_t\!\left[\min\left(r_t(\theta) A_t,\; \text{clip}\big(r_t(\theta),\, 1-\epsilon,\, 1+\epsilon\big) A_t\right)\right]$$
 
-<p>Here $\\epsilon$ is a small constant (typically 0.1–0.2) that bounds the step size. If the new policy attempts to change too much, the clipped term prevents further increase in the objective value, thereby keeping updates proximal to the old policy.</p>
+Here $\epsilon$ is a small constant (typically 0.1–0.2) that bounds the step size. If the new policy attempts to change too much, the clipped term prevents further increase in the objective value, thereby keeping updates proximal to the old policy.
 
-<p>This seemingly minor change had massive impact: it combined the stability of TRPO with the simplicity of REINFORCE — all without requiring second-order derivatives or complex constraints.</p>
+This seemingly minor change had massive impact: it combined the stability of TRPO with the simplicity of REINFORCE — all without requiring second-order derivatives or complex constraints.
 # Why It Worked
 
 PPO brought a level of practical reliability that made deep reinforcement learning trainable on large-scale tasks. Its balance between exploration and trust-region control allowed researchers to train massive agents safely. It became the foundation of OpenAI’s entire RL stack   from game agents to language models.
