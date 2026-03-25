@@ -1,6 +1,6 @@
 ---
 title: "Context Engineering Guide"
-date: 2025-11-01
+date: 2025-07-08
 description: "A concrete step-by-step guide to context engineering in practice — from system prompts and structured outputs to RAG, memory, and tool calling in AI agent workflows."
 layout: blog
 ---
