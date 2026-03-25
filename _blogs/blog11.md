@@ -265,6 +265,7 @@ Mnih et al. (2015). <em>Human-level control through deep reinforcement learning<
 Below is a simple tabular Q-Learning implementation suitable for a discrete OpenAI Gym/Gymnasium environment like FrozenLake or Taxi-v3.
 
 
+```python
 import numpy as np
 import gymnasium as gym
 import random
@@ -307,6 +308,7 @@ Q = q_learning(env)
 print("Learned Q-table:")
 print(Q)
 
+```
 
 Key takeaway: Each line of the update rule is a direct numerical realization of Watkins’ Bellman equation.
 
