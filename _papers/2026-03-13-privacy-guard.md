@@ -101,7 +101,7 @@ abstract: "We present Privacy Guard, a reinforcement learning framework for priv
 <hr />
 <h2 id="a-better-frame-graph-search-over-time">A Better Frame: Graph Search Over Time</h2>
 <p>The real question isn’t <em>whether</em> to activate sensors — it’s <strong>when, where, and at what fidelity</strong>. That’s a sequential decision problem. At every timestep, an agent observes the home and must search through possible actions, reserving budget for the moments that actually matter:</p>
-<div class="mermaid">
+<pre class="mermaid">
 graph LR
     A(["Observe: PIR, Door, Audio, Budget"]) --> B{"Threat level?"}
     B -- Low --> C["Sensors OFF - Save budget"]
@@ -111,7 +111,7 @@ graph LR
     D --> F
     E --> F
     F --> A
-</div>
+</pre>
 <p>This graph loops for every timestep in an episode. Budget spent on step 3 is unavailable at step 17 when a real threat arrives — creating genuine <strong>intertemporal commitment</strong>. No fixed-threshold rule set can navigate this. It requires <em>learning</em> which signals actually matter, and when spending is worth it.</p>
 <hr />
 <h2 id="the-gap-no-classical-policy-reaches">The Gap No Classical Policy Reaches</h2>
@@ -129,14 +129,14 @@ graph LR
 <hr />
 <h2 id="layer-1-training-llms-with-reward-signals">Layer 1 — Training LLMs With Reward Signals</h2>
 <p>The field started with applying RL to sequence-level metrics that aren’t differentiable. Early REINFORCE work (Ranzato et al., 2016) used policy gradients to optimise BLEU scores directly. <strong>RLHF</strong> (Christiano et al., 2017) scaled this by learning a <em>reward model</em> from human preference comparisons, then running PPO against it — the approach that produced InstructGPT and modern aligned assistants.</p>
-<div class="mermaid">
+<pre class="mermaid">
 graph TD
     A["Human preferences"] --> B["Reward model"]
     B --> C["PPO policy gradient"]
     C --> D["Aligned LLM"]
     D -->|"generates"| E["New outputs"]
     E -->|"feedback"| A
-</div>
+</pre>
 <p><strong>Key papers:</strong> - <a href="https://arxiv.org/abs/1706.03741">RLHF — Christiano et al. 2017</a> - <a href="https://arxiv.org/abs/2203.02155">InstructGPT — Ouyang et al. 2022</a> - <a href="https://arxiv.org/abs/2212.08073">Constitutional AI — Bai et al. 2022</a></p>
 <hr />
 <h2 id="layer-2-from-single-turn-to-agentic-multi-step">Layer 2 — From Single-Turn to Agentic Multi-Step</h2>
@@ -191,11 +191,11 @@ graph TD
 <hr />
 <h2 id="how-privacy-guard-extends-prior-work">How Privacy Guard Extends Prior Work</h2>
 <p>Prior LLM agent RL work uses free-form language or loosely structured API strings as outputs. We add three constraints that make the problem qualitatively harder:</p>
-<div class="mermaid">
+<pre class="mermaid">
 graph LR
     A["Prior work: free-text actions, no resource limit, single objective"] -->|"We add"| B["Structured JSON, hard budget constraint, coupled detection + privacy reward"]
     B --> C["Privacy Guard"]
-</div>
+</pre>
 <table>
 <colgroup>
 <col style="width: 33%" />

@@ -3,63 +3,51 @@ layout: default
 ---
 
 <article class="post">
-  <header class="post-header">
-    <h1 class="post-title">{{ page.title }}</h1>
+<header class="post-header">
+<h1 class="post-title">{{ page.title }}</h1>
 
-    {% if page.authors %}<p><strong>Authors:</strong> {{ page.authors }}</p>{% endif %}
-    {% if page.venue %}<p><strong>Venue:</strong> {{ page.venue }}</p>{% endif %}
-    {% if page.year %}<p><strong>Year:</strong> {{ page.year }}</p>{% endif %}
+{% if page.authors %}<p><strong>Authors:</strong> {{ page.authors }}</p>{% endif %}
+{% if page.venue %}<p><strong>Venue:</strong> {{ page.venue }}</p>{% endif %}
+{% if page.year %}<p><strong>Year:</strong> {{ page.year }}</p>{% endif %}
 
-    {% if page.tldr %}
-      <p><strong>TL;DR:</strong> {{ page.tldr }}</p>
-    {% endif %}
+{% if page.tldr %}
+<p><strong>TL;DR:</strong> {{ page.tldr }}</p>
+{% endif %}
 
-    {% if page.highlights %}
-      <div style="margin: 0.75rem 0;">
-        <strong>Highlights</strong>
-        <ul>
-          {% for item in page.highlights %}
-            <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
+{% if page.highlights %}
+<div style="margin: 0.75rem 0;">
+<strong>Highlights</strong>
+<ul style="list-style: none; padding-left: 0; margin: 0.4rem 0;">
+{% for item in page.highlights %}
+<li style="padding: 0.1rem 0;">{{ item }}</li>
+{% endfor %}
+</ul>
+</div>
+{% endif %}
 
-    {% if page.contributions %}
-      <div style="margin: 0.75rem 0;">
-        <strong>Key contributions</strong>
-        <ul>
-          {% for item in page.contributions %}
-            <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
+{% if page.contributions %}
+<div style="margin: 0.75rem 0;">
+<strong>Key contributions</strong>
+<ul style="list-style: none; padding-left: 0; margin: 0.4rem 0;">
+{% for item in page.contributions %}
+<li style="padding: 0.1rem 0;">{{ item }}</li>
+{% endfor %}
+</ul>
+</div>
+{% endif %}
 
-    <p>
-      {% if page.pdf %}
-        {% assign pdf_href = page.pdf %}
-        {% unless pdf_href contains "://" %}{% assign pdf_href = pdf_href | relative_url %}{% endunless %}
-        <a href="{{ pdf_href }}">PDF</a>
-      {% endif %}
-      {% if page.code %}
-        {% assign code_href = page.code %}
-        {% unless code_href contains "://" %}{% assign code_href = code_href | relative_url %}{% endunless %}
-        {% if page.pdf %} | {% endif %}<a href="{{ code_href }}">Code</a>
-      {% endif %}
-      {% if page.slides %}
-        {% assign slides_href = page.slides %}
-        {% unless slides_href contains "://" %}{% assign slides_href = slides_href | relative_url %}{% endunless %}
-        {% if page.pdf or page.code %} | {% endif %}<a href="{{ slides_href }}">Slides</a>
-      {% endif %}
-    </p>
+<p>
+{% if page.pdf %}{% assign pdf_href = page.pdf %}{% unless pdf_href contains "://" %}{% assign pdf_href = pdf_href | relative_url %}{% endunless %}<a href="{{ pdf_href }}">PDF</a>{% endif %}
+{% if page.code %}{% assign code_href = page.code %}{% unless code_href contains "://" %}{% assign code_href = code_href | relative_url %}{% endunless %}{% if page.pdf %} | {% endif %}<a href="{{ code_href }}">Code</a>{% endif %}
+{% if page.slides %}{% assign slides_href = page.slides %}{% unless slides_href contains "://" %}{% assign slides_href = slides_href | relative_url %}{% endunless %}{% if page.pdf or page.code %} | {% endif %}<a href="{{ slides_href }}">Slides</a>{% endif %}
+</p>
 
-    {% if page.abstract %}
-      <p>{{ page.abstract }}</p>
-    {% endif %}
-  </header>
+{% if page.abstract %}
+<p>{{ page.abstract }}</p>
+{% endif %}
+</header>
 
-  <div class="post-content">
-    {{ content }}
-  </div>
+<div class="post-content">
+{{ content }}
+</div>
 </article>
