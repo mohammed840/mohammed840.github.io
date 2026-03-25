@@ -1516,17 +1516,18 @@ PettingZoo uses an Agent-Environment-Cycle (AEC) API: agents act in turns within
   
   
   
-<h3>**DQN – good for discrete actions**</h3>
+### DQN – good for discrete actions
 
-Deep Q-Networks (DQN) extend classic Q-learning to high-dimensional observations by replacing the tabular $Q(s,a)$ with a deep network $Q_{\\theta}(s,a)$. At its core, DQN seeks parameters $\\theta$ that minimize the temporal-difference (TD) regression to the Bellman optimality target. For a transition $(s,a,r,s')$, the target is $y=r+\\gamma\\,\\max_{a'}Q_{\\theta^-}(s',a')$, where $\\theta^-$ are the “target network” parameters held fixed for several updates to stabilize training. The loss on a mini-batch $\\mathcal{B}$ is
-\\[
-\\mathcal{L}(\\theta)=\\frac{1}{\mid\\mathcal{B}\mid} \\sum_{(s,a,r,s')\\in\\mathcal{B}}\\Big( y - Q_{\\theta}(s,a) \\Big)^2,
-\\quad
-y=r+\\gamma\\,\\max_{a'}Q_{\\theta^-}(s',a').
-\\]
-Two key engineering ideas make DQN work in practice on discrete-action problems like Atari: an experience replay buffer $\\mathcal{D}$ that breaks temporal correlations by sampling uniformly from stored transitions, and a separate target network $Q_{\\theta^-}$ that slows the drift of targets. Agents explore with $\\varepsilon$-greedy behavior, decaying $\\varepsilon$ from near $1$ to a small floor so that $\\Pr(a=\\arg\\max_a Q_{\\theta}(s,a))$ increases over time. Stabilizers such as reward clipping (e.g., $r\\leftarrow\\mathrm{clip}(r,-1,1)$), observation preprocessing (grayscale, resize, frame-stacking), gradient clipping, and periodic target updates every $C$ steps keep the learning signal well-behaved. While vanilla DQN can overestimate values due to the $\\max$ operator, the Double DQN variant replaces the target with $y=r+\\gamma\\,Q_{\\theta^-}\\big(s',\\arg\\max_{a'} Q_{\\theta}(s',a')\\big)$ to reduce positive bias; prioritized replay further improves sample efficiency by sampling transitions with large TD errors more often. DQN shines when actions are discrete and moderate in number (e.g., up/down/left/right/jump), offering a clean path from pixels-to-actions; for continuous actions, policy-gradient or actor–critic methods are usually preferred.
+Deep Q-Networks (DQN) extend classic Q-learning to high-dimensional observations by replacing the tabular $Q(s,a)$ with a deep network $Q_{\theta}(s,a)$. At its core, DQN seeks parameters $\theta$ that minimize the temporal-difference (TD) regression to the Bellman optimality target. For a transition $(s,a,r,s')$, the target is $y=r+\gamma\,\max_{a'}Q_{\theta^-}(s',a')$, where $\theta^-$ are the “target network” parameters held fixed for several updates to stabilize training. The loss on a mini-batch $\mathcal{B}$ is
+$$
+\mathcal{L}(\theta)=\frac{1}{\mid\mathcal{B}\mid} \sum_{(s,a,r,s')\in\mathcal{B}}\Big( y - Q_{\theta}(s,a) \Big)^2,
+\quad
+y=r+\gamma\,\max_{a'}Q_{\theta^-}(s',a').
+$$
+Two key engineering ideas make DQN work in practice on discrete-action problems like Atari: an experience replay buffer $\mathcal{D}$ that breaks temporal correlations by sampling uniformly from stored transitions, and a separate target network $Q_{\theta^-}$ that slows the drift of targets. Agents explore with $\varepsilon$-greedy behavior, decaying $\varepsilon$ from near $1$ to a small floor so that $\Pr(a=\arg\max_a Q_{\theta}(s,a))$ increases over time. Stabilizers such as reward clipping (e.g., $r\leftarrow\mathrm{clip}(r,-1,1)$), observation preprocessing (grayscale, resize, frame-stacking), gradient clipping, and periodic target updates every $C$ steps keep the learning signal well-behaved. While vanilla DQN can overestimate values due to the $\max$ operator, the Double DQN variant replaces the target with $y=r+\gamma\,Q_{\theta^-}\big(s',\arg\max_{a'} Q_{\theta}(s',a')\big)$ to reduce positive bias; prioritized replay further improves sample efficiency by sampling transitions with large TD errors more often. DQN shines when actions are discrete and moderate in number (e.g., up/down/left/right/jump), offering a clean path from pixels-to-actions; for continuous actions, policy-gradient or actor–critic methods are usually preferred.
 
-<pre><code>// Pseudocode: Deep Q-Network (DQN) for discrete actions
+```
+// Pseudocode: Deep Q-Network (DQN) for discrete actions
 Initialize Q-network parameters θ randomly
 Initialize target network parameters θ⁻ ← θ
 Initialize replay buffer 𝓓 with capacity N
@@ -1560,30 +1561,30 @@ Optionally clip gradients and/or rewards
 Every C steps: θ⁻ ← θ  // target network update
 Decay ε toward ε_min
 if done: break
-</code></pre>
+```
 
-<p class="note">
-**Why it works in practice.** Replay makes the SGD gradient approximate the expectation in the Bellman error by mixing old and new transitions, the fixed $\\theta^-$ prevents “chasing a moving target,” and the $\\varepsilon$ schedule gradually shifts the policy from exploration to exploitation as $Q_{\\theta}$ improves. In Atari, a typical setup stacks 4 frames to inject short-term velocity, uses Adam with a modest learning rate, trains on mini-batches uniformly sampled from $\\mathcal{D}$, and syncs $\\theta^-\\leftarrow\\theta$ every few thousand updates. Limitations include value overestimation (mitigated by Double DQN), poor sample efficiency without prioritized replay, and sensitivity to preprocessing; nevertheless, for discrete action spaces with rich observations, DQN remains a robust and accessible baseline.
+**Why it works in practice.** Replay makes the SGD gradient approximate the expectation in the Bellman error by mixing old and new transitions, the fixed $\theta^-$ prevents “chasing a moving target,” and the $\varepsilon$ schedule gradually shifts the policy from exploration to exploitation as $Q_{\theta}$ improves. In Atari, a typical setup stacks 4 frames to inject short-term velocity, uses Adam with a modest learning rate, trains on mini-batches uniformly sampled from $\mathcal{D}$, and syncs $\theta^-\leftarrow\theta$ every few thousand updates. Limitations include value overestimation (mitigated by Double DQN), poor sample efficiency without prioritized replay, and sensitivity to preprocessing; nevertheless, for discrete action spaces with rich observations, DQN remains a robust and accessible baseline.
 
 **References.** [1] Mnih, V. et al. “Human-level control through deep reinforcement learning,” *Nature*, 518, 2015. <a href="https://doi.org/10.1038/nature14236">doi:10.1038/nature14236</a>. [2] Van Hasselt, H., Guez, A., Silver, D. “Deep Reinforcement Learning with Double Q-learning,” *AAAI*, 2016. <a href="https://arxiv.org/abs/1509.06461">arXiv:1509.06461</a>. [3] Schaul, T., Quan, J., Antonoglou, I., Silver, D. “Prioritized Experience Replay,” *ICLR*, 2016. <a href="https://arxiv.org/abs/1511.05952">arXiv:1511.05952</a>.
 
   
   
   
-<h3>**Double DQN – solves overestimation bias**</h3>
+### Double DQN – solves overestimation bias
 
-Double DQN fixes a systematic *overestimation* in vanilla DQN that comes from using the same value function both to *select* and to *evaluate* the bootstrapped action at the next state. In standard DQN, the target is $y=r+\\gamma\\max_{a'}Q_{\\theta^-}(s',a')$; the noisy max operator tends to overestimate the true value because $\\mathbb{E}[\\max_i X_i]\\ge\\max_i\\mathbb{E}[X_i]$ when the estimates $X_i$ contain noise. Double DQN decouples selection and evaluation by using the online network $Q_{\\theta}$ to pick the greedy action and the target network $Q_{\\theta^-}$ to score it:
-\\[
-y\\_{\\text{Double}}\\;=\\;r\\; +\\; \\gamma\\; Q\\_{\\theta^-}\\!\\big(s',\\;\\arg\\max\\_{a'} Q\\_{\\theta}(s',a')\\big).
-\\]
-This small change reduces positive bias without increasing computational cost, while keeping all the stabilizers of DQN (replay buffer, target network, $\\varepsilon$-greedy exploration). Intuitively, the online network handles *which* action looks best (argmax), and the target network—frozen for $C$ steps—provides a less biased *how good* estimate for that chosen action. In practice Double DQN improves value accuracy and learning stability on discrete-action benchmarks like Atari, especially for games where spurious high Q-values can derail exploration. You can combine Double DQN with other upgrades (e.g., prioritized replay or dueling heads) since it only modifies the TD target. The loss remains a simple mean-squared TD error over mini-batches $\\mathcal{B}$:
-\\[
-\\mathcal{L}(\\theta)=\\frac{1}{\mid\\mathcal{B}\mid}\\sum\\_{(s,a,r,s')}\\big(y\\_{\\text{Double}}-Q\\_{\\theta}(s,a)\\big)^2,
-\\qquad
-y\\_{\\text{Double}}=r+\\gamma\\,Q\\_{\\theta^-}\\big(s',\\arg\\max\\_{a'}Q\\_{\\theta}(s',a')\\big).
-\\]
+Double DQN fixes a systematic *overestimation* in vanilla DQN that comes from using the same value function both to *select* and to *evaluate* the bootstrapped action at the next state. In standard DQN, the target is $y=r+\gamma\max_{a'}Q_{\theta^-}(s',a')$; the noisy max operator tends to overestimate the true value because $\mathbb{E}[\max_i X_i]\ge\max_i\mathbb{E}[X_i]$ when the estimates $X_i$ contain noise. Double DQN decouples selection and evaluation by using the online network $Q_{\theta}$ to pick the greedy action and the target network $Q_{\theta^-}$ to score it:
+$$
+y\_{\text{Double}}\;=\;r\; +\; \gamma\; Q\_{\theta^-}\!\big(s',\;\arg\max\_{a'} Q\_{\theta}(s',a')\big).
+$$
+This small change reduces positive bias without increasing computational cost, while keeping all the stabilizers of DQN (replay buffer, target network, $\varepsilon$-greedy exploration). Intuitively, the online network handles *which* action looks best (argmax), and the target network—frozen for $C$ steps—provides a less biased *how good* estimate for that chosen action. In practice Double DQN improves value accuracy and learning stability on discrete-action benchmarks like Atari, especially for games where spurious high Q-values can derail exploration. You can combine Double DQN with other upgrades (e.g., prioritized replay or dueling heads) since it only modifies the TD target. The loss remains a simple mean-squared TD error over mini-batches $\mathcal{B}$:
+$$
+\mathcal{L}(\theta)=\frac{1}{\mid\mathcal{B}\mid}\sum\_{(s,a,r,s')}\big(y\_{\text{Double}}-Q\_{\theta}(s,a)\big)^2,
+\qquad
+y\_{\text{Double}}=r+\gamma\,Q\_{\theta^-}\big(s',\arg\max\_{a'}Q\_{\theta}(s',a')\big).
+$$
 
-<pre><code>// Pseudocode: Double DQN (discrete actions)
+```
+// Pseudocode: Double DQN (discrete actions)
 Initialize online network parameters θ
 Initialize target network parameters θ⁻ ← θ
 Initialize replay buffer 𝓓 with capacity N
@@ -1616,64 +1617,24 @@ Update θ to minimize L (e.g., Adam); optionally clip grads
 Every C steps: θ⁻ ← θ           // refresh target network
 Decay ε toward ε_min
 if done: break
-</code></pre>
+```
 
-<p class="note">
-**Notes.** The only change from DQN is the target: use $\\arg\\max\\_{a'} Q\\_{\\theta}(s',a')$ for selection and $Q\\_{\\theta^-}(s',\\cdot)$ for evaluation. Everything else—preprocessing, replay sampling, frame stacking, reward clipping, target sync period—stays the same. This separation curbs optimistic bias from the noisy max, yielding more reliable value learning without sacrificing simplicity.
+**Notes.** The only change from DQN is the target: use $\arg\max\_{a'} Q\_{\theta}(s',a')$ for selection and $Q\_{\theta^-}(s',\cdot)$ for evaluation. Everything else—preprocessing, replay sampling, frame stacking, reward clipping, target sync period—stays the same. This separation curbs optimistic bias from the noisy max, yielding more reliable value learning without sacrificing simplicity.
 
 **References.** [1] Van Hasselt, H. “Double Q-learning,” *NIPS*, 2010. <a href="https://proceedings.neurips.cc/paper/2010/hash/091d584fced301b442654dd8c23b3fc9-Abstract.html">NeurIPS 2010</a>. [2] Van Hasselt, H., Guez, A., Silver, D. “Deep Reinforcement Learning with Double Q-learning,” *AAAI*, 2016. <a href="https://arxiv.org/abs/1509.06461">arXiv:1509.06461</a>. [3] Mnih, V. et al. “Human-level control through deep reinforcement learning,” *Nature*, 518, 2015. <a href="https://doi.org/10.1038/nature14236">doi:10.1038/nature14236</a>.
 
-<h3>**A3C / A2C – parallel actor-learners**</h3>
+### A3C / A2C – parallel actor-learners
 
 Asynchronous Advantage Actor–Critic (A3C) accelerates and stabilizes training by running many lightweight actor-learners in parallel environments, each with its own copy of parameters θ (policy) and θᵥ (value). Each worker collects short on-policy rollouts, computes multi-step returns and advantages
-<span class="label">A<sub>t</sub> = &sum;<sub>k=0</sub><sup>n−1</sup> γ<sup>k</sup> r<sub>{t+k}</sub> + γ<sup>n</sup> V<sub>θᵥ</sub>(s<sub>{t+n}</sub>) − V<sub>θᵥ</sub>(s<sub>t</sub>)</span>,
+A<sub>t</sub> = ∑<sub>k=0</sub><sup>n−1</sup> γ<sup>k</sup> r<sub>{t+k}</sub> + γ<sup>n</sup> V<sub>θᵥ</sub>(s<sub>{t+n}</sub>) − V<sub>θᵥ</sub>(s<sub>t</sub>),
 and then pushes *asynchronous* gradients to shared parameters (often via a Hogwild-style update) so exploration decorrelates naturally across threads. The policy is optimized by maximizing the entropy-regularized objective
-<span class="label">J(θ) = E[&sum;<sub>t</sub> log π<sub>θ</sub>(a<sub>t</sub> \mid s<sub>t</sub>) · Â<sub>t</sub> + β · H(π<sub>θ</sub>(&middot; \mid s<sub>t</sub>))]</span>,
+J(θ) = E[∑<sub>t</sub> log π<sub>θ</sub>(a<sub>t</sub> \mid s<sub>t</sub>) · Â<sub>t</sub> + β · H(π<sub>θ</sub>(· \mid s<sub>t</sub>))],
 while the critic minimizes
-<span class="label">&sum;<sub>t</sub>(R<sub>t</sub> − V<sub>θᵥ</sub>(s<sub>t</sub>))<sup>2</sup></span>.
+∑<sub>t</sub>(R<sub>t</sub> − V<sub>θᵥ</sub>(s<sub>t</sub>))<sup>2</sup>.
 Advantage Actor–Critic (A2C) is the *synchronous* variant: it runs the same parallel rollout collection but averages gradients across workers and applies a single update step per cycle. In practice, A3C/A2C are strong choices for discrete or continuous actions, scale well on CPUs, and learn robust behaviors without replay buffers. Key knobs are the rollout length n, entropy weight β, learning rate, and the balance of workers and envs per worker.
 
-<figure>
-<svg viewBox="0 0 820 280" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A3C/A2C architecture diagram">
-<defs>
-
-<marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-<polygon points="0 0, 10 3.5, 0 7" fill="#374151"></polygon>
-</marker>
-</defs>
-<rect x="340" y="20" width="140" height="70" rx="10" class="box"></rect>
-<text x="410" y="48" text-anchor="middle" class="label">Shared Params</text>
-<text x="410" y="68" text-anchor="middle" class="small">θ (policy) & θᵥ (value)</text>
-<rect x="40" y="150" width="190" height="90" rx="10" class="box"></rect>
-<text x="135" y="178" text-anchor="middle" class="label">Worker 1</text>
-<text x="135" y="198" text-anchor="middle" class="small">env rollouts → Aₜ</text>
-<text x="135" y="216" text-anchor="middle" class="small">∇θ, ∇θᵥ</text>
-
-<rect x="315" y="150" width="190" height="90" rx="10" class="box"></rect>
-<text x="410" y="178" text-anchor="middle" class="label">Worker 2</text>
-<text x="410" y="198" text-anchor="middle" class="small">env rollouts → Aₜ</text>
-<text x="410" y="216" text-anchor="middle" class="small">∇θ, ∇θᵥ</text>
-
-<rect x="590" y="150" width="190" height="90" rx="10" class="box"></rect>
-<text x="685" y="178" text-anchor="middle" class="label">Worker 3</text>
-<text x="685" y="198" text-anchor="middle" class="small">env rollouts → Aₜ</text>
-<text x="685" y="216" text-anchor="middle" class="small">∇θ, ∇θᵥ</text>
-<path d="M135 150 L135 110" class="arrow"></path>
-<path d="M410 150 L410 110" class="arrow"></path>
-<path d="M685 150 L685 110" class="arrow"></path>
-<path d="M340 55 L230 55 L230 150" class="arrow"></path>
-<path d="M480 55 L590 55 L590 150" class="arrow"></path>
-<path d="M410 90 L410 150" class="arrow"></path>
-<text x="230" y="48" text-anchor="middle" class="small">sync/clone θ, θᵥ</text>
-<text x="590" y="48" text-anchor="middle" class="small">sync/clone θ, θᵥ</text>
-<text x="135" y="125" text-anchor="middle" class="small">push ∇</text>
-<text x="410" y="125" text-anchor="middle" class="small">push ∇</text>
-<text x="685" y="125" text-anchor="middle" class="small">push ∇</text>
-</svg>
-<figcaption>Figure: Parallel actor-learners collect rollouts, compute advantages, and push gradients to shared parameters. A3C updates asynchronously; A2C aggregates synchronously.</figcaption>
-</figure>
-
-<pre><code>// Pseudocode: A3C / A2C (parallel actor–critics)
+```
+// Pseudocode: A3C / A2C (parallel actor–critics)
 Shared parameters: θ (policy), θᵥ (value)
 Spawn W workers (threads or processes)
 
@@ -1699,58 +1660,27 @@ Apply gradients to shared θ, θᵥ immediately
 // then average and apply once per cycle
 
 // Tune n (rollout length), β (entropy), c_v (value weight)
-</code></pre>
+```
 
-<p class="note">
 **Why parallelism helps.** Multiple actors diversify trajectories and decorrelate updates without a replay buffer. Short n-step returns reduce bias/variance trade-offs, entropy β·H(π) sustains exploration, and CPU-friendly threads scale easily. A2C’s synchronized averaging often improves stability on GPUs; A3C’s async updates can be faster on many-core CPUs. Typical heads share a convolutional (or MLP) torso with two output branches: π<sub>θ</sub>(a \mid s) an
   
   
   
-<h3>**PPO – stable, scalable**</h3>
+### PPO – stable, scalable
 
-Proximal Policy Optimization (PPO) strikes a practical balance between stability and sample efficiency by applying multiple SGD epochs on recent on-policy data while constraining each update to stay “proximal” to the behavior policy. Let $r_t(\\theta)=\\frac{\\pi_{\\theta}(a_t\\mid s_t)}{\\pi_{\\theta_{\\text{old}}}(a_t\\mid s_t)}$ be the probability ratio and $\\hat A_t$ an advantage estimate (often GAE). The clipped surrogate maximizes the lower bound
-\\[
-L^{\\text{CLIP}}(\\theta)
-= \\mathbb{E}_t\\Big[\\min\\big(r_t(\\theta)\\,\\hat A_t,\\; \\mathrm{clip}(r_t(\\theta),\\,1-\\epsilon,\\,1+\\epsilon)\\,\\hat A_t\\big)\\Big],
-\\]
-penalizing steps that would push $r_t$ outside $[1-\\epsilon,1+\\epsilon]$. A typical total loss couples this objective with a value-function regression and an entropy bonus,
-\\[
-\\mathcal{L}(\\theta)= -L^{\\text{CLIP}}(\\theta) \\, + \\, c_v\\,\\mathbb{E}_t\\big(V_{\\theta}(s_t)-\\hat V_t\\big)^2 \\, - \\, c_e\\,\\mathbb{E}_t\\,\\mathcal{H}\\big(\\pi_{\\theta}(\\cdot\\mid s_t)\\big),
-\\]
-yielding robust improvements with simple hyperparameters (clip $\\epsilon\\approx0.1$–$0.3$, 3–10 epochs, minibatches over the rollout buffer). PPO scales cleanly on CPUs/GPUs, works for discrete and continuous actions, and has powered many large-scale applications because its update rule remains stable even under aggressive optimization.
+Proximal Policy Optimization (PPO) strikes a practical balance between stability and sample efficiency by applying multiple SGD epochs on recent on-policy data while constraining each update to stay “proximal” to the behavior policy. Let $r_t(\theta)=\frac{\pi_{\theta}(a_t\mid s_t)}{\pi_{\theta_{\text{old}}}(a_t\mid s_t)}$ be the probability ratio and $\hat A_t$ an advantage estimate (often GAE). The clipped surrogate maximizes the lower bound
+$$
+L^{\text{CLIP}}(\theta)
+= \mathbb{E}_t\Big[\min\big(r_t(\theta)\,\hat A_t,\; \mathrm{clip}(r_t(\theta),\,1-\epsilon,\,1+\epsilon)\,\hat A_t\big)\Big],
+$$
+penalizing steps that would push $r_t$ outside $[1-\epsilon,1+\epsilon]$. A typical total loss couples this objective with a value-function regression and an entropy bonus,
+$$
+\mathcal{L}(\theta)= -L^{\text{CLIP}}(\theta) \, + \, c_v\,\mathbb{E}_t\big(V_{\theta}(s_t)-\hat V_t\big)^2 \, - \, c_e\,\mathbb{E}_t\,\mathcal{H}\big(\pi_{\theta}(\cdot\mid s_t)\big),
+$$
+yielding robust improvements with simple hyperparameters (clip $\epsilon\approx0.1$–$0.3$, 3–10 epochs, minibatches over the rollout buffer). PPO scales cleanly on CPUs/GPUs, works for discrete and continuous actions, and has powered many large-scale applications because its update rule remains stable even under aggressive optimization.
 
-<figure aria-label="PPO clipping intuition">
-<svg viewBox="0 0 860 280" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img">
-<defs>
-<marker id="arrow" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-<polygon points="0 0, 10 3.5, 0 7" fill="#374151"/>
-</marker>
-
-</defs>
-<line x1="60" y1="230" x2="820" y2="230" class="axis"/>
-<line x1="60" y1="230" x2="60" y2="30" class="axis"/>
-<text x="825" y="230" class="small">r</text>
-<text x="40" y="36" class="small">objective</text>
-<line x1="300" y1="50" x2="300" y2="230" class="vline"/>
-<line x1="580" y1="50" x2="580" y2="230" class="vline"/>
-<text x="290" y="245" class="small">1−ε</text>
-<text x="572" y="245" class="small">1+ε</text>
-<text x="420" y="245" class="small">1.0</text>
-<line x1="440" y1="230" x2="440" y2="238" class="tick"/>
-<path d="M 120 210 L 780 60" class="curve"/>
-<text x="640" y="72" class="small">unclipped (A&gt;0)</text>
-<path d="M 580 100 L 780 100" class="clipcurve"/>
-<path d="M 120 200 L 300 200" class="clipcurve"/>
-<text x="600" y="118" class="small">clipped beyond 1+ε</text>
-<text x="120" y="217" class="small">clipped below 1−ε</text>
-<text x="120" y="255" class="small">r = πθ(a\mids)/πθ_old(a\mids)</text>
-<text x="300" y="40" class="small">trust-region window</text>
-<text x="115" y="28" class="small">min( r·A, clip(r)·A )</text>
-</svg>
-<figcaption>Figure: PPO maximizes a clipped surrogate. Ratios outside $[1-\\epsilon,\\,1+\\epsilon]$ are flattened, preventing excessively large policy updates while still improving when $\\hat A_t$ is positive.</figcaption>
-</figure>
-
-<pre><code>// Pseudocode: PPO-Clip with GAE (discrete or continuous actions)
+```
+// Pseudocode: PPO-Clip with GAE (discrete or continuous actions)
 Initialize policy/value network parameters θ (shared torso; policy & value heads)
 Repeat for iterations k = 1…K:
 // Rollout
@@ -1778,7 +1708,7 @@ Optionally: early-stop epochs if KL(π_old || π_θ) exceeds target
 Optionally: clip value updates or use separate value lr
 
 // Typical: ε∈[0.1,0.3], λ≈0.95, γ≈0.99, E∈[3,10], minibatch size 2–8k
-</code></pre>
+```
 
 **Why it works.** The clipped surrogate behaves like a soft trust-region: it preserves monotonic-like improvements without expensive second-order computation. Multiple epochs over the same on-policy batch squeeze more learning signal per sample while the clip (and optional KL early-stop) keeps updates conservative. With GAE to reduce variance, PPO delivers strong performance across robotics control, games, and large-scale simulated tasks with minimal tuning.
 
@@ -1796,16 +1726,16 @@ Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overesti
 
 **Overview.** In this project we implemented a classic Deep Q-Learning (DQN) agent in PyTorch and trained it on Atari environments exposed through the Gym interface. The goal is to learn a policy that maximizes long-term score directly from pixels. We follow the canonical DQN recipe—frame preprocessing and stacking, ε-greedy exploration, an experience replay buffer, a periodically updated target network, and Huber loss. The result is a compact, reproducible pipeline that learns meaningful strategies on games like *Breakout* and *Pong*.
 
-<h3>**From Pixels to Actions: Data Pipeline**</h3>
+### From Pixels to Actions: Data Pipeline
 Each raw 210×160 RGB frame is converted to grayscale, resized (e.g., 84×84), and normalized. To give the agent a sense of velocity, we stack the most recent \(k\) frames (commonly \(k=4\)) into a single observation tensor \(\in \mathbb{R}^{k \times 84 \times 84}\). Atari wrappers apply frame-skipping and max-pooling to reduce flicker and speed up training; reward clipping maps dense rewards into \(\{-1,0,1\}\), which stabilizes gradients across different games with very different score scales.
 
-<h3>**Q-Learning with a Deep Network**</h3>
+### Q-Learning with a Deep Network
 The agent approximates the optimal action-value function \(Q^\*(s,a)\) with a convolutional network \(Q_\theta(s,a)\). For each sampled transition \((s,a,r,s',\text{done})\) from the replay buffer, we form the target with a lagged copy of the network \(Q_{\theta^-}\):
 
 \[
 y = 
 \begin{cases}
-r & \text{if done} \\
+r & \text{if done} \
 r + \gamma \max_{a'} Q_{\theta^-}(s',a') & \text{otherwise.}
 \end{cases}
 \]
@@ -1816,18 +1746,20 @@ We minimize a robust Huber loss
 \]
 and update parameters with Adam/RMSProp. Every \(C\) gradient steps we copy weights from the online network to the target network, \( \theta^- \leftarrow \theta \), to avoid chasing a moving target.
 
-<h3>**Exploration & Replay**</h3>
+### Exploration & Replay
 Actions are selected by an ε-greedy policy. We linearly decay \(\varepsilon\) from a high initial value to a small floor to transition from exploration to exploitation:
 \[
 \varepsilon(t) = \max\!\big(\varepsilon_{\min},\, \varepsilon_{\max} - \alpha t\big).
 \]
 Experience replay stores the last \(N\) transitions; each update draws a mini-batch uniformly to break temporal correlations and make the stochastic gradient a better estimator of the Bellman error expectation.
 
-<h3>**Network Architecture**</h3>
-The model mirrors the original DQN CNN: several convolutional layers extract spatio-temporal features from stacked frames, followed by fully connected layers that produce one Q-value per discrete action (e.g., <span class="kbd">NOOP</span>, <span class="kbd">LEFT</span>, <span class="kbd">RIGHT</span>, <span class="kbd">FIRE</span>). During evaluation we act greedily \(a_t=\arg\max_a Q_\theta(s_t,a)\); during training we sample ε-greedy to keep discovering better trajectories.
+### Network Architecture
+The model mirrors the original DQN CNN: several convolutional layers extract spatio-temporal features from stacked frames, followed by fully connected layers that produce one Q-value per discrete action (e.g., NOOP, LEFT, RIGHT, FIRE). During evaluation we act greedily \(a_t=\arg\max_a Q_\theta(s_t,a)\); during training we sample ε-greedy to keep discovering better trajectories.
 
-<h3>**Training Loop (Conceptual)**</h3>
-<pre><code># Pseudocode (PyTorch-style) — white background, black text
+### Training Loop (Conceptual)
+
+```
+# Pseudocode (PyTorch-style) — white background, black text
 for episode in range(num_episodes):
 s = env.reset()                      # stacked frames
 for t in range(max_steps):
@@ -1836,7 +1768,7 @@ s2, r, done, info = env.step(a)
 replay.add(s, a, r, s2, done)
 s = s2
 
-if replay.size &gt; warmup and step % train_every == 0:
+if replay.size > warmup and step % train_every == 0:
 batch = replay.sample(batch_size)
 y = r + gamma * (1 - done) * Q_target(s2).max(dim=1).values
 loss = huber(Q_online(s).gather(1, a) - y)
@@ -1849,12 +1781,12 @@ Q_target.load_state_dict(Q_online.state_dict())
 
 if done: break
 eps = max(eps_min, eps - eps_decay)
-</code></pre>
+```
 
-<h3>**Evaluation Protocol**</h3>
+### Evaluation Protocol
 We periodically run evaluation episodes with \(\varepsilon=0\) and record average score, win/loss ratio (for games like *Pong*), and episode length. Because Atari scores can be bursty, we track moving averages and visualize learning curves to ensure improvements are not one-off lucky runs. Seeding the environment and PyTorch gives reproducible baselines for A/B tweaks.
 
-<h3>**Outcomes & Behaviors Learned**</h3>
+### Outcomes & Behaviors Learned
 After sufficient replay warm-up and ε-decay, the agent exhibits recognizable and repeatable strategies. On *Breakout* it aligns the paddle under predicted ball landings, learns to create side tunnels, and exploits back-wall bounces for rapid scoring. On *Pong* it anticipates ball trajectories earlier in volleys, gaining consistent winning margins. Qualitatively, trajectories become smooth and purposeful; quantitatively, evaluation averages stabilize and surpass random and naive baselines.
 
 <div class="figure">
@@ -1864,13 +1796,13 @@ After sufficient replay warm-up and ε-decay, the agent exhibits recognizable an
 
 <div class="caption">Figure: DQN agents in action on *Breakout* (left) and *Pong* (right), taken from the project’s README figures.</div>
 
-<h3>**Key Hyperparameters (What Mattered)**</h3>
+### Key Hyperparameters (What Mattered)
 *Replay size* large enough to cover diverse contexts; *batch size* balancing stability and throughput; *learning rate* tuned to avoid value explosion; *target update period* \(C\) that is neither too fast (chasing noise) nor too slow (stale targets); *ε schedule* that decays slowly enough to keep discovering new strategies; *reward clipping* and *gradient clipping* to control outliers. Small shifts in any of these show up clearly in the evaluation curves.
 
-<h3>**Troubleshooting & Diagnostics**</h3>
+### Troubleshooting & Diagnostics
 If training plateaus early, verify that stacked frames truly change over time (no frozen observations), that the replay buffer warms up before updates begin, and that the target network is actually copied on schedule. Exploding values usually point to too-high learning rate, missing reward/grad clipping, or an ε that collapsed prematurely. Always sanity-check by rendering a few training episodes to confirm actions are being sampled and the paddle moves responsively.
 
-<h3>**Limitations & Next Steps**</h3>
+### Limitations & Next Steps
 Vanilla DQN can overestimate values due to the max in the target; Double DQN, prioritized replay, and dueling heads are common upgrades. For harder games or partial observability, frame stacks may still be insufficient—recurrent layers or attention can help. Finally, transfer to continuous control requires policy-gradient or actor–critic methods (e.g., PPO, SAC); Atari remains a great sandbox for value-based methods but is not the final word on real-world RL.
 
 <div class="note">
@@ -1885,15 +1817,15 @@ Vanilla DQN can overestimate values due to the max in the target; Double DQN, pr
 
 **Overview.** This project reproduces a movie recommender using two reinforcement-learning strategies: (1) a *Multi-Armed Bandits* (MAB) recommender that learns which items to show by trading off exploration vs exploitation, and (2) an *Actor–Critic* deep RL recommender that models recommendation as a sequential decision problem where user interactions are the environment’s feedback. The repository includes a MovieLens dataset folder (<code>data/ml-1m</code>) and two notebooks: <code>RL_BanditsCode.ipynb</code> and <code>ActorCritic_DeepRL_RecommenderSystem.ipynb</code>. :contentReference[oaicite:0]{index=0}
 
-<h3>**Problem setup: recommendations as an RL loop**</h3>
+### Problem setup: recommendations as an RL loop
 At time \(t\), the system observes a (possibly partial) user state \(s_t\) (e.g., user & context features, history summary) and recommends an item \(a_t\) (a movie). The user response provides reward \(r_t\) (e.g., click, watch, rating), and the session updates to \(s_{t+1}\). Over many interactions, we learn a policy \(\pi(a\mid s)\) that maximizes expected long-term engagement:
 \[
 \max_{\pi}\; \mathbb{E}_\pi \Big[ \sum_{t\ge 0} \gamma^t\, r_t \Big].
   \]
-<h3>**Part 1 — Multi-Armed Bandits recommender**</h3>
+### Part 1 — Multi-Armed Bandits recommender
 In the MAB framing, each candidate movie (or strategy for choosing a movie) is an “arm.” With no explicit state dynamics, the agent learns a value estimate \(\hat{\mu}_i\) per arm \(i\) and chooses arms that look best while still exploring alternatives. Common choices are \(\varepsilon\)-greedy, UCB, or Thompson Sampling. This baseline is simple and effective for *cold-start* traffic or short sessions because it requires minimal modeling assumptions and updates online from immediate rewards.
 
-<h3>**Part 2 — Actor–Critic deep RL recommender**</h3>
+### Part 2 — Actor–Critic deep RL recommender
 The Actor–Critic notebook frames recommendation as a Markov Decision Process with function approximation. The *critic* estimates \(V_\phi(s)\) or \(Q_\phi(s,a)\), while the *actor* parameterizes a stochastic policy \(\pi_\theta(a\mid s)\). A standard advantage-based update looks like:
 \[
 \theta \leftarrow \theta
@@ -1908,14 +1840,14 @@ A_t = r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t),
 
 In practice, the state can embed user history (e.g., a learned representation of past views/ratings), the action can be an item ID or a slate selection strategy, and the reward blends implicit signals (click, watch-time) with explicit ratings to reflect quality and satisfaction over the session. The repository’s README explicitly lists both “Multi Armed Bandits” and an “Actor-Critic based recommender framework” as implemented strategies. :contentReference[oaicite:1]{index=1}
 
-<h3>**Data & features**</h3>
+### Data & features
 The repo ships with a MovieLens directory (<code>data/ml-1m</code>), indicating experiments on the 1M-ratings split (users, items, ratings, timestamps). Typical preprocessing includes joining user/movie metadata, indexing IDs, constructing sparse interaction matrices, and creating per-user histories or session windows that feed the RL state encoder. (Presence of the <code>data/ml-1m</code> folder is visible in the repo file tree.) :contentReference[oaicite:2]{index=2}
 
-<h3>**Training dynamics & evaluation**</h3>
+### Training dynamics & evaluation
 *MAB stage.* Online (or simulated-online) learning picks an arm (movie) per impression and immediately observes reward; we track click-through-rate proxies, average reward, and regret curves vs. an oracle. Exploration controls (\(\varepsilon\), UCB confidence) determine how fast we converge and how robust we are to non-stationarity.
 *Actor–Critic stage.* We simulate user trajectories from MovieLens interactions. Mini-batches of transitions \((s_t,a_t,r_t,s_{t+1})\) update the critic (value regression) and the actor (policy-gradient). We monitor running averages of reward per step, policy entropy (to avoid collapse), and offline top-K ranking metrics like Precision@K/Recall@K or NDCG computed on held-out sessions. Where ratings exist, we can also report RMSE/MAE on predicted affinity but emphasize *sequence-level* success (e.g., session length, multi-step engagement).
 
-<h3>**What we learned (outcomes)**</h3>
+### What we learned (outcomes)
 <ul>
 <li>**Cold-start & sparse data.** Bandits quickly identify high-reward items with minimal history and serve as strong warm-up baselines before deploying heavier RL. They reduce early regret and stabilize early-life users.</li>
 <li>**Session-aware optimization.** Actor–Critic optimizes for multi-step objectives (not just one-shot ratings), improving the probability of sustained engagement across a session by using bootstrapped value estimates.</li>
@@ -1923,11 +1855,13 @@ The repo ships with a MovieLens directory (<code>data/ml-1m</code>), indicating 
 <li>**Personalization via state.** Encoding user history into the state improves relevance; even simple history embeddings (e.g., recent-k items) noticeably lift top-K ranking metrics compared to stateless choices.</li>
 </ul>
 
-<h3>**Pseudocode — Bandits then Actor–Critic (white background)**</h3>
-<pre><code># Stage 1: Multi-Armed Bandit (epsilon-greedy)
+### Pseudocode — Bandits then Actor–Critic (white background)
+
+```
+# Stage 1: Multi-Armed Bandit (epsilon-greedy)
 init Q = zeros(num_items); N = zeros(num_items); eps = eps0
 for t in 1..T:
-if rand() &lt; eps:  a = random_item()
+if rand() < eps:  a = random_item()
 else:             a = argmax_i Q[i]
 r = observe_reward(user_t, a)          # click/watch/rating
 N[a] += 1
