@@ -200,35 +200,32 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
 
 ![image](https://static.wixstatic.com/media/ffcc74_1634525ab2e34c31b6a6634749a0fab8~mv2.png/v1/fill/w_412,h_538,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_1634525ab2e34c31b6a6634749a0fab8~mv2.png)
 
-<h3>Q-Learning (Watkins, 1989): The First Practical Model-Free Control Algorithm</h3>
+### Q-Learning (Watkins, 1989): The First Practical Model-Free Control Algorithm
 
 In 1989, Christopher J. C. H. Watkins introduced a breakthrough in reinforcement learning: Q-Learning. It was the first practical algorithm that could learn optimal behavior purely from experience, without knowing how the world works underneath. This work, later formalized in Watkins & Dayan (1992), became the foundation of modern RL—from Deep Q-Networks (DQN) to AlphaGo.
 
-<h3>The Problem: Learning to Act Without a Model</h3>
+### The Problem: Learning to Act Without a Model
 
 Reinforcement learning studies how an agent interacts with an environment to maximize cumulative reward. At each step the agent observes a state $s_t$, takes an action $a_t$, receives a reward $r_{t+1}$, and moves to a new state $s_{t+1}$. The challenge is to learn which actions are best even when the dynamics are unknown. Earlier methods depended on transition models $P(s'\mids,a)$ or Monte Carlo policy evaluation. Watkins proposed learning value estimates directly from experience—no model needed.
 
-<h3>The Core Idea: Action-Value Learning</h3>
+### The Core Idea: Action-Value Learning
 
 The optimal action-value function $Q^*(s,a)$ satisfies the Bellman optimality equation:
 
-<div class="eq">
   $$Q^*(s,a) = \mathbb{E}\!\left[\, r_{t+1} + \gamma \max_{a'} Q^*(s_{t+1}, a') \,\middle\mid\, s_t=s, a_t=a \right].
 $$
 
 If $Q^*(s,a)$ were known, the optimal policy is simply
 
-<div class="eq">
   $$\pi^*(s) = \arg\max_{a} Q^*(s,a).
 $$
 
 Since $Q^*$ is unknown, Q-Learning approximates it from experience.
 
-<h3>The Q-Learning Update Rule</h3>
+### The Q-Learning Update Rule
 
 Given a transition $(s_t,a_t,r_{t+1},s_{t+1})$, the update is:
 
-<div class="eq">
   $$Q(s_t,a_t) \leftarrow Q(s_t,a_t)
 + \alpha \big[ r_{t+1}
 + \gamma \max_{a'} Q(s_{t+1},a')
@@ -237,15 +234,15 @@ $$
 
 Here $\alpha$ is the learning rate and $\gamma$ the discount factor. The term $\max_{a'}Q(s_{t+1},a')$ bootstraps from the next state. Q-Learning is off-policy: it learns the greedy target while following an exploratory policy such as $\varepsilon$-greedy (choose a random action with probability $\varepsilon$, otherwise the greedy one).
 
-<h3>Convergence: Theory Behind the Magic</h3>
+### Convergence: Theory Behind the Magic
 
 In tabular settings, if every state–action pair is visited infinitely often and learning rates $\alpha_t$ satisfy the Robbins–Monro conditions $\sum_t\alpha_t=\infty$ and $\sum_t\alpha_t^2&lt;\infty$, then $Q(s,a)$ converges to $Q^*(s,a)$ with probability 1. This proved that optimal control can emerge purely from experience without knowing transition probabilities in advance.
 
-<h3>Why It Changed Everything</h3>
+### Why It Changed Everything
 
 Q-Learning removed the need for a model and enabled trial-and-error learning in unknown environments. It extended naturally to function approximators (neural nets, trees, etc.), inspiring Double Q-Learning, Dueling Networks, and Deep Q-Networks (DQN). DeepMind’s 2015 paper *Human-level control through deep reinforcement learning* built directly on this idea, combining Q-Learning with deep CNNs to achieve human-level Atari performance.
 
-<h3>Citations</h3>
+### Citations
 
 Watkins, C. J. C. H. (1989). *Learning from Delayed Rewards*, PhD Thesis, King’s College Cambridge.<br>
 Watkins & Dayan (1992). *Q-learning*. *Machine Learning* 8: 279–292.<br>
@@ -356,19 +353,17 @@ DeepMind’s DQN changed that by introducing representation learning.The network
 
 # From Tabular to Deep Q-Learning
 
-<h3>a) Classical Q-Learning recap</h3>
+### a) Classical Q-Learning recap
 
-<div class="eq">
   $$Q(s,a) \leftarrow Q(s,a) + \alpha \Big[r + \gamma \max_{a'} Q(s',a') - Q(s,a)\Big]
 $$
 
 This update iteratively drives $Q$ toward the Bellman optimality fixed point. In tabular settings, every $(s,a)$ pair has its own entry.
 
-<h3>b) DQN’s key idea — function approximation</h3>
+### b) DQN’s key idea — function approximation
 
 Replace the table with a neural network $Q(s,a;\,\theta)$ and train by minimizing a squared temporal-difference loss with a target network:
 
-<div class="eq">
   $$L(\theta) \;=\; \Big(r + \gamma \max_{a'} Q(s',a';\,\theta^-) \;-\; Q(s,a;\,\theta)\Big)^2
 $$
 
@@ -426,7 +421,6 @@ Initially, the agent flails randomly; after ~200 k steps it learns to hit the ba
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; margin: 1.5rem 0;">
 <iframe src="https://www.youtube-nocookie.com/embed/V1eYniJ0Rnk?modestbranding=1&rel=0" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
-</div>
 
 Such emergent behavior illustrated that reward driven learning could produce human-like ingenuity.
 
@@ -458,9 +452,8 @@ These models now power applications in robotics, game AI, finance, and autonomou
 
  What Policy Gradients Optimize (High-Level)
 
-<h3>Policy Gradient (PG) methods optimize the expected return directly by adjusting the parameters of a stochastic policy $\pi_\theta(a \mid s)$. Using the likelihood-ratio trick, the vanilla REINFORCE gradient is:</h3>
+### Policy Gradient (PG) methods optimize the expected return directly by adjusting the parameters of a stochastic policy $\pi_\theta(a \mid s)$. Using the likelihood-ratio trick, the vanilla REINFORCE gradient is:
 
-<div class="eq">
   $$\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}\!\left[\nabla_\theta \log \pi_\theta(a_t\mid s_t) \, R_t \right].
 $$
 
@@ -473,9 +466,8 @@ This increases the probability of actions that produced high returns — effecti
 
   Intuition + Variance Reduction
 
-<h3>REINFORCE updates are simple but high-variance (episode-level credit assignment). Subtracting a baseline $b(s)$ leaves the expectation unbiased yet reduces variance:</h3>
+### REINFORCE updates are simple but high-variance (episode-level credit assignment). Subtracting a baseline $b(s)$ leaves the expectation unbiased yet reduces variance:
 
-<div class="eq">
   $$\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}\!\left[\nabla_\theta \log \pi_\theta(a_t\mid s_t)\,\big(R_t - b(s_t)\big)\right].
 $$
 
@@ -486,48 +478,46 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 
  Derivation (Sketch)
 
-<h3>Objective</h3>
+### Objective
 
-<div class="eq">
   $$J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}\!\left[\sum_t \gamma^t r_t\right].$$
 
-<h3>Apply log-derivative trick</h3>
+### Apply log-derivative trick
 
-<div class="eq">
   $$\nabla_\theta p_\theta(\tau) = p_\theta(\tau)\sum_t \nabla_\theta \log \pi_\theta(a_t\mid s_t).$$
 
-<h3>Exchange gradient and expectation to obtain REINFORCE</h3>
+### Exchange gradient and expectation to obtain REINFORCE
 
 This leads directly to the policy gradient estimator underlying REINFORCE.
 
-<h3>Use causality</h3>
+### Use causality
 
 At time $t$, only future rewards contribute to the gradient—past rewards are irrelevant (“don’t let the past distract you”).
 
-<h3>Subtract a baseline</h3>
+### Subtract a baseline
 
 Subtracting any baseline independent of $a_t$ yields an unbiased but lower-variance estimator. The advantage function then emerges naturally as a centered return signal.
 
 *(spinningup.openai.com)*
  Practical Tricks (That Actually Help)
 
-<h3>Normalize returns and advantages per batch</h3>
+### Normalize returns and advantages per batch
 
 Standardizing advantages within each batch helps stabilize learning and prevents excessively large gradients.
 
-<h3>Entropy bonus</h3>
+### Entropy bonus
 
 Add an entropy regularization term $\beta \,\mathcal{H}(\pi_\theta(\cdot|s))$ to encourage exploration and avoid premature convergence to deterministic policies.
 
-<h3>Clipping and learning rate scheduling</h3>
+### Clipping and learning rate scheduling
 
 Use gradient clipping and learning rate warmups to control instability and smooth early training dynamics.
 
-<h3>Longer batches</h3>
+### Longer batches
 
 Collecting more trajectories per update reduces variance of gradient estimates and improves stability at the cost of slower updates.
 
-<h3>Logging and monitoring</h3>
+### Logging and monitoring
 
 Track moving averages of episodic return and key loss components (policy loss, entropy loss, value loss). Logging helps diagnose instability and detect performance regressions.
 
@@ -705,7 +695,6 @@ This design addresses one of the biggest weaknesses of pure policy gradient meth
 
 Mathematically, this update can be expressed as:
 
-<div class="eq">
   $$\nabla_\theta J(\theta) \;=\; \mathbb{E}_{\pi_\theta}\!\Big[\, \nabla_\theta \log \pi_\theta(a_t\mid s_t)\, \big(R_t - V_w(s_t)\big) \,\Big]\,,
 $$
 
@@ -733,24 +722,24 @@ $A(s_t, a_t) = R_t + \gamma V(s_{t+1}) - V(s_t)$.
 This term allows the network to assess how much better an action was compared to the expected value at that state.
 The total loss in A3C combines three components:
 
-<h3>Actor Loss</h3>
+### Actor Loss
 Encourages actions that improve the policy:
-<div class="eq">
+
   $$L_{\text{actor}} = -\log \pi_\theta(a_t\mid s_t)\, A(s_t, a_t)$$
 
-<h3>Critic Loss</h3>
+### Critic Loss
 Minimizes the error in the value function:
-<div class="eq">
+
   $$L_{\text{critic}} = (R_t - V(s_t))^2$$
 
-<h3>Entropy Loss</h3>
+### Entropy Loss
 Maintains policy diversity and avoids early convergence:
-<div class="eq">
+
   $$L_{\text{entropy}} = -\beta\, H(\pi_\theta)$$
 
-<h3>Total Loss</h3>
+### Total Loss
 These components are combined into a total loss:
-<div class="eq">
+
   $$L = L_{\text{actor}} + c_v L_{\text{critic}} - c_H L_{\text{entropy}}
 $$
 
@@ -891,7 +880,6 @@ These projects cemented PPO as a cornerstone algorithm for safe, scalable, and h
 
 The PPO loss function balances three objectives: the clipped surrogate objective, the value function loss, and an entropy bonus for exploration.
 
-<div class="eq">
   $$L^{\text{PPO}}(\theta) = \mathbb{E}_t \Big[ 
   L^{\text{CLIP}}(\theta) 
   - c_1 (V_\theta(s_t) - R_t)^2 
@@ -1565,7 +1553,7 @@ if done: break
 
 **Why it works in practice.** Replay makes the SGD gradient approximate the expectation in the Bellman error by mixing old and new transitions, the fixed $\theta^-$ prevents “chasing a moving target,” and the $\varepsilon$ schedule gradually shifts the policy from exploration to exploitation as $Q_{\theta}$ improves. In Atari, a typical setup stacks 4 frames to inject short-term velocity, uses Adam with a modest learning rate, trains on mini-batches uniformly sampled from $\mathcal{D}$, and syncs $\theta^-\leftarrow\theta$ every few thousand updates. Limitations include value overestimation (mitigated by Double DQN), poor sample efficiency without prioritized replay, and sensitivity to preprocessing; nevertheless, for discrete action spaces with rich observations, DQN remains a robust and accessible baseline.
 
-**References.** [1] Mnih, V. et al. “Human-level control through deep reinforcement learning,” *Nature*, 518, 2015. <a href="https://doi.org/10.1038/nature14236">doi:10.1038/nature14236</a>. [2] Van Hasselt, H., Guez, A., Silver, D. “Deep Reinforcement Learning with Double Q-learning,” *AAAI*, 2016. <a href="https://arxiv.org/abs/1509.06461">arXiv:1509.06461</a>. [3] Schaul, T., Quan, J., Antonoglou, I., Silver, D. “Prioritized Experience Replay,” *ICLR*, 2016. <a href="https://arxiv.org/abs/1511.05952">arXiv:1511.05952</a>.
+**References.** [1] Mnih, V. et al. “Human-level control through deep reinforcement learning,” *Nature*, 518, 2015. [doi:10.1038/nature14236](https://doi.org/10.1038/nature14236). [2] Van Hasselt, H., Guez, A., Silver, D. “Deep Reinforcement Learning with Double Q-learning,” *AAAI*, 2016. [arXiv:1509.06461](https://arxiv.org/abs/1509.06461). [3] Schaul, T., Quan, J., Antonoglou, I., Silver, D. “Prioritized Experience Replay,” *ICLR*, 2016. [arXiv:1511.05952](https://arxiv.org/abs/1511.05952).
 
   
   
@@ -1621,7 +1609,7 @@ if done: break
 
 **Notes.** The only change from DQN is the target: use $\arg\max\_{a'} Q\_{\theta}(s',a')$ for selection and $Q\_{\theta^-}(s',\cdot)$ for evaluation. Everything else—preprocessing, replay sampling, frame stacking, reward clipping, target sync period—stays the same. This separation curbs optimistic bias from the noisy max, yielding more reliable value learning without sacrificing simplicity.
 
-**References.** [1] Van Hasselt, H. “Double Q-learning,” *NIPS*, 2010. <a href="https://proceedings.neurips.cc/paper/2010/hash/091d584fced301b442654dd8c23b3fc9-Abstract.html">NeurIPS 2010</a>. [2] Van Hasselt, H., Guez, A., Silver, D. “Deep Reinforcement Learning with Double Q-learning,” *AAAI*, 2016. <a href="https://arxiv.org/abs/1509.06461">arXiv:1509.06461</a>. [3] Mnih, V. et al. “Human-level control through deep reinforcement learning,” *Nature*, 518, 2015. <a href="https://doi.org/10.1038/nature14236">doi:10.1038/nature14236</a>.
+**References.** [1] Van Hasselt, H. “Double Q-learning,” *NIPS*, 2010. [NeurIPS 2010](https://proceedings.neurips.cc/paper/2010/hash/091d584fced301b442654dd8c23b3fc9-Abstract.html). [2] Van Hasselt, H., Guez, A., Silver, D. “Deep Reinforcement Learning with Double Q-learning,” *AAAI*, 2016. [arXiv:1509.06461](https://arxiv.org/abs/1509.06461). [3] Mnih, V. et al. “Human-level control through deep reinforcement learning,” *Nature*, 518, 2015. [doi:10.1038/nature14236](https://doi.org/10.1038/nature14236).
 
 ### A3C / A2C – parallel actor-learners
 
@@ -1712,7 +1700,7 @@ Optionally: clip value updates or use separate value lr
 
 **Why it works.** The clipped surrogate behaves like a soft trust-region: it preserves monotonic-like improvements without expensive second-order computation. Multiple epochs over the same on-policy batch squeeze more learning signal per sample while the clip (and optional KL early-stop) keeps updates conservative. With GAE to reduce variance, PPO delivers strong performance across robotics control, games, and large-scale simulated tasks with minimal tuning.
 
-**References.** [1] Schulman, J. et al. “Proximal Policy Optimization Algorithms,” 2017. <a href="https://arxiv.org/abs/1707.06347">arXiv:1707.06347</a>. [2] Schulman, J. et al. “High-Dimensional Continuous Control Using Generalized Advantage Estimation,” 2016. <a href="https://arxiv.org/abs/1506.02438">arXiv:1506.02438</a>. [3] OpenAI Spinning Up, “PPO.” <a href="https://spinningup.openai.com/en/latest/algorithms/ppo.html">overview and tips</a>.
+**References.** [1] Schulman, J. et al. “Proximal Policy Optimization Algorithms,” 2017. [arXiv:1707.06347](https://arxiv.org/abs/1707.06347). [2] Schulman, J. et al. “High-Dimensional Continuous Control Using Generalized Advantage Estimation,” 2016. [arXiv:1506.02438](https://arxiv.org/abs/1506.02438). [3] OpenAI Spinning Up, “PPO.” [overview and tips](https://spinningup.openai.com/en/latest/algorithms/ppo.html).
 
 When to Use What
 
@@ -1722,7 +1710,7 @@ Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overesti
   
 
   
-<h2>**RL Projects & Applications — Training an Atari Agent (DQN, PyTorch)**</h2>
+## RL Projects & Applications — Training an Atari Agent (DQN, PyTorch)
 
 **Overview.** In this project we implemented a classic Deep Q-Learning (DQN) agent in PyTorch and trained it on Atari environments exposed through the Gym interface. The goal is to learn a policy that maximizes long-term score directly from pixels. We follow the canonical DQN recipe—frame preprocessing and stacking, ε-greedy exploration, an experience replay buffer, a periodically updated target network, and Huber loss. The result is a compact, reproducible pipeline that learns meaningful strategies on games like *Breakout* and *Pong*.
 
@@ -1789,12 +1777,10 @@ We periodically run evaluation episodes with $\varepsilon=0$ and record average 
 ### Outcomes & Behaviors Learned
 After sufficient replay warm-up and ε-decay, the agent exhibits recognizable and repeatable strategies. On *Breakout* it aligns the paddle under predicted ball landings, learns to create side tunnels, and exploits back-wall bounces for rapid scoring. On *Pong* it anticipates ball trajectories earlier in volleys, gaining consistent winning margins. Qualitatively, trajectories become smooth and purposeful; quantitatively, evaluation averages stabilize and surpass random and naive baselines.
 
-<div class="figure">
-<div class="gif-grid">
 <img src="https://raw.githubusercontent.com/mohammed840/Reinforcement-Learning-on-Atari-Games./refs/heads/main/figures_for_README/Pong_21.gif" alt="DQN Breakout demo gif">
 <img src="https://raw.githubusercontent.com/mohammed840/Reinforcement-Learning-on-Atari-Games./refs/heads/main/figures_for_README/Breakout_756.gif" alt="DQN Pong demo gif">
 
-<div class="caption">Figure: DQN agents in action on *Breakout* (left) and *Pong* (right), taken from the project’s README figures.</div>
+Figure: DQN agents in action on *Breakout* (left) and *Pong* (right), taken from the project’s README figures.
 
 ### Key Hyperparameters (What Mattered)
 *Replay size* large enough to cover diverse contexts; *batch size* balancing stability and throughput; *learning rate* tuned to avoid value explosion; *target update period* $C$ that is neither too fast (chasing noise) nor too slow (stale targets); *ε schedule* that decays slowly enough to keep discovering new strategies; *reward clipping* and *gradient clipping* to control outliers. Small shifts in any of these show up clearly in the evaluation curves.
@@ -1805,17 +1791,16 @@ If training plateaus early, verify that stacked frames truly change over time (n
 ### Limitations & Next Steps
 Vanilla DQN can overestimate values due to the max in the target; Double DQN, prioritized replay, and dueling heads are common upgrades. For harder games or partial observability, frame stacks may still be insufficient—recurrent layers or attention can help. Finally, transfer to continuous control requires policy-gradient or actor–critic methods (e.g., PPO, SAC); Atari remains a great sandbox for value-based methods but is not the final word on real-world RL.
 
-<div class="note">
 **Why this project matters.** It’s an end-to-end template for discrete-action RL from pixels: define observations and actions, set up ε-greedy data collection, learn off-policy with replay and a target network, and evaluate greedily. Swap the environment and reward and you can reuse the loop for many applied problems—game agents, UI navigation, simple robotics with discrete controllers, and more.
 
-**Code & repository:** <a href="https://github.com/jasonbian97/Deep-Q-Learning-Atari-Pytorch" target="_blank" rel="noopener">github.com/mohammed840/Reinforcement-Learning-on-Atari-Games.</a>
+**Code & repository:** [github.com/mohammed840/Reinforcement-Learning-on-Atari-Games.](https://github.com/jasonbian97/Deep-Q-Learning-Atari-Pytorch)
   
   
 
   
-<h2>**RL Projects & Applications — Reinforcement-Learning-based Movie Recommendation**</h2>
+## RL Projects & Applications — Reinforcement-Learning-based Movie Recommendation
 
-**Overview.** This project reproduces a movie recommender using two reinforcement-learning strategies: (1) a *Multi-Armed Bandits* (MAB) recommender that learns which items to show by trading off exploration vs exploitation, and (2) an *Actor–Critic* deep RL recommender that models recommendation as a sequential decision problem where user interactions are the environment’s feedback. The repository includes a MovieLens dataset folder (<code>data/ml-1m</code>) and two notebooks: <code>RL_BanditsCode.ipynb</code> and <code>ActorCritic_DeepRL_RecommenderSystem.ipynb</code>. :contentReference[oaicite:0]{index=0}
+**Overview.** This project reproduces a movie recommender using two reinforcement-learning strategies: (1) a *Multi-Armed Bandits* (MAB) recommender that learns which items to show by trading off exploration vs exploitation, and (2) an *Actor–Critic* deep RL recommender that models recommendation as a sequential decision problem where user interactions are the environment’s feedback. The repository includes a MovieLens dataset folder (`data/ml-1m`) and two notebooks: `RL_BanditsCode.ipynb` and `ActorCritic_DeepRL_RecommenderSystem.ipynb`.
 
 ### Problem setup: recommendations as an RL loop
 At time $t$, the system observes a (possibly partial) user state $s_t$ (e.g., user & context features, history summary) and recommends an item $a_t$ (a movie). The user response provides reward $r_t$ (e.g., click, watch, rating), and the session updates to $s_{t+1}$. Over many interactions, we learn a policy $\pi(a\mid s)$ that maximizes expected long-term engagement:
@@ -1838,22 +1823,21 @@ A_t = r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t),
 - \eta_v \,\widehat{\mathbb{E}}\big[ (r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t))^2 \big].
   $$
 
-In practice, the state can embed user history (e.g., a learned representation of past views/ratings), the action can be an item ID or a slate selection strategy, and the reward blends implicit signals (click, watch-time) with explicit ratings to reflect quality and satisfaction over the session. The repository’s README explicitly lists both “Multi Armed Bandits” and an “Actor-Critic based recommender framework” as implemented strategies. :contentReference[oaicite:1]{index=1}
+In practice, the state can embed user history (e.g., a learned representation of past views/ratings), the action can be an item ID or a slate selection strategy, and the reward blends implicit signals (click, watch-time) with explicit ratings to reflect quality and satisfaction over the session. The repository’s README explicitly lists both “Multi Armed Bandits” and an “Actor-Critic based recommender framework” as implemented strategies.
 
 ### Data & features
-The repo ships with a MovieLens directory (<code>data/ml-1m</code>), indicating experiments on the 1M-ratings split (users, items, ratings, timestamps). Typical preprocessing includes joining user/movie metadata, indexing IDs, constructing sparse interaction matrices, and creating per-user histories or session windows that feed the RL state encoder. (Presence of the <code>data/ml-1m</code> folder is visible in the repo file tree.) :contentReference[oaicite:2]{index=2}
+The repo ships with a MovieLens directory (`data/ml-1m`), indicating experiments on the 1M-ratings split (users, items, ratings, timestamps). Typical preprocessing includes joining user/movie metadata, indexing IDs, constructing sparse interaction matrices, and creating per-user histories or session windows that feed the RL state encoder. (Presence of the `data/ml-1m` folder is visible in the repo file tree.)
 
 ### Training dynamics & evaluation
 *MAB stage.* Online (or simulated-online) learning picks an arm (movie) per impression and immediately observes reward; we track click-through-rate proxies, average reward, and regret curves vs. an oracle. Exploration controls ($\varepsilon$, UCB confidence) determine how fast we converge and how robust we are to non-stationarity.
 *Actor–Critic stage.* We simulate user trajectories from MovieLens interactions. Mini-batches of transitions $(s_t,a_t,r_t,s_{t+1})$ update the critic (value regression) and the actor (policy-gradient). We monitor running averages of reward per step, policy entropy (to avoid collapse), and offline top-K ranking metrics like Precision@K/Recall@K or NDCG computed on held-out sessions. Where ratings exist, we can also report RMSE/MAE on predicted affinity but emphasize *sequence-level* success (e.g., session length, multi-step engagement).
 
 ### What we learned (outcomes)
-<ul>
-<li>**Cold-start & sparse data.** Bandits quickly identify high-reward items with minimal history and serve as strong warm-up baselines before deploying heavier RL. They reduce early regret and stabilize early-life users.</li>
-<li>**Session-aware optimization.** Actor–Critic optimizes for multi-step objectives (not just one-shot ratings), improving the probability of sustained engagement across a session by using bootstrapped value estimates.</li>
-<li>**Exploration that pays off.** Both approaches incorporate explicit exploration; controlled exploration prevents popularity bias lock-in and helps discover long-tail movies that later drive higher cumulative reward.</li>
-<li>**Personalization via state.** Encoding user history into the state improves relevance; even simple history embeddings (e.g., recent-k items) noticeably lift top-K ranking metrics compared to stateless choices.</li>
-</ul>
+
+- **Cold-start & sparse data.** Bandits quickly identify high-reward items with minimal history and serve as strong warm-up baselines before deploying heavier RL. They reduce early regret and stabilize early-life users.
+- **Session-aware optimization.** Actor–Critic optimizes for multi-step objectives (not just one-shot ratings), improving the probability of sustained engagement across a session by using bootstrapped value estimates.
+- **Exploration that pays off.** Both approaches incorporate explicit exploration; controlled exploration prevents popularity bias lock-in and helps discover long-tail movies that later drive higher cumulative reward.
+- **Personalization via state.** Encoding user history into the state improves relevance; even simple history embeddings (e.g., recent-k items) noticeably lift top-K ranking metrics compared to stateless choices.
 
 ### Pseudocode — Bandits then Actor–Critic (white background)
 
@@ -1878,23 +1862,21 @@ loss_actor  = -(log_pi_theta(a \mid s) * A).mean()
 loss_critic = (A.detach() ** 2).mean()
 (loss_actor + beta * loss_critic).backward()
 optimizer.step(); optimizer.zero_grad()
-</code></pre>
+```
 
-<h3>**Design choices that mattered**</h3>
-<ul>
-<li>*Reward shaping.* Combining implicit signals (click/watch-time) and explicit ratings gives a more faithful objective; session bonuses (e.g., diversity/novelty rewards) prevent degenerate loops.</li>
-<li>*Candidate generation vs ranking.* In practice we sample a small candidate set per user (ANN vectors, metadata filters) and let the policy rank within that slate—keeps the action space tractable.</li>
-<li>*State representation.* Even simple recency-weighted embeddings outperform one-hot histories; recurrent/attention encoders help when sessions are long.</li>
-<li>*Exploration schedules.* Start with higher entropy (policy) or higher $\varepsilon$ (bandit), cool slowly; track regret/entropy to avoid premature convergence.</li>
-</ul>
+### Design choices that mattered
 
-<div class="note">
-**Repo pointers.** The README lists both the MAB and Actor–Critic implementations; the root shows <code>data/ml-1m</code> and the two notebooks (<code>RL_BanditsCode.ipynb</code>, <code>ActorCritic_DeepRL_RecommenderSystem.ipynb</code>) for bandits and deep RL respectively. :contentReference[oaicite:3]{index=3}
+- *Reward shaping.* Combining implicit signals (click/watch-time) and explicit ratings gives a more faithful objective; session bonuses (e.g., diversity/novelty rewards) prevent degenerate loops.
+- *Candidate generation vs ranking.* In practice we sample a small candidate set per user (ANN vectors, metadata filters) and let the policy rank within that slate—keeps the action space tractable.
+- *State representation.* Even simple recency-weighted embeddings outperform one-hot histories; recurrent/attention encoders help when sessions are long.
+- *Exploration schedules.* Start with higher entropy (policy) or higher $\varepsilon$ (bandit), cool slowly; track regret/entropy to avoid premature convergence.
+
+**Repo pointers.** The README lists both the MAB and Actor–Critic implementations; the root shows `data/ml-1m` and the two notebooks (`RL_BanditsCode.ipynb`, `ActorCritic_DeepRL_RecommenderSystem.ipynb`) for bandits and deep RL respectively.
 
 **Code & repository:**
-<a href="https://github.com/ShreenidhiN/Reinforcement-Learning-based-Movie-Recommendation" target="_blank" rel="noopener">
+[
 github.com/mohammed840/MOVIE-RECOMMENDATION-SYSTEM-USING-DEEP-REINFORCEMENT-LEARNING
-</a>
+](https://github.com/ShreenidhiN/Reinforcement-Learning-based-Movie-Recommendation)
 
 # Conclusion
 
