@@ -107,12 +107,34 @@ table th {
 
 table td:nth-child(2),
 table th:nth-child(2) {
-  text-align: right;
+  text-align: left;
 }
 
 table td:nth-child(1),
 table th:nth-child(1),
 table th:nth-child(3) {
+  text-align: left;
+}
+
+/* ── Paper page: force all headings left-aligned ── */
+.paper-content h1,
+.paper-content h2,
+.paper-content h3,
+.paper-content h4,
+.paper-content p {
+  text-align: left;
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4 {
+  text-align: left;
+}
+
+/* Paper tables: all columns left-aligned */
+.paper-content table th,
+.paper-content table td {
   text-align: left;
 }
 
