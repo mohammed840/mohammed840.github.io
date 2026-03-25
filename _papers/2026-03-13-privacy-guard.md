@@ -103,11 +103,11 @@ abstract: "We present Privacy Guard, a reinforcement learning framework for priv
 <p>The real question isn’t <em>whether</em> to activate sensors — it’s <strong>when, where, and at what fidelity</strong>. That’s a sequential decision problem. At every timestep, an agent observes the home and must search through possible actions, reserving budget for the moments that actually matter:</p>
 <div class="mermaid">
 graph LR
-    A([Observe\nPIR · Door · Audio · Budget]) --> B{Threat level?}
-    B -- Low --> C[Sensors OFF\nSave budget]
-    B -- Ambiguous --> D[LOW-res camera\nCost: 1 unit]
-    B -- Confirmed --> E[HIGH-res + ESCALATE\nCost: 4–6 units]
-    C --> F([Next timestep])
+    A(["Observe: PIR, Door, Audio, Budget"]) --> B{"Threat level?"}
+    B -- Low --> C["Sensors OFF - Save budget"]
+    B -- Ambiguous --> D["LOW-res camera - Cost: 1 unit"]
+    B -- Confirmed --> E["HIGH-res + ESCALATE - Cost: 4-6 units"]
+    C --> F(["Next timestep"])
     D --> F
     E --> F
     F --> A
@@ -131,11 +131,11 @@ graph LR
 <p>The field started with applying RL to sequence-level metrics that aren’t differentiable. Early REINFORCE work (Ranzato et al., 2016) used policy gradients to optimise BLEU scores directly. <strong>RLHF</strong> (Christiano et al., 2017) scaled this by learning a <em>reward model</em> from human preference comparisons, then running PPO against it — the approach that produced InstructGPT and modern aligned assistants.</p>
 <div class="mermaid">
 graph TD
-    A[Human preferences] --> B[Reward model]
-    B --> C[PPO policy gradient]
-    C --> D[Aligned LLM]
-    D -->|generates| E[New outputs]
-    E -->|feedback| A
+    A["Human preferences"] --> B["Reward model"]
+    B --> C["PPO policy gradient"]
+    C --> D["Aligned LLM"]
+    D -->|"generates"| E["New outputs"]
+    E -->|"feedback"| A
 </div>
 <p><strong>Key papers:</strong> - <a href="https://arxiv.org/abs/1706.03741">RLHF — Christiano et al. 2017</a> - <a href="https://arxiv.org/abs/2203.02155">InstructGPT — Ouyang et al. 2022</a> - <a href="https://arxiv.org/abs/2212.08073">Constitutional AI — Bai et al. 2022</a></p>
 <hr />
@@ -193,8 +193,8 @@ graph TD
 <p>Prior LLM agent RL work uses free-form language or loosely structured API strings as outputs. We add three constraints that make the problem qualitatively harder:</p>
 <div class="mermaid">
 graph LR
-    A[Prior work\nFree-text actions\nNo resource limit\nSingle objective] -->|We add| B[Structured JSON\nHard budget constraint\nCoupled detection + privacy reward]
-    B --> C[Privacy Guard]
+    A["Prior work: free-text actions, no resource limit, single objective"] -->|"We add"| B["Structured JSON, hard budget constraint, coupled detection + privacy reward"]
+    B --> C["Privacy Guard"]
 </div>
 <table>
 <colgroup>
