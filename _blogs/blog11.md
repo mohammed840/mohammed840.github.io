@@ -401,6 +401,8 @@ Together, these created a stable, data-efficient RL pipeline that finally made d
 The DQN used a three-layer CNN to process stacked frames (84 × 84 pixels × 4).Outputs were Q-values for each discrete action (typically 18 Atari controls).
 
 # Simplified Deep Q-Learning loop
+
+```python
 q_net = CNN_QNetwork()
 target_net = copy.deepcopy(q_net)
 replay = deque(maxlen=100000)
@@ -424,14 +426,17 @@ for step in range(total_steps):
     if step % 10000 == 0:
         target_net.load_state_dict(q_net.state_dict())
 
+```
+
 Training ran for 50 million frames per game, updating every four steps with γ = 0.99 and RMSProp optimizer.Exploration ε decayed from 1.0 → 0.1 over 1 M frames.
 
 #   Emergent Behavior — Breakout and Beyond
 
 Initially, the agent flails randomly; after ~200 k steps it learns to hit the ball; by 1 M steps it discovers tunneling  carving a hole through bricks to trap the ball above the wall for infinite reward.
 
-# youtube video 
-https://www.youtube.com/watch?v=V1eYniJ0Rnk
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; margin: 1.5rem 0;">
+<iframe src="https://www.youtube-nocookie.com/embed/V1eYniJ0Rnk?modestbranding=1&rel=0" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+</div>
 
 Such emergent behavior illustrated that reward driven learning could produce human-like ingenuity.
 
