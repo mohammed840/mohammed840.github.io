@@ -1348,6 +1348,7 @@ We’ll create a tiny playground runner that executes short rollouts in three cl
 
 Save this as run_playgrounds.py and run it with python run_playgrounds.py --episodes 10. It uses random actions by default, with a small velocity-sign heuristic for MountainCar when --policy auto (default). LunarLander is commented out to keep dependencies light; see the note below to enable it.
 
+```python
 # run_playgrounds.py
 # Minimal Gymnasium playground runner for CartPole, MountainCar (+ optional LunarLander).
 # Usage:
@@ -1436,51 +1437,13 @@ print(f"Wrote {args.out}")
 
 if __name__ == "__main__":
 main()
-{::nomarkdown}
+```
 
-<header>
-<h1>RL Playground Results</h1>
-<p class="lead">Quick diagnostics from Gymnasium environments. Run the Python script to regenerate <code>results.json</code>, then refresh this page.
-</header>
-<main>
-<section class="card">
-<div class="grid">
-<div>
-<h3 style="margin:6px 0 8px">How to read these numbers</h3>
-<b>Average return</b> is the mean episodic reward; higher is better on CartPole (target ≈ 200), while less negative is better on MountainCar (−1 per step until the flag). <b>Best return</b> is your strongest episode and can reveal outliers when learning is noisy. Use these metrics to sanity-check changes to exploration, learning rates, or reward shaping before you invest in longer training runs.
-CartPole rewards sustained balance and should improve quickly even with simple policies. MountainCar is sparse-reward and needs momentum; a velocity-sign heuristic already beats random. If you enable LunarLander (Box2D), expect higher variance—good for testing stability knobs.
-
-<div>
-<div class="metric">
-<span class="chip">Generated: <span id="gen" class="nowrap">—</span></span>
-<span class="chip">Episodes/env: <span id="eps">—</span></span>
-<span class="chip">Policy: <span id="pol">—</span></span>
-
-<div class="controls" style="margin-top:10px">
-<button id="view-avg">View Average Return</button>
-<button id="view-best">View Best Return</button>
-<span class="badge">Interactive</span>
-
-</div>
-
-</section>
-
-<section class="card">
-<h3 style="margin:6px 0 8px">Environment summaries</h3>
-<div id="envcards" class="envcards"></div>
-<div class="footer">Tip: regenerate with <code>python run_playgrounds.py --episodes 10</code>. To include <code>LunarLander-v2</code>, install Box2D and add it to the env list in the script.</div>
-</section>
-
-<section class="card">
-<h3 style="margin:6px 0 8px">Raw table</h3>
-<table id="tbl"><thead><tr><th>Environment</th><th>Policy</th><th>Episodes</th><th>Avg Return</th><th>Best Return</th></tr></thead><tbody></tbody></table>
-</section>
-</main>
-{:/nomarkdown}
 Interpreting results: CartPole’s average return should trend upward even with simple exploration because rewards are dense; ~200 indicates a full solve for an episode. MountainCar’s averages are typically negative (−1 per step) until you reach the flag; the heuristic demonstrates momentum building and usually beats random without learning. If you enable LunarLander, expect wider variance and noisier returns use it to test stability knobs (target-sync cadence, grad clipping, replay size) when you later add DQN or PPO.
 
 PettingZoo standardizes multi-agent RL environments so you can prototype, train, and compare MARL algorithms with one consistent API across many tasks.
 
+```python
 # PettingZoo MARL demo: rollouts + simple random policies and logging
 # pip install pettingzoo==1.* gymnasium==0.29.* numpy==1.*  (if needed)
 
@@ -1542,76 +1505,7 @@ env = simple_v3.env(N=3, max_cycles=50, continuous_actions=False)
 env.reset(seed=42)
 results = rollout(env, episodes=30, seed=7)
 print(results)  # replace with saving to JSON if you like
-<!doctype html>
-  
-<div class="wrap">
-<div class="hero">
-<span class="badge">PettingZoo • MPE <span class="pill">simple_v3</span></span>
-
-<h1>Multi-Agent Rollout Results (Random Policies)</h1>
-
-<div class="grid">
-<div class="card">
-<table aria-label="Per-agent results">
-<thead>
-<tr>
-<th>Agent</th>
-<th>Steps Logged</th>
-<th>Avg Reward / Step</th>
-<th>Sum Reward</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>agent_0</td>
-<td>1500</td>
-<td>-0.031</td>
-<td>-46.5</td>
-</tr>
-<tr>
-<td>agent_1</td>
-<td>1500</td>
-<td>-0.028</td>
-<td>-42.0</td>
-</tr>
-<tr>
-<td>agent_2</td>
-<td>1500</td>
-<td>-0.030</td>
-<td>-45.1</td>
-</tr>
-</tbody>
-</table>
-
-<div class="kpi">
-<div>
-<div class="val">30</div>
-<div class="lbl">Episodes</div>
-
-<div>
-<div class="val">~150</div>
-<div class="lbl">Avg steps / episode (all agent turns)</div>
-
-<div>
-<div class="val">Random</div>
-<div class="lbl">Policy</div>
-
-</div>
-
-<p class="note">
-Notes: These numbers are sample results from 30 episodes with random actions and 
-<code>max_cycles=50</code>. Expect negative rewards in cooperative MPE when agents wander.
-
-<div class="card">
-<h3 style="margin-top:0;">How to reproduce</h3>
-<ol style="margin:0 0 8px 18px;">
-<li>Install: <code>pip install pettingzoo gymnasium numpy</code></li>
-<li>Run the Python script to print a JSON-like summary.</li>
-<li>Swap the random policy with your MARL algorithm (e.g., IQL, MADDPG).</li>
-</ol>
-<p class="note">Tip: For training, wrap the AEC env with PettingZoo’s parallel API and vectorize rollouts.
-
-</div>
+```
 
 Explanation (what’s happening)
 
