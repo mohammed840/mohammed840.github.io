@@ -936,6 +936,7 @@ These projects cemented PPO as a cornerstone algorithm for safe, scalable, and h
 
 Below is a concise PyTorch implementation illustrating the core logic of PPO. It operates on a discrete environment like CartPole and uses mini-batch optimization over trajectories collected by the current policy.
 
+```python
 import torch, torch.nn as nn, torch.optim as optim
 import gym
 from torch.distributions import Categorical
@@ -1008,6 +1009,8 @@ for update in range(500):
 
     if update % 50 == 0:
         print(f"Update {update}: loss={loss.item():.3f}, return={sum(rews)}")
+```
+
 
         
 
@@ -1033,16 +1036,16 @@ Reinforcement Learning (RL) studies how an agent should act in an environment to
 
 # Layer 1 MDPs: the world as state, action, reward
 
-    An RL problem is modeled as a Markov Decision Process, written as
-    $\text{MDP}=(S,A,P,R,\gamma)$. Here $S$ is the set of states, $A$ the actions,
-    $P(s' \mid s,a)$ the transition law, $R(s,a)$ the reward, and
-    $\gamma \in [0,1]$ the discount that down-weights distant outcomes.
-    A policy $\pi(a \mid s)$ maps a state to a distribution over actions.
-    The agent’s objective is to maximize expected return
+An RL problem is modeled as a Markov Decision Process, written as
+$\text{MDP}=(S,A,P,R,\gamma)$. Here $S$ is the set of states, $A$ the actions,
+$P(s' \mid s,a)$ the transition law, $R(s,a)$ the reward, and
+$\gamma \in [0,1]$ the discount that down-weights distant outcomes.
+A policy $\pi(a \mid s)$ maps a state to a distribution over actions.
+The agent’s objective is to maximize expected return
     $G_t=\sum_{k=0}^{\infty}\gamma^k r_{t+k+1}$.
-    Formally, we seek a policy $\pi^*$ that maximizes
+Formally, we seek a policy $\pi^*$ that maximizes
     $J(\pi)=\mathbb{E}_{\pi}\!\left[\sum_{t\ge0}\gamma^t r_{t+1}\right]$
-    under the environment dynamics.
+under the environment dynamics.
 
 How to solve it (conceptually): specify S,A,P,R,γS,A,P,R,γ for your task; choose whether you will compute exact values with a known model PP (dynamic programming) or learn from data when PP is unknown (temporal-difference and policy gradient methods). That fork planning vs. learning determines everything that follows.
 
