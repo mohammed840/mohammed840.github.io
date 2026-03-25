@@ -1814,15 +1814,12 @@ In the MAB framing, each candidate movie (or strategy for choosing a movie) is a
 ### Part 2 — Actor–Critic deep RL recommender
 The Actor–Critic notebook frames recommendation as a Markov Decision Process with function approximation. The *critic* estimates $V_\phi(s)$ or $Q_\phi(s,a)$, while the *actor* parameterizes a stochastic policy $\pi_\theta(a\mid s)$. A standard advantage-based update looks like:
 $$
-\theta \leftarrow \theta
-+ \eta \,\widehat{\mathbb{E}}\Big[\nabla_\theta \log \pi_\theta(a_t\!\mid\! s_t)\; A_t\Big],
-\quad
-A_t = r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t),
-  $$
-  $$
-\phi \leftarrow \phi
-- \eta_v \,\widehat{\mathbb{E}}\big[ (r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t))^2 \big].
-  $$
+\theta \leftarrow \theta + \eta \,\widehat{\mathbb{E}}\Big[\nabla_\theta \log \pi_\theta(a_t\!\mid\! s_t)\; A_t\Big], \quad A_t = r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t)
+$$
+
+$$
+\phi \leftarrow \phi - \eta_v \,\widehat{\mathbb{E}}\big[ (r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t))^2 \big]
+$$
 
 In practice, the state can embed user history (e.g., a learned representation of past views/ratings), the action can be an item ID or a slate selection strategy, and the reward blends implicit signals (click, watch-time) with explicit ratings to reflect quality and satisfaction over the session. The repository’s README explicitly lists both “Multi Armed Bandits” and an “Actor-Critic based recommender framework” as implemented strategies.
 
