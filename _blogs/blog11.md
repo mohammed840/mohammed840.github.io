@@ -997,18 +997,19 @@ Reinforcement Learning (RL) studies how an agent should act in an environment to
 
 # Layer 1 MDPs: the world as state, action, reward
 
-An RL problem is modeled as a Markov Decision Process, written as
-$\text{MDP}=(S,A,P,R,\gamma)$. Here $S$ is the set of states, $A$ the actions,
-$P(s' \mid s,a)$ the transition law, $R(s,a)$ the reward, and
-$\gamma \in [0,1]$ the discount that down-weights distant outcomes.
-A policy $\pi(a \mid s)$ maps a state to a distribution over actions.
-The agent’s objective is to maximize expected return
-$G_t=\sum_{k=0}^{\infty}\gamma^k r_{t+k+1}$.
-Formally, we seek a policy $\pi^*$ that maximizes
-$J(\pi)=\mathbb{E}_{\pi}\!\left[\sum_{t\ge0}\gamma^t r_{t+1}\right]$
+An RL problem is modeled as a Markov Decision Process: $\text{MDP}=(S,A,P,R,\gamma)$. Here $S$ is the set of states, $A$ the actions, $P(s'\mid s,a)$ the transition law, $R(s,a)$ the reward, and $\gamma \in [0,1]$ the discount that down-weights distant outcomes. A policy $\pi(a\mid s)$ maps a state to a distribution over actions.
+
+The agent's objective is to maximize expected return:
+
+$$G_t = \sum_{k=0}^{\infty} \gamma^k r_{t+k+1}$$
+
+Formally, we seek a policy $\pi^*$ that maximizes:
+
+$$J(\pi) = \mathbb{E}_{\pi}\left[\sum_{t \ge 0} \gamma^t r_{t+1}\right]$$
+
 under the environment dynamics.
 
-How to solve it (conceptually): specify S,A,P,R,γS,A,P,R,γ for your task; choose whether you will compute exact values with a known model PP (dynamic programming) or learn from data when PP is unknown (temporal-difference and policy gradient methods). That fork planning vs. learning determines everything that follows.
+How to solve it: specify $S, A, P, R, \gamma$ for your task; choose whether to compute exact values with a known model $P$ (dynamic programming) or learn from data when $P$ is unknown (temporal-difference and policy gradient methods). That fork — planning vs. learning — determines everything that follows.
 
 # Layer 2  Bellman equations: recursive value reasoning
 
