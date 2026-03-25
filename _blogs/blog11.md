@@ -1727,34 +1727,34 @@ Use DQN for pixel-based, discrete actions; switch to Double DQN to curb overesti
 **Overview.** In this project we implemented a classic Deep Q-Learning (DQN) agent in PyTorch and trained it on Atari environments exposed through the Gym interface. The goal is to learn a policy that maximizes long-term score directly from pixels. We follow the canonical DQN recipe—frame preprocessing and stacking, ε-greedy exploration, an experience replay buffer, a periodically updated target network, and Huber loss. The result is a compact, reproducible pipeline that learns meaningful strategies on games like *Breakout* and *Pong*.
 
 ### From Pixels to Actions: Data Pipeline
-Each raw 210×160 RGB frame is converted to grayscale, resized (e.g., 84×84), and normalized. To give the agent a sense of velocity, we stack the most recent \(k\) frames (commonly \(k=4\)) into a single observation tensor \(\in \mathbb{R}^{k \times 84 \times 84}\). Atari wrappers apply frame-skipping and max-pooling to reduce flicker and speed up training; reward clipping maps dense rewards into \(\{-1,0,1\}\), which stabilizes gradients across different games with very different score scales.
+Each raw 210×160 RGB frame is converted to grayscale, resized (e.g., 84×84), and normalized. To give the agent a sense of velocity, we stack the most recent $k$ frames (commonly $k=4$) into a single observation tensor $\in \mathbb{R}^{k \times 84 \times 84}$. Atari wrappers apply frame-skipping and max-pooling to reduce flicker and speed up training; reward clipping maps dense rewards into $\{-1,0,1\}$, which stabilizes gradients across different games with very different score scales.
 
 ### Q-Learning with a Deep Network
-The agent approximates the optimal action-value function \(Q^\*(s,a)\) with a convolutional network \(Q_\theta(s,a)\). For each sampled transition \((s,a,r,s',\text{done})\) from the replay buffer, we form the target with a lagged copy of the network \(Q_{\theta^-}\):
+The agent approximates the optimal action-value function $Q^\*(s,a)$ with a convolutional network $Q_\theta(s,a)$. For each sampled transition $(s,a,r,s',\text{done})$ from the replay buffer, we form the target with a lagged copy of the network $Q_{\theta^-}$:
 
-\[
+$$
 y = 
 \begin{cases}
 r & \text{if done} \
 r + \gamma \max_{a'} Q_{\theta^-}(s',a') & \text{otherwise.}
 \end{cases}
-\]
+$$
 
 We minimize a robust Huber loss
-\[
+$$
 \mathcal{L}(\theta)=\mathbb{E}\big[\mathrm{Huber}\big(y - Q_\theta(s,a)\big)\big],
-\]
-and update parameters with Adam/RMSProp. Every \(C\) gradient steps we copy weights from the online network to the target network, \( \theta^- \leftarrow \theta \), to avoid chasing a moving target.
+$$
+and update parameters with Adam/RMSProp. Every $C$ gradient steps we copy weights from the online network to the target network, $ \theta^- \leftarrow \theta $, to avoid chasing a moving target.
 
 ### Exploration & Replay
-Actions are selected by an ε-greedy policy. We linearly decay \(\varepsilon\) from a high initial value to a small floor to transition from exploration to exploitation:
-\[
+Actions are selected by an ε-greedy policy. We linearly decay $\varepsilon$ from a high initial value to a small floor to transition from exploration to exploitation:
+$$
 \varepsilon(t) = \max\!\big(\varepsilon_{\min},\, \varepsilon_{\max} - \alpha t\big).
-\]
-Experience replay stores the last \(N\) transitions; each update draws a mini-batch uniformly to break temporal correlations and make the stochastic gradient a better estimator of the Bellman error expectation.
+$$
+Experience replay stores the last $N$ transitions; each update draws a mini-batch uniformly to break temporal correlations and make the stochastic gradient a better estimator of the Bellman error expectation.
 
 ### Network Architecture
-The model mirrors the original DQN CNN: several convolutional layers extract spatio-temporal features from stacked frames, followed by fully connected layers that produce one Q-value per discrete action (e.g., NOOP, LEFT, RIGHT, FIRE). During evaluation we act greedily \(a_t=\arg\max_a Q_\theta(s_t,a)\); during training we sample ε-greedy to keep discovering better trajectories.
+The model mirrors the original DQN CNN: several convolutional layers extract spatio-temporal features from stacked frames, followed by fully connected layers that produce one Q-value per discrete action (e.g., NOOP, LEFT, RIGHT, FIRE). During evaluation we act greedily $a_t=\arg\max_a Q_\theta(s_t,a)$; during training we sample ε-greedy to keep discovering better trajectories.
 
 ### Training Loop (Conceptual)
 
@@ -1784,7 +1784,7 @@ eps = max(eps_min, eps - eps_decay)
 ```
 
 ### Evaluation Protocol
-We periodically run evaluation episodes with \(\varepsilon=0\) and record average score, win/loss ratio (for games like *Pong*), and episode length. Because Atari scores can be bursty, we track moving averages and visualize learning curves to ensure improvements are not one-off lucky runs. Seeding the environment and PyTorch gives reproducible baselines for A/B tweaks.
+We periodically run evaluation episodes with $\varepsilon=0$ and record average score, win/loss ratio (for games like *Pong*), and episode length. Because Atari scores can be bursty, we track moving averages and visualize learning curves to ensure improvements are not one-off lucky runs. Seeding the environment and PyTorch gives reproducible baselines for A/B tweaks.
 
 ### Outcomes & Behaviors Learned
 After sufficient replay warm-up and ε-decay, the agent exhibits recognizable and repeatable strategies. On *Breakout* it aligns the paddle under predicted ball landings, learns to create side tunnels, and exploits back-wall bounces for rapid scoring. On *Pong* it anticipates ball trajectories earlier in volleys, gaining consistent winning margins. Qualitatively, trajectories become smooth and purposeful; quantitatively, evaluation averages stabilize and surpass random and naive baselines.
@@ -1797,7 +1797,7 @@ After sufficient replay warm-up and ε-decay, the agent exhibits recognizable an
 <div class="caption">Figure: DQN agents in action on *Breakout* (left) and *Pong* (right), taken from the project’s README figures.</div>
 
 ### Key Hyperparameters (What Mattered)
-*Replay size* large enough to cover diverse contexts; *batch size* balancing stability and throughput; *learning rate* tuned to avoid value explosion; *target update period* \(C\) that is neither too fast (chasing noise) nor too slow (stale targets); *ε schedule* that decays slowly enough to keep discovering new strategies; *reward clipping* and *gradient clipping* to control outliers. Small shifts in any of these show up clearly in the evaluation curves.
+*Replay size* large enough to cover diverse contexts; *batch size* balancing stability and throughput; *learning rate* tuned to avoid value explosion; *target update period* $C$ that is neither too fast (chasing noise) nor too slow (stale targets); *ε schedule* that decays slowly enough to keep discovering new strategies; *reward clipping* and *gradient clipping* to control outliers. Small shifts in any of these show up clearly in the evaluation curves.
 
 ### Troubleshooting & Diagnostics
 If training plateaus early, verify that stacked frames truly change over time (no frozen observations), that the replay buffer warms up before updates begin, and that the target network is actually copied on schedule. Exploding values usually point to too-high learning rate, missing reward/grad clipping, or an ε that collapsed prematurely. Always sanity-check by rendering a few training episodes to confirm actions are being sampled and the paddle moves responsively.
@@ -1818,25 +1818,25 @@ Vanilla DQN can overestimate values due to the max in the target; Double DQN, pr
 **Overview.** This project reproduces a movie recommender using two reinforcement-learning strategies: (1) a *Multi-Armed Bandits* (MAB) recommender that learns which items to show by trading off exploration vs exploitation, and (2) an *Actor–Critic* deep RL recommender that models recommendation as a sequential decision problem where user interactions are the environment’s feedback. The repository includes a MovieLens dataset folder (<code>data/ml-1m</code>) and two notebooks: <code>RL_BanditsCode.ipynb</code> and <code>ActorCritic_DeepRL_RecommenderSystem.ipynb</code>. :contentReference[oaicite:0]{index=0}
 
 ### Problem setup: recommendations as an RL loop
-At time \(t\), the system observes a (possibly partial) user state \(s_t\) (e.g., user & context features, history summary) and recommends an item \(a_t\) (a movie). The user response provides reward \(r_t\) (e.g., click, watch, rating), and the session updates to \(s_{t+1}\). Over many interactions, we learn a policy \(\pi(a\mid s)\) that maximizes expected long-term engagement:
-\[
+At time $t$, the system observes a (possibly partial) user state $s_t$ (e.g., user & context features, history summary) and recommends an item $a_t$ (a movie). The user response provides reward $r_t$ (e.g., click, watch, rating), and the session updates to $s_{t+1}$. Over many interactions, we learn a policy $\pi(a\mid s)$ that maximizes expected long-term engagement:
+$$
 \max_{\pi}\; \mathbb{E}_\pi \Big[ \sum_{t\ge 0} \gamma^t\, r_t \Big].
-  \]
+  $$
 ### Part 1 — Multi-Armed Bandits recommender
-In the MAB framing, each candidate movie (or strategy for choosing a movie) is an “arm.” With no explicit state dynamics, the agent learns a value estimate \(\hat{\mu}_i\) per arm \(i\) and chooses arms that look best while still exploring alternatives. Common choices are \(\varepsilon\)-greedy, UCB, or Thompson Sampling. This baseline is simple and effective for *cold-start* traffic or short sessions because it requires minimal modeling assumptions and updates online from immediate rewards.
+In the MAB framing, each candidate movie (or strategy for choosing a movie) is an “arm.” With no explicit state dynamics, the agent learns a value estimate $\hat{\mu}_i$ per arm $i$ and chooses arms that look best while still exploring alternatives. Common choices are $\varepsilon$-greedy, UCB, or Thompson Sampling. This baseline is simple and effective for *cold-start* traffic or short sessions because it requires minimal modeling assumptions and updates online from immediate rewards.
 
 ### Part 2 — Actor–Critic deep RL recommender
-The Actor–Critic notebook frames recommendation as a Markov Decision Process with function approximation. The *critic* estimates \(V_\phi(s)\) or \(Q_\phi(s,a)\), while the *actor* parameterizes a stochastic policy \(\pi_\theta(a\mid s)\). A standard advantage-based update looks like:
-\[
+The Actor–Critic notebook frames recommendation as a Markov Decision Process with function approximation. The *critic* estimates $V_\phi(s)$ or $Q_\phi(s,a)$, while the *actor* parameterizes a stochastic policy $\pi_\theta(a\mid s)$. A standard advantage-based update looks like:
+$$
 \theta \leftarrow \theta
 + \eta \,\widehat{\mathbb{E}}\Big[\nabla_\theta \log \pi_\theta(a_t\!\mid\! s_t)\; A_t\Big],
 \quad
 A_t = r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t),
-  \]
-  \[
+  $$
+  $$
 \phi \leftarrow \phi
 - \eta_v \,\widehat{\mathbb{E}}\big[ (r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t))^2 \big].
-  \]
+  $$
 
 In practice, the state can embed user history (e.g., a learned representation of past views/ratings), the action can be an item ID or a slate selection strategy, and the reward blends implicit signals (click, watch-time) with explicit ratings to reflect quality and satisfaction over the session. The repository’s README explicitly lists both “Multi Armed Bandits” and an “Actor-Critic based recommender framework” as implemented strategies. :contentReference[oaicite:1]{index=1}
 
@@ -1844,8 +1844,8 @@ In practice, the state can embed user history (e.g., a learned representation of
 The repo ships with a MovieLens directory (<code>data/ml-1m</code>), indicating experiments on the 1M-ratings split (users, items, ratings, timestamps). Typical preprocessing includes joining user/movie metadata, indexing IDs, constructing sparse interaction matrices, and creating per-user histories or session windows that feed the RL state encoder. (Presence of the <code>data/ml-1m</code> folder is visible in the repo file tree.) :contentReference[oaicite:2]{index=2}
 
 ### Training dynamics & evaluation
-*MAB stage.* Online (or simulated-online) learning picks an arm (movie) per impression and immediately observes reward; we track click-through-rate proxies, average reward, and regret curves vs. an oracle. Exploration controls (\(\varepsilon\), UCB confidence) determine how fast we converge and how robust we are to non-stationarity.
-*Actor–Critic stage.* We simulate user trajectories from MovieLens interactions. Mini-batches of transitions \((s_t,a_t,r_t,s_{t+1})\) update the critic (value regression) and the actor (policy-gradient). We monitor running averages of reward per step, policy entropy (to avoid collapse), and offline top-K ranking metrics like Precision@K/Recall@K or NDCG computed on held-out sessions. Where ratings exist, we can also report RMSE/MAE on predicted affinity but emphasize *sequence-level* success (e.g., session length, multi-step engagement).
+*MAB stage.* Online (or simulated-online) learning picks an arm (movie) per impression and immediately observes reward; we track click-through-rate proxies, average reward, and regret curves vs. an oracle. Exploration controls ($\varepsilon$, UCB confidence) determine how fast we converge and how robust we are to non-stationarity.
+*Actor–Critic stage.* We simulate user trajectories from MovieLens interactions. Mini-batches of transitions $(s_t,a_t,r_t,s_{t+1})$ update the critic (value regression) and the actor (policy-gradient). We monitor running averages of reward per step, policy entropy (to avoid collapse), and offline top-K ranking metrics like Precision@K/Recall@K or NDCG computed on held-out sessions. Where ratings exist, we can also report RMSE/MAE on predicted affinity but emphasize *sequence-level* success (e.g., session length, multi-step engagement).
 
 ### What we learned (outcomes)
 <ul>
@@ -1885,7 +1885,7 @@ optimizer.step(); optimizer.zero_grad()
 <li>*Reward shaping.* Combining implicit signals (click/watch-time) and explicit ratings gives a more faithful objective; session bonuses (e.g., diversity/novelty rewards) prevent degenerate loops.</li>
 <li>*Candidate generation vs ranking.* In practice we sample a small candidate set per user (ANN vectors, metadata filters) and let the policy rank within that slate—keeps the action space tractable.</li>
 <li>*State representation.* Even simple recency-weighted embeddings outperform one-hot histories; recurrent/attention encoders help when sessions are long.</li>
-<li>*Exploration schedules.* Start with higher entropy (policy) or higher \(\varepsilon\) (bandit), cool slowly; track regret/entropy to avoid premature convergence.</li>
+<li>*Exploration schedules.* Start with higher entropy (policy) or higher $\varepsilon$ (bandit), cool slowly; track regret/entropy to avoid premature convergence.</li>
 </ul>
 
 <div class="note">
