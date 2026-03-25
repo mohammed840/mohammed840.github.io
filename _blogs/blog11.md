@@ -206,18 +206,20 @@ In 1989, Christopher J. C. H. Watkins introduced a breakthrough in reinforcement
 
 ### The Problem: Learning to Act Without a Model
 
-Reinforcement learning studies how an agent interacts with an environment to maximize cumulative reward. At each step the agent observes a state $s_t$, takes an action $a_t$, receives a reward $r_{t+1}$, and moves to a new state $s_{t+1}$. The challenge is to learn which actions are best even when the dynamics are unknown. Earlier methods depended on transition models $P(s'\mids,a)$ or Monte Carlo policy evaluation. Watkins proposed learning value estimates directly from experience—no model needed.
+Reinforcement learning studies how an agent interacts with an environment to maximize cumulative reward. At each step the agent observes a state $s_t$, takes an action $a_t$, receives a reward $r_{t+1}$, and moves to a new state $s_{t+1}$. The challenge is to learn which actions are best even when the dynamics are unknown. Earlier methods depended on transition models $P(s' \mid s, a)$ or Monte Carlo policy evaluation. Watkins proposed learning value estimates directly from experience—no model needed.
 
 ### The Core Idea: Action-Value Learning
 
 The optimal action-value function $Q^*(s,a)$ satisfies the Bellman optimality equation:
 
-  $$Q^*(s,a) = \mathbb{E}\!\left[\, r_{t+1} + \gamma \max_{a'} Q^*(s_{t+1}, a') \,\middle\mid\, s_t=s, a_t=a \right].
+$$
+Q^*(s,a) = \mathbb{E}\!\left[\, r_{t+1} + \gamma \max_{a'} Q^*(s_{t+1}, a') \,\mid\, s_t=s,\, a_t=a \right].
 $$
 
 If $Q^*(s,a)$ were known, the optimal policy is simply
 
-  $$\pi^*(s) = \arg\max_{a} Q^*(s,a).
+$$
+\pi^*(s) = \arg\max_{a} Q^*(s,a).
 $$
 
 Since $Q^*$ is unknown, Q-Learning approximates it from experience.
@@ -226,10 +228,8 @@ Since $Q^*$ is unknown, Q-Learning approximates it from experience.
 
 Given a transition $(s_t,a_t,r_{t+1},s_{t+1})$, the update is:
 
-  $$Q(s_t,a_t) \leftarrow Q(s_t,a_t)
-+ \alpha \big[ r_{t+1}
-+ \gamma \max_{a'} Q(s_{t+1},a')
-- Q(s_t,a_t) \big].
+$$
+Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha \big[ r_{t+1} + \gamma \max_{a'} Q(s_{t+1},a') - Q(s_t,a_t) \big].
 $$
 
 Here $\alpha$ is the learning rate and $\gamma$ the discount factor. The term $\max_{a'}Q(s_{t+1},a')$ bootstraps from the next state. Q-Learning is off-policy: it learns the greedy target while following an exploratory policy such as $\varepsilon$-greedy (choose a random action with probability $\varepsilon$, otherwise the greedy one).
