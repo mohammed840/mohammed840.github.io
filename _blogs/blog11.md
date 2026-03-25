@@ -217,14 +217,14 @@ By the end, you won’t just know reinforcement learning.You’ll have witnessed
 
 <h3>The Problem: Learning to Act Without a Model</h3>
 
-<p>Reinforcement learning studies how an agent interacts with an environment to maximize cumulative reward. At each step the agent observes a state $s_t$, takes an action $a_t$, receives a reward $r_{t+1}$, and moves to a new state $s_{t+1}$. The challenge is to learn which actions are best even when the dynamics are unknown. Earlier methods depended on transition models $P(s'|s,a)$ or Monte Carlo policy evaluation. Watkins proposed learning value estimates directly from experience—no model needed.</p>
+<p>Reinforcement learning studies how an agent interacts with an environment to maximize cumulative reward. At each step the agent observes a state $s_t$, takes an action $a_t$, receives a reward $r_{t+1}$, and moves to a new state $s_{t+1}$. The challenge is to learn which actions are best even when the dynamics are unknown. Earlier methods depended on transition models $P(s'\mids,a)$ or Monte Carlo policy evaluation. Watkins proposed learning value estimates directly from experience—no model needed.</p>
 
 <h3>The Core Idea: Action-Value Learning</h3>
 
 <p>The optimal action-value function $Q^*(s,a)$ satisfies the Bellman optimality equation:</p>
 
 <div class="eq">
-  $$Q^*(s,a) = \mathbb{E}\!\left[\, r_{t+1} + \gamma \max_{a'} Q^*(s_{t+1}, a') \,\middle|\, s_t=s, a_t=a \right].$$
+  $$Q^*(s,a) = \mathbb{E}\!\left[\, r_{t+1} + \gamma \max_{a'} Q^*(s_{t+1}, a') \,\middle\mid\, s_t=s, a_t=a \right].$$
 
 <p>If $Q^*(s,a)$ were known, the optimal policy is simply</p>
 
@@ -341,12 +341,12 @@ This bootstrapping is what allows an agent to learn long-term outcomes from imme
 
 Although elegant, Watkins’ formulation had some practical challenges:
 
-| Limitation | Solution |
-|---|---|
-| Over-estimation bias from max operator | Double Q-Learning |
-| Slow convergence in large spaces | Function approximation (Deep Q-Networks) |
-| Poor exploration | Entropy regularization / ε decay / Soft-Q |
-| Instability with neural networks | Experience Replay + Target Networks (DQN) |
+\mid Limitation \mid Solution \mid
+\mid---\mid---\mid
+\mid Over-estimation bias from max operator \mid Double Q-Learning \mid
+\mid Slow convergence in large spaces \mid Function approximation (Deep Q-Networks) \mid
+\mid Poor exploration \mid Entropy regularization / ε decay / Soft-Q \mid
+\mid Instability with neural networks \mid Experience Replay + Target Networks (DQN) \mid
 
 These refinements show how Q-Learning served as the seed for an entire field of algorithms.
 
@@ -387,10 +387,10 @@ DeepMind’s DQN changed that by introducing representation learning.The network
 Naively combining Q-Learning with neural nets quickly diverges.DeepMind introduced two elegant yet powerful fixes:
 
 
-| Technique | Problem Solved | Mechanism |
-|---|---|---|
-| Experience Replay | Temporal correlation between samples | Store past transitions (s,a,r,s') → sample random mini-batches to approximate i.i.d. data |
-| Target Network | Moving targets destabilize gradient updates | Freeze a copy Q(s,a;θ⁻) for N steps → periodically sync with online network |
+\mid Technique \mid Problem Solved \mid Mechanism \mid
+\mid---\mid---\mid---\mid
+\mid Experience Replay \mid Temporal correlation between samples \mid Store past transitions (s,a,r,s') → sample random mini-batches to approximate i.i.d. data \mid
+\mid Target Network \mid Moving targets destabilize gradient updates \mid Freeze a copy Q(s,a;θ⁻) for N steps → periodically sync with online network \mid
 
 ![image](https://static.wixstatic.com/media/ffcc74_f15c8fdc8398458ca7ff6ffa1042f643~mv2.png/v1/fill/w_850,h_547,al_c,q_90,enc_auto/ffcc74_f15c8fdc8398458ca7ff6ffa1042f643~mv2.png)
 
@@ -452,13 +452,13 @@ This was the first demonstration that a general RL agent could learn complex tas
 
 DQN’s success sparked a wave of descendants that remain core to modern AI systems:
 
-| Successor | Core Idea | Year |
-|---|---|---|
-| Double DQN | Decouples action selection and evaluation to reduce over-estimation bias | 2016 |
-| Dueling DQN | Separates state value and advantage streams for better generalization | 2016 |
-| Prioritized Replay | Samples high-TD-error experiences more often | 2016 |
-| Rainbow DQN | Combines six improvements (Double, Dueling, NoisyNets, etc.) | 2017 |
-| AlphaGo / AlphaZero / MuZero | Integrate Q-value estimation into Monte Carlo Tree Search | — |
+\mid Successor \mid Core Idea \mid Year \mid
+\mid---\mid---\mid---\mid
+\mid Double DQN \mid Decouples action selection and evaluation to reduce over-estimation bias \mid 2016 \mid
+\mid Dueling DQN \mid Separates state value and advantage streams for better generalization \mid 2016 \mid
+\mid Prioritized Replay \mid Samples high-TD-error experiences more often \mid 2016 \mid
+\mid Rainbow DQN \mid Combines six improvements (Double, Dueling, NoisyNets, etc.) \mid 2017 \mid
+\mid AlphaGo / AlphaZero / MuZero \mid Integrate Q-value estimation into Monte Carlo Tree Search \mid — \mid
 
 These models now power applications in robotics, game AI, finance, and autonomous control.
 
@@ -470,10 +470,10 @@ These models now power applications in robotics, game AI, finance, and autonomou
 
  What Policy Gradients Optimize (High-Level)
 
-<h3>Policy Gradient (PG) methods optimize the expected return directly by adjusting the parameters of a stochastic policy $\pi_\theta(a|s)$. Using the likelihood-ratio trick, the vanilla REINFORCE gradient is:</h3>
+<h3>Policy Gradient (PG) methods optimize the expected return directly by adjusting the parameters of a stochastic policy $\pi_\theta(a \mid s)$. Using the likelihood-ratio trick, the vanilla REINFORCE gradient is:</h3>
 
 <div class="eq">
-  $$\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}\!\left[\nabla_\theta \log \pi_\theta(a_t|s_t) \, R_t \right].$$
+  $$\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}\!\left[\nabla_\theta \log \pi_\theta(a_t\mid s_t) \, R_t \right].$$
 
 <p>This increases the probability of actions that produced high returns — effectively a form of reward-weighted imitation. The key conceptual win over Q-learning–style methods is that policy gradients naturally support continuous actions and differentiable policies.</p>
 
@@ -487,7 +487,7 @@ These models now power applications in robotics, game AI, finance, and autonomou
 <h3>REINFORCE updates are simple but high-variance (episode-level credit assignment). Subtracting a baseline $b(s)$ leaves the expectation unbiased yet reduces variance:</h3>
 
 <div class="eq">
-  $$\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}\!\left[\nabla_\theta \log \pi_\theta(a_t|s_t)\,\big(R_t - b(s_t)\big)\right].$$
+  $$\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta}\!\left[\nabla_\theta \log \pi_\theta(a_t\mid s_t)\,\big(R_t - b(s_t)\big)\right].$$
 
 <p>Choosing $b(s) = V^\pi(s)$ yields the advantage function $A^\pi(s,a) = Q^\pi(s,a) - V^\pi(s)$ — a cornerstone of modern policy gradient methods such as Generalized Advantage Estimation (GAE) in PPO and TRPO.</p>
 
@@ -504,7 +504,7 @@ Takeaway: Use advantage estimates (not raw returns) to reduce variance and stabi
 <h3>Apply log-derivative trick</h3>
 
 <div class="eq">
-  $$\nabla_\theta p_\theta(\tau) = p_\theta(\tau)\sum_t \nabla_\theta \log \pi_\theta(a_t|s_t).$$
+  $$\nabla_\theta p_\theta(\tau) = p_\theta(\tau)\sum_t \nabla_\theta \log \pi_\theta(a_t\mid s_t).$$
 
 <h3>Exchange gradient and expectation to obtain REINFORCE</h3>
 
@@ -560,7 +560,7 @@ repeat for each iteration:
         Update ψ by minimizing (Vψ(s_t) − G_t)^2
     else:
         Ā_t ← (G_t − mean(G)) / std(G)
-    Update θ by ascending ∑_t log πθ(a_t|s_t) · Ā_t + β·H[πθ(·|s_t)]
+    Update θ by ascending ∑_t log πθ(a_t\mid s_t) · Ā_t + β·H[πθ(·\mid s_t)]
 until solved
 ```
 
@@ -610,7 +610,7 @@ for ep in range(600):
     opt.zero_grad(); loss.backward(); opt.step()
 
     if ep % 50 == 0:
-        print(f"Episode {ep} | loss {loss.item():.3f} | return {sum(rews):.1f}")
+        print(f"Episode {ep} \mid loss {loss.item():.3f} \mid return {sum(rews):.1f}")
 ```
 
 
@@ -680,7 +680,7 @@ for ep in range(800):
     opt.zero_grad(); loss.backward(); opt.step()
 
     if ep % 50 == 0:
-        print(f"[Cont] Episode {ep} | return {sum(rews):.1f}")
+        print(f"[Cont] Episode {ep} \mid return {sum(rews):.1f}")
 ```
 
 
@@ -758,7 +758,7 @@ This term allows the network to assess how much better an action was compared to
 <h3>Actor Loss</h3>
 <p>Encourages actions that improve the policy:</p>
 <div class="eq">
-  $$L_{\text{actor}} = -\log \pi_\theta(a_t|s_t)\, A(s_t, a_t)$$
+  $$L_{\text{actor}} = -\log \pi_\theta(a_t\mid s_t)\, A(s_t, a_t)$$
 
 <h3>Critic Loss</h3>
 <p>Minimizes the error in the value function:</p>
@@ -893,9 +893,9 @@ Proximal Policy Optimization (PPO), proposed by John Schulman et al. (2017) at O
 
 The goal of Proximal Policy Optimization (PPO) is to make policy updates trustworthy and consistent. Instead of taking large, unstable gradient steps, PPO restricts how much the new policy can deviate from the old one.
 
-Let $\pi_\theta(a|s)$ be the current policy and $\pi_{\text{old}}(a|s)$ the previous policy. We define the probability ratio:
+Let $\pi_\theta(a \mid s)$ be the current policy and $\pi_{\text{old}}(a \mid s)$ the previous policy. We define the probability ratio:
 
-$$r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\text{old}}(a_t|s_t)}$$
+$$r_t(\theta) = \frac{\pi_\theta(a_t\mid s_t)}{\pi_{\text{old}}(a_t\mid s_t)}$$
 
 This ratio measures how much the new policy has changed its probability of taking the same action in the same state. The objective is then to maximize the expected advantage, but with a clip to prevent too large of a policy shift:
 
@@ -928,7 +928,7 @@ These projects cemented PPO as a cornerstone algorithm for safe, scalable, and h
   $$L^{\text{PPO}}(\theta) = \mathbb{E}_t \Big[ 
   L^{\text{CLIP}}(\theta) 
   - c_1 (V_\theta(s_t) - R_t)^2 
-  + c_2 \, H[\pi_\theta(\cdot|s_t)]
+  + c_2 \, H[\pi_\theta(\cdot\mid s_t)]
   \Big].$$
 
 <p>Here, $c_1$ and $c_2$ are coefficients that balance value function accuracy and entropy regularization. This formulation shows how PPO jointly optimizes for return maximization while maintaining diversity and value accuracy — a three-way harmony between stability, exploration, and performance.</p>
@@ -1665,7 +1665,7 @@ PettingZoo uses an Agent-Environment-Cycle (AEC) API: agents act in turns within
 
 Deep Q-Networks (DQN) extend classic Q-learning to high-dimensional observations by replacing the tabular $Q(s,a)$ with a deep network $Q_{\\theta}(s,a)$. At its core, DQN seeks parameters $\\theta$ that minimize the temporal-difference (TD) regression to the Bellman optimality target. For a transition $(s,a,r,s')$, the target is $y=r+\\gamma\\,\\max_{a'}Q_{\\theta^-}(s',a')$, where $\\theta^-$ are the “target network” parameters held fixed for several updates to stabilize training. The loss on a mini-batch $\\mathcal{B}$ is
 \\[
-\\mathcal{L}(\\theta)=\\frac{1}{|\\mathcal{B}|} \\sum_{(s,a,r,s')\\in\\mathcal{B}}\\Big( y - Q_{\\theta}(s,a) \\Big)^2,
+\\mathcal{L}(\\theta)=\\frac{1}{\mid\\mathcal{B}\mid} \\sum_{(s,a,r,s')\\in\\mathcal{B}}\\Big( y - Q_{\\theta}(s,a) \\Big)^2,
 \\quad
 y=r+\\gamma\\,\\max_{a'}Q_{\\theta^-}(s',a').
 \\]
@@ -1698,7 +1698,7 @@ for episode = 1 ... M:
                     // Double DQN target (drop-in replacement):
                     // a* ← argmax_{a'} Q_θ(s'_i, a')
                     // y_i ← r_i + γ * Q_{θ⁻}(s'_i, a*)
-            Compute loss: L ← (1/|B|) * Σ_i (y_i - Q_θ(s_i, a_i))²
+            Compute loss: L ← (1/\midB\mid) * Σ_i (y_i - Q_θ(s_i, a_i))²
             Update θ by one or more gradient steps to minimize L
             Optionally clip gradients and/or rewards
 
@@ -1724,7 +1724,7 @@ y\\_{\\text{Double}}\\;=\\;r\\; +\\; \\gamma\\; Q\\_{\\theta^-}\\!\\big(s',\\;\\
 \\]
 This small change reduces positive bias without increasing computational cost, while keeping all the stabilizers of DQN (replay buffer, target network, $\\varepsilon$-greedy exploration). Intuitively, the online network handles <em>which</em> action looks best (argmax), and the target network—frozen for $C$ steps—provides a less biased <em>how good</em> estimate for that chosen action. In practice Double DQN improves value accuracy and learning stability on discrete-action benchmarks like Atari, especially for games where spurious high Q-values can derail exploration. You can combine Double DQN with other upgrades (e.g., prioritized replay or dueling heads) since it only modifies the TD target. The loss remains a simple mean-squared TD error over mini-batches $\\mathcal{B}$:
 \\[
-\\mathcal{L}(\\theta)=\\frac{1}{|\\mathcal{B}|}\\sum\\_{(s,a,r,s')}\\big(y\\_{\\text{Double}}-Q\\_{\\theta}(s,a)\\big)^2,
+\\mathcal{L}(\\theta)=\\frac{1}{\mid\\mathcal{B}\mid}\\sum\\_{(s,a,r,s')}\\big(y\\_{\\text{Double}}-Q\\_{\\theta}(s,a)\\big)^2,
 \\qquad
 y\\_{\\text{Double}}=r+\\gamma\\,Q\\_{\\theta^-}\\big(s',\\arg\\max\\_{a'}Q\\_{\\theta}(s',a')\\big).
 \\]
@@ -1756,7 +1756,7 @@ for episode = 1 ... M:
             y_i ← r_i  if done_i else  r_i + γ * q_eval_i
 
             // Optimize θ via one or more gradient steps
-            L ← (1/|B|) * Σ_i (y_i - Q_θ(s_i, a_i))²
+            L ← (1/\midB\mid) * Σ_i (y_i - Q_θ(s_i, a_i))²
             Update θ to minimize L (e.g., Adam); optionally clip grads
 
         Every C steps: θ⁻ ← θ           // refresh target network
@@ -1774,7 +1774,7 @@ for episode = 1 ... M:
 Asynchronous Advantage Actor–Critic (A3C) accelerates and stabilizes training by running many lightweight actor-learners in parallel environments, each with its own copy of parameters θ (policy) and θᵥ (value). Each worker collects short on-policy rollouts, computes multi-step returns and advantages
 <span class="label">A<sub>t</sub> = &sum;<sub>k=0</sub><sup>n−1</sup> γ<sup>k</sup> r<sub>{t+k}</sub> + γ<sup>n</sup> V<sub>θᵥ</sub>(s<sub>{t+n}</sub>) − V<sub>θᵥ</sub>(s<sub>t</sub>)</span>,
 and then pushes <em>asynchronous</em> gradients to shared parameters (often via a Hogwild-style update) so exploration decorrelates naturally across threads. The policy is optimized by maximizing the entropy-regularized objective
-<span class="label">J(θ) = E[&sum;<sub>t</sub> log&nbsp;π<sub>θ</sub>(a<sub>t</sub> | s<sub>t</sub>) · Â<sub>t</sub> + β · H(π<sub>θ</sub>(&middot; | s<sub>t</sub>))]</span>,
+<span class="label">J(θ) = E[&sum;<sub>t</sub> log&nbsp;π<sub>θ</sub>(a<sub>t</sub> \mid s<sub>t</sub>) · Â<sub>t</sub> + β · H(π<sub>θ</sub>(&middot; \mid s<sub>t</sub>))]</span>,
 while the critic minimizes
 <span class="label">&sum;<sub>t</sub>(R<sub>t</sub> − V<sub>θᵥ</sub>(s<sub>t</sub>))<sup>2</sup></span>.
 Advantage Actor–Critic (A2C) is the <em>synchronous</em> variant: it runs the same parallel rollout collection but averages gradients across workers and applies a single update step per cycle. In practice, A3C/A2C are strong choices for discrete or continuous actions, scale well on CPUs, and learn robust behaviors without replay buffers. Key knobs are the rollout length n, entropy weight β, learning rate, and the balance of workers and envs per worker.
@@ -1833,13 +1833,13 @@ For each worker w in parallel:
     loop over cycles:
         Sync local copy: θ_w ← θ ; θᵥ_w ← θᵥ
         Roll out for n steps in env:
-            s_t → a_t ~ π_{θ_w}(·|s_t) → r_t, s_{t+1}
+            s_t → a_t ~ π_{θ_w}(·\mid s_t) → r_t, s_{t+1}
         Compute bootstrap V̂ = 0 if terminal else V_{θᵥ_w}(s_{t+n})
         For t = n−1 … 0:
             R_t ← r_t + γ * R_{t+1}  with R_{n} = V̂
             A_t ← R_t − V_{θᵥ_w}(s_t)
 
-        Policy loss:      L_π  = − mean_t [ log π_{θ_w}(a_t|s_t) * A_t + β H(π_{θ_w}(·|s_t)) ]
+        Policy loss:      L_π  = − mean_t [ log π_{θ_w}(a_t\mid s_t) * A_t + β H(π_{θ_w}(·\mid s_t)) ]
         Value loss:       L_V  =  mean_t [ (R_t − V_{θᵥ_w}(s_t))² ]
         Total loss:       L    = L_π + c_v * L_V
         Compute gradients ∇θ_w, ∇θᵥ_w of L
@@ -1854,7 +1854,7 @@ For each worker w in parallel:
 </code></pre>
 
 <p class="note">
-<strong>Why parallelism helps.</strong> Multiple actors diversify trajectories and decorrelate updates without a replay buffer. Short n-step returns reduce bias/variance trade-offs, entropy β·H(π) sustains exploration, and CPU-friendly threads scale easily. A2C’s synchronized averaging often improves stability on GPUs; A3C’s async updates can be faster on many-core CPUs. Typical heads share a convolutional (or MLP) torso with two output branches: π<sub>θ</sub>(a | s) an
+<strong>Why parallelism helps.</strong> Multiple actors diversify trajectories and decorrelate updates without a replay buffer. Short n-step returns reduce bias/variance trade-offs, entropy β·H(π) sustains exploration, and CPU-friendly threads scale easily. A2C’s synchronized averaging often improves stability on GPUs; A3C’s async updates can be faster on many-core CPUs. Typical heads share a convolutional (or MLP) torso with two output branches: π<sub>θ</sub>(a \mid s) an
   <!-- MathJax for LaTeX math -->
   
   
@@ -1902,7 +1902,7 @@ yielding robust improvements with simple hyperparameters (clip $\\epsilon\\appro
 <text x="600" y="118" class="small">clipped beyond 1+ε</text>
 <text x="120" y="217" class="small">clipped below 1−ε</text>
 <!-- Labels -->
-<text x="120" y="255" class="small">r = πθ(a|s)/πθ_old(a|s)</text>
+<text x="120" y="255" class="small">r = πθ(a\mids)/πθ_old(a\mids)</text>
 <text x="300" y="40" class="small">trust-region window</text>
 <text x="115" y="28" class="small">min( r·A, clip(r)·A )</text>
 </svg>
@@ -1925,7 +1925,7 @@ Repeat for iterations k = 1…K:
     // Policy/Value optimization
     For epoch = 1…E:
         For each minibatch B from the rollout buffer:
-            r_t(θ)   = exp( logπ_θ(a_t|s_t) - logp_old_t )
+            r_t(θ)   = exp( logπ_θ(a_t \mid s_t) - logp_old_t )
             L_clip   = mean( min( r_t * Â_t,
                                   clip(r_t, 1-ε, 1+ε) * Â_t ) )
             L_value  = mean( (V_θ(s_t) - V̂_t)^2 )
@@ -2102,7 +2102,7 @@ for epoch in 1..E:
     for (s, a, r, s_next) in traj.batches(batch_size):
         with torch.no_grad():
             A = r + gamma * V_phi(s_next) - V_phi(s)   # advantage
-        loss_actor  = -(log_pi_theta(a|s) * A).mean()
+        loss_actor  = -(log_pi_theta(a \mid s) * A).mean()
         loss_critic = (A.detach() ** 2).mean()
         (loss_actor + beta * loss_critic).backward()
         optimizer.step(); optimizer.zero_grad()
