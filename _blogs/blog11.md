@@ -1192,6 +1192,7 @@ Read the short motivation, skim the pseudocode to lock in the algorithmic loop, 
 Q-Learning learns action values in a table by bootstrapping from its own estimates. At each step you act ε-greedily from the current state, observe the next state and reward, and push the old entry toward the target r+γmax⁡a′Q(s′,a′)r+γmaxa′​Q(s′,a′). Exploration starts high and decays so the agent first discovers outcomes and then exploits what it has learned. On FrozenLake, using a deterministic variant keeps the learning curve focused on the update itself rather than stochastic slips.
 
 # Q-Learning (pseudocode)
+```
 for episode in range(E):
 s = env.reset()
 done = False
@@ -1200,8 +1201,10 @@ a = epsilon_greedy(Q[s])
 s2, r, done, _ = env.step(a)
 Q[s, a] = Q[s, a] + alpha * (r + gamma * (0 if done else max(Q[s2])) - Q[s, a])
 s = s2
+```
 
 # Tabular Q-Learning — FrozenLake
+```python
 import gymnasium as gym
 import numpy as np
 
@@ -1228,12 +1231,14 @@ s = s2
 if done: break
 
 print("Sample Q[0]:", Q[0])
+```
 
 Deep Q-Networks replace the table with a neural network Qθ(s,⋅)Qθ​(s,⋅), train it on random mini-batches from a replay buffer to break temporal correlations, and stabilize targets with a lagged copy Qθ−Qθ−​. A small MLP is enough for CartPole. 
 
 Using the Double DQN trick selecting the next action with the policy network but evaluating it with the target network reduces overestimation bias and improves stability without extra complexity. Keep ε-greedy exploration early, start learning only after the buffer has a few hundred to a thousand transitions, and periodically sync the target network.
 
 # DQN (pseudocode)
+```
 initialize policy network Qθ and target network Qθ− (copy of θ)
 initialize replay buffer B
 for each episode:
@@ -1249,8 +1254,10 @@ y = R + γ * (1 − D) * Qθ−(S2, argmax_a Qθ(S2,a))   # Double DQN target
 loss = Huber(Qθ(S,A), y); backprop on θ
 every K steps: θ− ← θ
 s ← s2
+```
 
 # DQN — CartPole (PyTorch) with Replay Buffer + Target Network
+```python
 import gymnasium as gym, numpy as np, torch, random, collections
 import torch.nn as nn, torch.optim as optim
 
@@ -1323,6 +1330,7 @@ target.load_state_dict(policy.state_dict())
 eps = max(eps_min, eps * eps_decay)
 
 print("Training complete.")
+```
 
 If you prefer studying from existing, public code, the classic reference implementations and a Colab-backed tutorial are freely available. 
 
