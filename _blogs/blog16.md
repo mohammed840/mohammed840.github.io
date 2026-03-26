@@ -26,7 +26,10 @@ By late 2024, a new paradigm took shape: **agentic AI**. Industry leaders like A
 
 For enterprise users, this shift represents a leap — from static outputs to intelligent, action-ready collaboration.
 
-https://youtu.be/KrRD7r7y7NY
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:2rem 0;">
+  <iframe src="https://www.youtube.com/embed/KrRD7r7y7NY" frameborder="0" allowfullscreen
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+</div>
 
 In this article, we'll dissect the architecture of modern AI agents, exploring:
 
@@ -133,7 +136,10 @@ Basic reflection and reflexion patterns form the foundation for agents to self-c
 
 To dive deeper into these patterns, I recommend watching this insightful video on "Reflection Agents" by LangChain:
 
-https://youtu.be/v5ymBTXNqtk
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:2rem 0;">
+  <iframe src="https://www.youtube.com/embed/v5ymBTXNqtk" frameborder="0" allowfullscreen
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+</div>
 
 ---
 
