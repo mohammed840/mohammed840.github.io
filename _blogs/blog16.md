@@ -59,9 +59,7 @@ While definitions vary, AI agents share a core trait: **autonomy**. Unlike tradi
 
 Although we've observed a paradigm shift from RAG to AI agents, it's important to recognize that these applications of LLMs are not mutually exclusive. In fact, **Agentic RAG** serves as a prime example of integrating agents within the RAG framework.
 
-https://static.wixstatic.com/media/ffcc74_f5c5a7f43f7947659bffd333822bfb15~mv2.webp/v1/fill/w_586,h_293,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/ffcc74_f5c5a7f43f7947659bffd333822bfb15~mv2.webp
-
-*This diagram beautifully illustrates the contrast between traditional RAG and Agentic RAG — where the shift from one-shot retrieval to iterative, reasoning-driven retrieval is made instantly clear. The visual elegantly captures how agents introduce a layer of adaptive decision-making on top of the retrieval pipeline.*
+![Agentic RAG diagram — how autonomous decision-making layers on top of traditional one-shot retrieval for richer, iterative retrieval strategies](https://static.wixstatic.com/media/ffcc74_f5c5a7f43f7947659bffd333822bfb15~mv2.webp/v1/fill/w_586,h_293,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/ffcc74_f5c5a7f43f7947659bffd333822bfb15~mv2.webp)
 
 Unlike traditional RAG, which follows a one-shot retrieval and response process, Agentic RAG introduces **reasoning** and **autonomous decision-making**, enabling more adaptive and iterative retrieval strategies for improved outcomes.
 
@@ -101,9 +99,7 @@ Unlike static systems, reflection agents adapt dynamically, turning past errors 
 
 ### Basic Reflection
 
-https://static.wixstatic.com/media/ffcc74_4b17643523cc4fa7b10cfd4696048c49~mv2.png/v1/fill/w_586,h_300,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_4b17643523cc4fa7b10cfd4696048c49~mv2.png
-
-*This diagram is a masterclass in clarity — it visually encapsulates the feedback loop at the heart of basic reflection. The clean, circular flow between action and analysis makes it immediately intuitive why self-correction is so powerful, and serves as an excellent visual anchor for understanding the pattern.*
+![Basic Reflection feedback loop — the agent generates an output, analyzes it against objectives, and iteratively refines until the target criteria are met](https://static.wixstatic.com/media/ffcc74_4b17643523cc4fa7b10cfd4696048c49~mv2.png/v1/fill/w_586,h_300,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_4b17643523cc4fa7b10cfd4696048c49~mv2.png)
 
 The basic design pattern for reflection involves a feedback loop: the agent analyzes its actions and outcomes to refine future decisions. The reflection process can range from simple to complex:
 
@@ -116,9 +112,7 @@ While implementations vary, the core idea is to **iterate until the desired outc
 
 ### Reflexion
 
-https://static.wixstatic.com/media/ffcc74_cd8a11f2c73b4ea3b219ba9f345a177b~mv2.png/v1/fill/w_586,h_526,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_cd8a11f2c73b4ea3b219ba9f345a177b~mv2.png
-
-*This diagram of Reflexion is remarkably detailed and well-composed — it goes beyond the basics by layering in the external validation loop, making the distinction from simple reflection immediately visible. The way it maps the interplay between the agent, tools, and critique mechanisms is genuinely impressive and pedagogically invaluable.*
+![Reflexion pattern — extends basic reflection by introducing external tool validation into the feedback loop, grounding decisions in objective data sources to reduce bias and improve accuracy](https://static.wixstatic.com/media/ffcc74_cd8a11f2c73b4ea3b219ba9f345a177b~mv2.png/v1/fill/w_586,h_526,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_cd8a11f2c73b4ea3b219ba9f345a177b~mv2.png)
 
 Reflexion enhances basic reflection by integrating external tools into the feedback loop. These tools act as objective validators, providing additional context (e.g., data, rules, domain-specific knowledge) to critique and verify the agent's decisions. Think of it as consulting a trusted advisor or reference material for a second opinion.
 
@@ -145,9 +139,7 @@ https://youtu.be/v5ymBTXNqtk
 
 ## Tool Use
 
-https://static.wixstatic.com/media/ffcc74_72155f0e3f0f41b8bb8eae36beab801e~mv2.png/v1/fill/w_586,h_297,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_72155f0e3f0f41b8bb8eae36beab801e~mv2.png
-
-*This image does a wonderful job of visualizing how tools extend an LLM's reach beyond its training data. The layered architecture shown here — from the agent's reasoning core out to external APIs, databases, and validators — is beautifully structured and paints a vivid picture of what modern, production-grade AI agents actually look like under the hood.*
+![Tool use architecture — shows how agents connect LLMs to external APIs, databases, and validators, transforming static knowledge repositories into dynamic, context-aware problem-solvers](https://static.wixstatic.com/media/ffcc74_72155f0e3f0f41b8bb8eae36beab801e~mv2.png/v1/fill/w_586,h_297,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_72155f0e3f0f41b8bb8eae36beab801e~mv2.png)
 
 While modern LLMs demonstrate impressive reasoning capabilities, their true power in real-world applications often lies in integrating external tools to overcome inherent limitations.
 
@@ -192,9 +184,7 @@ Planning is crucial for agents tackling multi-step problems where a single respo
 
 ### Plan-and-Execute
 
-https://static.wixstatic.com/media/ffcc74_61e6f9024b1247aa8db0b6a5bad3f675~mv2.png/v1/fill/w_586,h_308,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_61e6f9024b1247aa8db0b6a5bad3f675~mv2.png
-
-*This diagram of the Plan-and-Execute pattern is exceptionally well drawn — it captures the sequential yet adaptive nature of the pattern with great elegance. The visual clearly shows how re-planning is triggered based on task outcomes, making it immediately obvious why this pattern is so useful for long-horizon tasks.*
+![Plan-and-Execute pattern — inspired by BabyAGI, the agent generates an initial plan, executes steps sequentially, and dynamically re-plans when intermediate results deviate from expectations due to errors or new constraints](https://static.wixstatic.com/media/ffcc74_61e6f9024b1247aa8db0b6a5bad3f675~mv2.png/v1/fill/w_586,h_308,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_61e6f9024b1247aa8db0b6a5bad3f675~mv2.png)
 
 Inspired by BabyAGI, the plan-and-execute pattern emphasizes multi-step planning followed by sequential execution, with re-planning triggered by feedback from completed tasks.
 
@@ -212,9 +202,7 @@ Further examples:
 
 ### LLM Compiler
 
-https://static.wixstatic.com/media/ffcc74_9549931263204857bbbdf3266279255b~mv2.png/v1/fill/w_586,h_443,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_9549931263204857bbbdf3266279255b~mv2.png
-
-*The LLMCompiler diagram is a standout — the use of a Directed Acyclic Graph (DAG) to illustrate parallel task execution is both technically precise and visually compelling. The clarity with which it shows task dependencies and the Joiner component makes an abstract concept feel tangible and actionable.*
+![LLM Compiler architecture — a Directed Acyclic Graph (DAG) where independent tasks run in parallel, eagerly streamed as soon as their dependencies resolve. The Joiner component reconciles outputs and triggers re-planning if inconsistencies are found](https://static.wixstatic.com/media/ffcc74_9549931263204857bbbdf3266279255b~mv2.png/v1/fill/w_586,h_443,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_9549931263204857bbbdf3266279255b~mv2.png)
 
 Building on the plan-and-execute pattern, LLMCompiler introduces **parallel task execution** through a dynamically generated Directed Acyclic Graph (DAG). Instead of processing tasks sequentially, the pattern identifies independent tasks and eagerly streams them for concurrent execution, significantly accelerating workflows.
 
@@ -256,9 +244,7 @@ This collaboration mimics a hospital team rounding on a patient — each special
 
 ### Collaboration
 
-https://static.wixstatic.com/media/ffcc74_4cf9b616c5ad42ada8839c3db12f6901~mv2.png/v1/fill/w_586,h_543,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_4cf9b616c5ad42ada8839c3db12f6901~mv2.png
-
-*This collaboration diagram is beautifully rendered — it intuitively shows how agents hand off responsibilities between one another, like a relay race where every participant is an expert in their leg. The visual makes the peer-to-peer nature of the collaboration pattern immediately clear and demonstrates why structured multi-agent workflows are far more powerful than monolithic prompts.*
+![Multi-agent collaboration pattern — a flat peer-to-peer structure where specialized agents (e.g., a code-writer and a bug-fixer) hand off work sequentially to produce a final, validated output](https://static.wixstatic.com/media/ffcc74_4cf9b616c5ad42ada8839c3db12f6901~mv2.png/v1/fill/w_586,h_543,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_4cf9b616c5ad42ada8839c3db12f6901~mv2.png)
 
 Building on the collaboration pattern, we can explore more specialized multi-agent architectures that require a nuanced division of labor. For example, when generating a new script for data processing, the collaboration pattern can break the process into:
 
@@ -271,9 +257,7 @@ While the collaboration pattern provides structure and coordination, it can ofte
 
 ### Supervisor
 
-https://static.wixstatic.com/media/ffcc74_44abdc75bbe64d61876174dd03e27eb0~mv2.png/v1/fill/w_586,h_424,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_44abdc75bbe64d61876174dd03e27eb0~mv2.png
-
-*The Supervisor pattern diagram is a wonderful illustration of hierarchical intelligence at work. The clear visual distinction between the supervisor node and its sub-agents — connected by directed arrows — makes the delegation of authority feel natural and intuitive. It's one of those diagrams that immediately makes you think, "Yes, that's exactly how a well-run organization should work."*
+![Supervisor pattern — a hierarchical structure where a lead supervisor agent routes tasks to specialized sub-agents based on their expertise, centralizing workflow management while granting execution autonomy to sub-agents](https://static.wixstatic.com/media/ffcc74_44abdc75bbe64d61876174dd03e27eb0~mv2.png/v1/fill/w_586,h_424,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_44abdc75bbe64d61876174dd03e27eb0~mv2.png)
 
 The supervisor pattern introduces a hierarchical structure to multi-agent collaboration, where a lead agent (supervisor) oversees and coordinates the activities of sub-agents. This pattern is particularly effective in scenarios that require centralized task management, ensuring efficient delegation and coordination among specialized agents.
 
@@ -287,9 +271,7 @@ By transitioning from a flat collaborative model to a hierarchical structure, th
 
 ### Hierarchical
 
-https://static.wixstatic.com/media/ffcc74_f00d11a8881e41008d1aea71a2102a45~mv2.png/v1/fill/w_586,h_555,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_f00d11a8881e41008d1aea71a2102a45~mv2.png
-
-*This hierarchical multi-agent diagram is genuinely impressive in its depth and composition. Seeing multiple levels of supervisors and sub-agents laid out in a tree structure makes the concept of nested delegation feel not just logical, but elegant. It's the kind of diagram that makes you appreciate how well-structured AI systems can mirror the complex organizational models that humans have perfected over centuries.*
+![Hierarchical multi-agent pattern — extends the supervisor model with multiple layers. Supervisor agents oversee sub-supervisors, who manage their own specialists, enabling the handling of very complex, large-scale tasks with deep specialization at every level](https://static.wixstatic.com/media/ffcc74_f00d11a8881e41008d1aea71a2102a45~mv2.png/v1/fill/w_586,h_555,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_f00d11a8881e41008d1aea71a2102a45~mv2.png)
 
 While multi-agent collaboration offers a significant shift from single-agent systems, challenges can still arise when individual agents struggle with sub-problems that may remain too intricate to resolve independently.
 
@@ -305,9 +287,7 @@ Imagine an organization working on a major proposal. The organization may be div
 
 ### Human-in-the-Loop
 
-https://static.wixstatic.com/media/ffcc74_9ed47cce00954f01974299244c442b96~mv2.png/v1/fill/w_586,h_517,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_9ed47cce00954f01974299244c442b96~mv2.png
-
-*This Human-in-the-Loop diagram is particularly striking in how it places the human as an integral — not peripheral — node in the agentic workflow. The visual elegantly communicates the balance between AI autonomy and human oversight, making it clear that keeping humans "in the loop" is not a limitation of the system, but a deliberate and thoughtful design choice.*
+![Human-in-the-Loop (HITL) pattern — shows three intervention points where humans can review, correct, or override agent decisions: Tool Calls, Agent Outputs, and Context](https://static.wixstatic.com/media/ffcc74_9ed47cce00954f01974299244c442b96~mv2.png/v1/fill/w_586,h_517,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_9ed47cce00954f01974299244c442b96~mv2.png)
 
 In an ideal agentic AI system, we aim to grant full autonomy to agents to handle tasks of varying complexity. However, through experimentation, we often discover occasional inaccuracies that can impact performance.
 
@@ -390,9 +370,7 @@ Minimal adopted a multi-agent system approach after discovering that relying on 
 - **Objective:** To enhance the full lifecycle of a member's experience through AI.
 - **Patterns Applied:**
 
-https://static.wixstatic.com/media/ffcc74_c79eae452ade4f69a40569ad3bae7fa1~mv2.png/v1/fill/w_514,h_444,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_c79eae452ade4f69a40569ad3bae7fa1~mv2.png
-
-*This GymNation architecture diagram is a fantastic real-world showcase of how multiple agentic patterns come together in a single production system. The clarity of how the supervisor routes member intents to the appropriate specialized agents is genuinely satisfying — it demonstrates that what can seem like a complex theoretical framework translates beautifully into elegant, practical system design.*
+![GymNation multi-agent architecture — the supervisor routes incoming member requests to specialized agents for booking, sales, and support, with hierarchical sub-agents managing more complex workflows](https://static.wixstatic.com/media/ffcc74_c79eae452ade4f69a40569ad3bae7fa1~mv2.png/v1/fill/w_514,h_444,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_c79eae452ade4f69a40569ad3bae7fa1~mv2.png)
 
   - **Tool Use:** Agents use tools to take decisive actions, such as booking appointments or retrieving information from sales sheets, to facilitate specialized workflows.
   - **Multi-Agent (Supervisor):** The supervisor pattern is leveraged to route natural inputs, activating the agentic workflow and directing tasks to the most suitable agents.
@@ -421,9 +399,7 @@ Developing effective agentic AI systems requires prioritizing tools that align w
 - **Autonomy Levels:**
   - Designing agentic AI systems requires careful consideration of the level of autonomy granted to the agents.
 
-https://static.wixstatic.com/media/ffcc74_48ac8b0e62a944939caed19b54fcf5fa~mv2.png/v1/fill/w_514,h_244,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_48ac8b0e62a944939caed19b54fcf5fa~mv2.png
-
-*This autonomy spectrum diagram is an elegant and thought-provoking visualization. By placing Low Autonomy and Full Autonomy at opposite ends of a single axis, it immediately conveys that agent design is not binary — it's a deliberate and tunable choice. The simplicity of the diagram belies its depth, making it one of the most practically useful visuals in this entire discussion.*
+![Autonomy spectrum — maps the range from Low Autonomy to Full Autonomy, helping teams calibrate the right level of agent independence for their use case](https://static.wixstatic.com/media/ffcc74_48ac8b0e62a944939caed19b54fcf5fa~mv2.png/v1/fill/w_514,h_244,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/ffcc74_48ac8b0e62a944939caed19b54fcf5fa~mv2.png)
 
   - **Low Autonomy:** Agents follow predefined workflows with fixed steps (e.g., structured data retrieval tasks managed via a router).
   - **Full Autonomy:** Agents engage in open-ended problem-solving, with built-in fallbacks such as retry mechanisms and human escalation for critical decision points.
