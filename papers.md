@@ -1,13 +1,13 @@
 ---
-title: Papers
+title: Projects
 permalink: /papers/
 ---
 
-# Papers
+# Projects
 
-{% assign papers_sorted = site.papers | sort: "date" | reverse %}
+{% assign projects_sorted = site.projects | sort: "date" | reverse %}
 
-{% for p in papers_sorted %}
+{% for p in projects_sorted %}
 <article style="margin: 1.5rem 0; padding: 1rem 0; border-bottom: 1px solid #eee;">
 <h2 style="margin: 0 0 0.3rem; font-size: 1.2rem;">{{ p.title }}</h2>
 {% if p.date %}<p style="margin: 0 0 0.4rem; font-size: 0.85rem; color: #666;">{{ p.date | date: "%B %Y" }}</p>{% endif %}

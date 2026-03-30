@@ -10,16 +10,16 @@ kramdown:
   parse_block_html: true
   parse_span_html: true
 collections:
-  papers:
+  projects:
     output: true
-    permalink: /papers/:name/
+    permalink: /projects/:name/
   blogs:
     output: true
     permalink: /blogs/:name/
 defaults:
   - scope:
       path: ""
-      type: papers
+      type: projects
     values:
       layout: paper
   - scope:

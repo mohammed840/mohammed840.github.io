@@ -1,0 +1,1366 @@
+---
+title: "Privacy Guard: Learning Privacy-Budgeted Active Sensing Policies via Reinforcement Learning in Smart Home Environments"
+date: 2026-03-13
+authors: "Mohammed Alshehri"
+year: 2026
+pdf: "/assets/privacy-guard.pdf"
+code: "https://github.com/mohammed840/privacy-guard"
+tldr: "We train LLM agents using GRPO to perform privacy-budgeted active sensing in smart homes, achieving a 131% detection improvement over baselines while emergent budget-efficient behaviour produces near-perfect privacy compliance as a side-effect."
+highlights:
+  - "Training distribution matters more than model scale: a 4B model on medium scenarios outperforms a 30B MoE at half the compute."
+  - "Chain-of-thought reasoning is structurally incompatible with token-constrained multi-turn RL (97% truncation)."
+  - "Privacy compliance (0.994–0.995 identity safety) emerges without any explicit leakage penalty—purely as a consequence of budget efficiency."
+contributions:
+  - "PrivacyGuardEnv: a multi-turn RL environment with 24 scenarios across three difficulty tiers and configurable episode length."
+  - "GRPO training pipeline producing a 131% improvement in detection recall and 65% improvement in overall reward over the best rule-based baseline."
+  - "Systematic architecture ablation revealing that CoT reasoning is incompatible with token-constrained multi-turn RL."
+  - "Curriculum learning result: medium-difficulty static filtering achieves best performance at half the training compute."
+  - "Phase 6 horizon scaling: clean dissociation between detection (horizon-invariant) and privacy management (horizon-sensitive)."
+  - "Post-hoc privacy leakage framework with identity leakage proxy and reconstruction risk proxy metrics."
+abstract: "We present Privacy Guard, a reinforcement learning framework for privacy-budgeted active sensing in smart homes. The agent detects intrusions by selectively activating cameras and microphones under a finite privacy budget, balancing security with minimal surveillance. Using GRPO, we run 12 experiments varying architecture (4B dense vs. 30B MoE), reasoning mode (standard vs. chain-of-thought), curriculum difficulty, and episode length. The main result is that training distribution matters more than model scale: a 4B model trained on medium-difficulty scenarios for 100 steps reaches 0.912 peak reward and 86.4% detection, outperforming a larger 30B MoE and substantially exceeding rule-based baselines. Chain-of-thought fails in this token-constrained multi-turn setting (97% truncation). Longer-horizon tests show strong detection generalisation but weaker privacy-budget management, identifying temporal budget planning as the key remaining challenge."
+---
+<style>
+.paper-content { font-family: Georgia, "Times New Roman", serif; line-height: 1.75; color: #1a1a1a; max-width: 100%; }
+.paper-content h1 { font-size: 1.55rem; margin-top: 2rem; }
+.paper-content h2 { font-size: 1.25rem; margin-top: 1.8rem; color: #222; }
+.paper-content h3 { font-size: 1.05rem; margin-top: 1.4rem; color: #333; }
+.paper-header { margin-bottom: 1.5rem; }
+.paper-header h1 { border: none; font-size: 1.6rem; line-height: 1.3; font-family: inherit; }
+.paper-header .author { font-size: 1rem; color: #555; margin-top: 0.4rem; margin-bottom: 0; font-family: inherit; }
+.paper-header .paper-links { display: flex; gap: 1.2rem; align-items: center; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+.paper-header .paper-links a { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; font-family: inherit; text-decoration: none; color: #333; border: none; background: none; padding: 0; transition: color 0.15s; }
+.paper-header .paper-links a:hover { color: #000; text-decoration: underline; }
+.paper-header .paper-links a.pdf-link { color: #1a1a2e; font-weight: 600; }
+.paper-header .paper-links a.pdf-link:hover { color: #000; }
+.paper-header .abstract-label { font-size: 1rem; font-weight: bold; margin-top: 1.2rem; margin-bottom: 0.3rem; font-family: inherit; }
+.paper-content table { border-collapse: collapse; width: 100%; font-size: 0.84rem; margin: 1.4rem auto; border-top: 2px solid #111; border-bottom: 2px solid #111; }
+.paper-content th, .paper-content td { border: none; padding: 6px 14px; text-align: left; vertical-align: top; }
+.paper-content thead tr { border-bottom: 1px solid #555; font-weight: 600; background: none; }
+.paper-content tr:nth-child(even) td { background: none; }
+.paper-content blockquote { border-left: 3px solid #bbb; padding: 0.5em 1em; color: #555; margin: 1em 0; background: #f9f9f9; border-radius: 0 4px 4px 0; }
+.paper-content img { max-width: 100%; display: block; margin: 1.2em auto; border-radius: 4px; border: 1px solid #e0e0e0; }
+.paper-content code { background: #f4f4f4; padding: 1px 5px; border-radius: 3px; font-size: 0.87em; font-family: "SF Mono", "Fira Code", monospace; }
+.paper-content pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.84em; }
+.paper-content pre code { background: none; padding: 0; }
+.paper-content hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+.paper-content ol, .paper-content ul { padding-left: 1.5em; }
+.paper-content li { margin-bottom: 0.3em; }
+</style>
+<script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';mermaid.initialize({startOnLoad:true,theme:'neutral'});</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<div class="paper-content">
+<div class="paper-header">
+<h1>Privacy Guard: Learning Privacy-Budgeted Active Sensing Policies via Reinforcement Learning in Smart Home Environments</h1>
+<p class="author"><strong>Mohammed Alshehri</strong> &mdash; March 2026</p>
+<div class="paper-links">
+  <a href="/assets/privacy-guard.pdf" class="pdf-link" target="_blank">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+    Paper
+  </a>
+  <a href="https://github.com/mohammed840/privacy-guard" target="_blank">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+    Code
+  </a>
+</div>
+<p class="abstract-label">Abstract</p>
+</div>
+<p>We present <strong>Privacy Guard</strong>, a reinforcement learning framework for <em>privacy-budgeted active sensing</em> in smart homes. The agent detects intrusions by selectively activating cameras and microphones under a finite privacy budget, balancing security with minimal surveillance. Using GRPO, we run 12 experiments varying architecture (4B dense vs. 30B MoE), reasoning mode (standard vs. chain-of-thought), curriculum difficulty, and episode length. The main result is that <strong>training distribution matters more than model scale</strong>: a 4B model trained on medium-difficulty scenarios for 100 steps reaches 0.912 peak reward and 86.4% detection, outperforming a larger 30B MoE and substantially exceeding rule-based baselines. Chain-of-thought fails in this token-constrained multi-turn setting (97% truncation). Longer-horizon tests show strong detection generalisation but weaker privacy-budget management, identifying temporal budget planning as the key remaining challenge.</p>
+<h1 id="introduction-and-motivation">Introduction and Motivation</h1>
+<p>Your home camera is probably watching you right now. Not because you’re in danger — because nobody programmed it to know the difference.</p>
+<p>The proliferation of smart home sensors — doorbell cameras, PIR motion detectors, always-listening voice assistants — has made residential security powerful and pervasive at the same time. Rich sensor data enables reliable intrusion detection. But continuous, high-fidelity capture of in-home activity is also a form of surveillance that most people find deeply uncomfortable, and that regulators (GDPR Article 25, CCPA) explicitly constrain through <em>data minimisation</em> principles.</p>
+<hr />
+<h2 id="two-bad-bets">Two Bad Bets</h2>
+<p>Classic security systems resolve this tension through one of two degenerate strategies:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>What it does</th>
+<th>The problem</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Always-On</strong></td>
+<td>Cameras + mics at full resolution, always</td>
+<td>Perfectly surveils your entire life</td>
+</tr>
+<tr>
+<td><strong>Event-Triggered</strong></td>
+<td>Fires when PIR crosses a threshold</td>
+<td>Misses stealth intrusions by design</td>
+</tr>
+</tbody>
+</table>
+<p>Neither strategy treats privacy as a <em>finite resource to be allocated</em>. Yet that is exactly how occupants experience it. A resident may accept the system capturing a hallway recording at 2 AM when the door opens. They are far less accepting of a system that captures their kitchen, living room, and bedroom in high resolution throughout every waking hour.</p>
+<hr />
+<h2 id="a-better-frame-graph-search-over-time">A Better Frame: Graph Search Over Time</h2>
+<p>The real question isn’t <em>whether</em> to activate sensors — it’s <strong>when, where, and at what fidelity</strong>. That’s a sequential decision problem. At every timestep, an agent observes the home and must search through possible actions, reserving budget for the moments that actually matter:</p>
+<pre class="mermaid">
+graph LR
+    A(["Observe: PIR, Door, Audio, Budget"]) --> B{"Threat level?"}
+    B -- Low --> C["Sensors OFF - Save budget"]
+    B -- Ambiguous --> D["LOW-res camera - Cost: 1 unit"]
+    B -- Confirmed --> E["HIGH-res + ESCALATE - Cost: 4-6 units"]
+    C --> F(["Next timestep"])
+    D --> F
+    E --> F
+    F --> A
+</pre>
+<p>This graph loops for every timestep in an episode. Budget spent on step 3 is unavailable at step 17 when a real threat arrives — creating genuine <strong>intertemporal commitment</strong>. No fixed-threshold rule set can navigate this. It requires <em>learning</em> which signals actually matter, and when spending is worth it.</p>
+<hr />
+<h2 id="the-gap-no-classical-policy-reaches">The Gap No Classical Policy Reaches</h2>
+<p>Before any training, we benchmarked six classical strategies — always-on, event-triggered, audio-gated, random, and two rule-based variants. None of them occupies the upper-right region of the detection-privacy tradeoff:</p>
+<figure>
+<img src="/assets/assets-privacy-guard/leakage_pareto_research.png" alt="The Pareto frontier of detection vs privacy for all baseline policies" />
+<figcaption aria-hidden="true">The Pareto frontier of detection vs privacy for all baseline policies</figcaption>
+</figure>
+<p><em>Triangles = classical baselines. Stars (⭐) = our GRPO-trained agents. The high-detection + high-privacy quadrant is structurally inaccessible to any fixed-rule policy — no threshold calibration can get you there.</em></p>
+<p>This gap is the core motivation. We propose <strong>privacy-constrained sequential sensing</strong> as a reinforcement learning problem, using an LLM agent that reads natural-language sensor observations and produces structured JSON actions under a hard budget constraint.</p>
+<hr />
+
+<h2 id="related-work">2. Related Work</h2>
+<p>The idea of using reinforcement learning to shape language model behaviour is not new. But the <em>setting</em> has shifted dramatically — from single-turn preference alignment to multi-turn agentic control with structured outputs and hard resource constraints. Here’s the lineage, with real papers and code.</p>
+<hr />
+<h2 id="layer-1-training-llms-with-reward-signals">Layer 1 — Training LLMs With Reward Signals</h2>
+<p>The field started with applying RL to sequence-level metrics that aren’t differentiable. Early REINFORCE work (Ranzato et al., 2016) used policy gradients to optimise BLEU scores directly. <strong>RLHF</strong> (Christiano et al., 2017) scaled this by learning a <em>reward model</em> from human preference comparisons, then running PPO against it — the approach that produced InstructGPT and modern aligned assistants.</p>
+<pre class="mermaid">
+graph TD
+    A["Human preferences"] --> B["Reward model"]
+    B --> C["PPO policy gradient"]
+    C --> D["Aligned LLM"]
+    D -->|"generates"| E["New outputs"]
+    E -->|"feedback"| A
+</pre>
+<p><strong>Key papers:</strong> - <a href="https://arxiv.org/abs/1706.03741">RLHF — Christiano et al. 2017</a> - <a href="https://arxiv.org/abs/2203.02155">InstructGPT — Ouyang et al. 2022</a> - <a href="https://arxiv.org/abs/2212.08073">Constitutional AI — Bai et al. 2022</a></p>
+<hr />
+<h2 id="layer-2-from-single-turn-to-agentic-multi-step">Layer 2 — From Single-Turn to Agentic Multi-Step</h2>
+<p>RLHF trains on single model outputs. Agentic RL trains on <em>trajectories</em> — sequences of observations, actions, and rewards across many steps. Three projects defined this space:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Project</th>
+<th>What it does</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ReAct</strong></td>
+<td>Interleaves reasoning traces + tool calls</td>
+<td><a href="https://github.com/ysymyth/ReAct">github.com/ysymyth/ReAct</a></td>
+</tr>
+<tr>
+<td><strong>Voyager</strong></td>
+<td>LLM generates reusable code skills in Minecraft</td>
+<td><a href="https://github.com/MineDojo/Voyager">github.com/MineDojo/Voyager</a></td>
+</tr>
+<tr>
+<td><strong>ALFWorld</strong></td>
+<td>Language agents in text-based household environments</td>
+<td><a href="https://github.com/alfworld/alfworld">github.com/alfworld/alfworld</a></td>
+</tr>
+<tr>
+<td><strong>WebGPT</strong></td>
+<td>Web-browsing agent trained with human feedback</td>
+<td><a href="https://openai.com/research/webgpt">openai.com/research/webgpt</a></td>
+</tr>
+</tbody>
+</table>
+<p>The common theme: the agent reasons, acts, and gets feedback from an environment — not from a human rater scoring a single completion.</p>
+<hr />
+<h2 id="layer-3-grpo-group-relative-policy-optimisation">Layer 3 — GRPO: Group Relative Policy Optimisation</h2>
+<p>The algorithm we use is <strong>GRPO</strong> (Shao et al., 2024 — <a href="https://arxiv.org/abs/2402.03300">DeepSeekMath</a>). The key insight: instead of training a separate value network (expensive, unstable), normalise rewards <em>within a group</em> of rollouts on the same prompt.</p>
+<p>For a group of G rollouts with rewards {r₁ … rG}, the advantage for rollout i is:</p>
+<p style="text-align:center;margin:1.2rem 0;">
+\[ \hat{A}_i = \frac{r_i - \bar{r}}{\mathrm{std}(r_1,\ldots,r_G)}, \qquad \bar{r} = \frac{1}{G}\sum_{j=1}^{G} r_j \]
+</p>
+<p>No critic network. No moving baseline. Just within-batch normalisation. This is what makes GRPO tractable for multi-turn agentic tasks where PPO’s value head would be computing over long, variable-length trajectories.</p>
+<p><strong>Where GRPO has been applied:</strong> - Mathematical reasoning → <a href="https://github.com/deepseek-ai/DeepSeek-Math">DeepSeekMath</a> - Code generation → <a href="https://github.com/deepseek-ai/DeepSeek-R1">DeepSeek-R1</a> - Agentic tool use → <a href="https://github.com/PrimeIntellect-ai/verifiers">verifiers (Prime Intellect)</a></p>
+<p><strong>Our use:</strong> GRPO over 20-turn smart home episodes, where the reward is computed once at the end of the episode and normalised within a batch of 8 rollouts per scenario.</p>
+<hr />
+<h2 id="how-privacy-guard-extends-prior-work">How Privacy Guard Extends Prior Work</h2>
+<p>Prior LLM agent RL work uses free-form language or loosely structured API strings as outputs. We add three constraints that make the problem qualitatively harder:</p>
+<pre class="mermaid">
+graph LR
+    A["Prior work: free-text actions, no resource limit, single objective"] -->|"We add"| B["Structured JSON, hard budget constraint, coupled detection + privacy reward"]
+    B --> C["Privacy Guard"]
+</pre>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Prior agentic RL</th>
+<th>Privacy Guard</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Action type</td>
+<td>Free-form / API strings</td>
+<td>Strongly-typed JSON</td>
+</tr>
+<tr>
+<td>Resource constraint</td>
+<td>None</td>
+<td>Hard budget; runs out mid-episode</td>
+</tr>
+<tr>
+<td>Reward structure</td>
+<td>Single objective</td>
+<td>Coupled: detection × privacy × format</td>
+</tr>
+</tbody>
+</table>
+<p>The result: standard reward hacking strategies (just ESCALATE every turn) immediately backfire — they exhaust the budget and produce zero privacy reward. The agent <em>must</em> learn frugality as a precondition for detection.</p>
+<hr />
+<p><em>Next: <a href="/papers/2026-03-13-privacy-guard">Problem Formulation and Environment</a> — the full POMDP setup, scenario taxonomy, and action space.</em></p>
+
+<h2 id="problem-formulation-and-environment">3. Problem Formulation and Environment</h2>
+<h3 id="problem-formulation">3.1 Problem Formulation</h3>
+<p>We formulate smart-home privacy-budgeted sensing as a finite-horizon <strong>Partially Observable Markov Decision Process (POMDP)</strong> <span class="math inline">\(\mathcal{M} = (\mathcal{S}, \mathcal{O}, \mathcal{A}, \mathcal{T}, \mathcal{R}, T, B)\)</span> where:</p>
+<ul>
+<li><span class="math inline">\(\mathcal{S}\)</span>: hidden state space encoding ground-truth room occupancy, intruder presence/location, door states, audio events, and time of day</li>
+<li><span class="math inline">\(\mathcal{O}\)</span>: observation space of natural-language strings <span class="math inline">\(o_t = \phi(s_t, \epsilon_t)\)</span>, where <span class="math inline">\(\epsilon_t\)</span> represents sensor noise and event stochasticity</li>
+<li><span class="math inline">\(\mathcal{A}\)</span>: discrete action space over (camera_room, camera_level, mic_level, alert) — 108 discrete combinations</li>
+<li><span class="math inline">\(\mathcal{T}: \mathcal{S} \times \mathcal{A} \rightarrow \mathcal{S}\)</span>: deterministic state transition given the scenario’s event schedule</li>
+<li><span class="math inline">\(\mathcal{R}\)</span>: episode-end scalar reward (Section 3.5)</li>
+<li><span class="math inline">\(T\)</span>: episode length (20, 40, or 60 steps in our experiments)</li>
+<li><span class="math inline">\(B\)</span>: initial privacy budget (default <span class="math inline">\(B = 5T\)</span>, scaled proportionally to episode length)</li>
+</ul>
+<p>The POMDP framing is essential: the agent cannot observe whether an intruder is physically present. It must infer threat level from noisy, ambiguous observations — PIR intensities that could reflect a person or a pet, audio events that could be a break-in or a falling object, door states that could indicate legitimate occupant activity or forced entry. This partial observability is the principal source of task difficulty and motivates the use of an LLM agent with pre-trained priors over household normalcy.</p>
+<p>The <strong>privacy budget</strong> <span class="math inline">\(b_t\)</span> decreases monotonically with activations:</p>
+<p><span class="math display">\[
+b_{t+1} = b_t - c(a_t), \quad b_0 = B
+\]</span></p>
+<p>where <span class="math inline">\(c(a)\)</span> is the cost function defined in Section 3.4. Hard enforcement applies: when <span class="math inline">\(b_t \leq 0\)</span>, the environment overrides the agent’s output with ALL-OFF regardless of what was generated. This creates genuine <em>intertemporal commitment</em> — early budget expenditure directly reduces the agent’s ability to respond to events later in the episode.</p>
+<p>The <strong>policy</strong> <span class="math inline">\(\pi_\theta\)</span> is parameterised by the language model weights <span class="math inline">\(\theta\)</span>. At each timestep, the model receives the full conversation context (system prompt, all prior observations, and all prior actions) as input and generates <span class="math inline">\(a_t\)</span> autoregressively. A key constraint is the context window: with 64K total tokens and 512 tokens per turn, the model can attend to the full context of a 20-step episode, but longer episodes (40, 60 steps) begin to approach the effective window limit, making observation truncation a realistic concern in Phase 6.</p>
+<h3 id="smart-home-simulation">3.2 Smart-Home Simulation</h3>
+<p>The smart home comprises four rooms: living room, kitchen, hallway, and bedroom. At each timestep the simulation generates a natural-language observation encoding:</p>
+<ul>
+<li><strong>PIR sensor readings</strong>: per-room motion intensity in <span class="math inline">\([0, 1]\)</span></li>
+<li><strong>Door state</strong>: open/closed/recently-opened per door</li>
+<li><strong>Audio anomalies</strong>: binary indicator plus description (e.g., “faint scraping sound”, “glass break detected”)</li>
+<li><strong>Time of day</strong>: wall-clock time and contextual label (early morning, late night, etc.)</li>
+<li><strong>Privacy budget remaining</strong>: explicit numerical display</li>
+</ul>
+<p>A representative observation at timestep 7 of 20:</p>
+<pre><code>+==========================================================+
+| SMART HOME SECURITY MONITOR - TIMESTEP 7 of 20          |
+|                                                          |
+| Privacy Budget: 11.0 / 25.0 remaining (44%)             |
+|                                                          |
+| Time of Day: 02:14 (late night)                         |
+|                                                          |
++==========================================================+
+| MOTION SENSORS (PIR):                                    |
+|                                                          |
+|   Living Room : 0.00  ..........                        |
+|   Kitchen     : 0.00  ..........                        |
+|   Hallway     : 0.82  ########.. &lt;- elevated            |
+|   Bedroom     : 0.10  #.........                        |
+|                                                          |
++==========================================================+
+| DOORS: front_door = OPEN (opened 2 steps ago)           |
+|                                                          |
+| AUDIO: faint scraping sound detected in hallway         |
+|                                                          |
++==========================================================+
+| Respond with a JSON action. Fields required:             |
+|   camera_room, camera_level, mic_level, alert, reasoning |
++==========================================================+</code></pre>
+<p>Events (both intrusion and benign) are injected at scenario-defined timesteps. The 24 scenarios span three difficulty tiers (Table 1) and include 6 held-out test scenarios used only for evaluation.</p>
+<p><strong>Table 1: Scenario taxonomy across difficulty tiers.</strong></p>
+<p>[see PDF for table]</p>
+<h3 id="action-space">3.3 Action Space</h3>
+<p>At each timestep the agent produces a JSON object:</p>
+<pre class="json"><code>{
+  &quot;camera_room&quot;:  &quot;hallway | living_room | kitchen | bedroom&quot;,
+  &quot;camera_level&quot;: &quot;OFF | LOW | HIGH&quot;,
+  &quot;mic_level&quot;:    &quot;OFF | LOW | HIGH&quot;,
+  &quot;alert&quot;:        &quot;NONE | NOTIFY | ESCALATE&quot;,
+  &quot;reasoning&quot;:    &quot;&lt;free-text explanation - not scored&gt;&quot;
+</code></pre>
+<p>The <code>reasoning</code> field is never scored but appears in all training rollouts, providing a natural chain-of-thought trace that can be audited post-hoc.</p>
+<h3 id="privacy-budget">3.4 Privacy Budget</h3>
+<p>Each sensor activation incurs a cost deducted from the privacy budget <span class="math inline">\(b\)</span>:</p>
+<p><strong>Table 2: Privacy cost schedule per timestep.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Sensor</th>
+<th>Level</th>
+<th>Cost (units/timestep)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Camera</td>
+<td>OFF</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Camera</td>
+<td>LOW</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Camera</td>
+<td>HIGH</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Microphone</td>
+<td>OFF</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Microphone</td>
+<td>LOW</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>Microphone</td>
+<td>HIGH</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p>The maximum cost per timestep is 6 units (Camera HIGH + Mic HIGH). With <span class="math inline">\(B = 100\)</span> for a 20-step episode, a maximally greedy agent exhausts the budget in <span class="math inline">\(\lfloor 100/6 \rfloor \approx 16\)</span> steps. Budget enforcement is hard: when <span class="math inline">\(b \leq 0\)</span>, all sensors are forced to OFF regardless of agent output.</p>
+<h3 id="reward-function">3.5 Reward Function</h3>
+<p>The agent receives a single scalar reward at episode end:</p>
+<p><span class="math display">\[
+R = w_d \cdot R_\text{detection} + w_p \cdot R_\text{privacy} + w_f \cdot R_\text{format}
+\]</span></p>
+<p>with weights <span class="math inline">\(w_d = 0.6\)</span>, <span class="math inline">\(w_p = 0.3\)</span>, <span class="math inline">\(w_f = 0.1\)</span>.</p>
+<p><strong>Detection reward</strong> <span class="math inline">\(R_d \in [0, 1]\)</span>: measures episode-level recall of intrusion events, weighted by alert escalation. Let <span class="math inline">\(\mathcal{I}\)</span> be the set of timesteps at which intrusion events are active:</p>
+<p><span class="math display">\[
+R_d = \frac{1}{|\mathcal{I}|} \sum_{t \in \mathcal{I}} \text{score}(a_t) - \lambda_{\text{fp}} \cdot N_\text{fp}
+\]</span></p>
+<p>where <span class="math inline">\(\text{score}(a_t) = 1.0\)</span> if alert=ESCALATE and camera=HIGH; <span class="math inline">\(0.5\)</span> if alert∈{NOTIFY, ESCALATE} and camera≠OFF; <span class="math inline">\(0.0\)</span> otherwise; and <span class="math inline">\(\lambda_\text{fp} = 0.1\)</span> penalises each false alarm (alert≠NONE at non-intrusion timesteps).</p>
+<p><strong>Privacy reward</strong> <span class="math inline">\(R_p \in [0, 1]\)</span>: fraction of budget remaining at episode end:</p>
+<p><span class="math display">\[
+R_p = \frac{b_T}{B}
+\]</span></p>
+<p>This directly incentivises budget efficiency and, by extension, sensor restraint.</p>
+<p><strong>Format reward</strong> <span class="math inline">\(R_f \in \{0, 1\}\)</span>: binary reward for producing a valid, parseable JSON action with all required fields and valid enum values.</p>
+<p>The weight vector <span class="math inline">\((0.6, 0.3, 0.1)\)</span> prioritises detection while maintaining a strong conservation incentive. The format reward prevents collapse to unparseable outputs during early training and becomes non-binding once format compliance is learned.</p>
+<hr />
+<h2 id="baselines">4. Baselines</h2>
+<p>Before any RL training, we establish six non-learning baselines that span the design space of classical sensor activation strategies.</p>
+<p><strong>Table 3: Baseline policy comparison.</strong></p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Strategy</th>
+<th>Detection <span class="math inline">\(R_d\)</span></th>
+<th>Privacy <span class="math inline">\(R_p\)</span></th>
+<th>Overall <span class="math inline">\(R\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Always-On</td>
+<td>Camera HIGH + Mic HIGH every step</td>
+<td>0.345</td>
+<td>0.009</td>
+<td>0.245</td>
+</tr>
+<tr>
+<td><strong>Rule-Based</strong></td>
+<td>PIR &gt; 0.5 or door opened → activate + NOTIFY</td>
+<td><strong>0.345</strong></td>
+<td><strong>0.812</strong></td>
+<td><strong>0.529</strong></td>
+</tr>
+<tr>
+<td>Random</td>
+<td>Uniform random action each timestep</td>
+<td>0.173</td>
+<td>0.498</td>
+<td>0.290</td>
+</tr>
+<tr>
+<td>Audio-Gate</td>
+<td>Activate only when audio anomaly detected</td>
+<td>0.183</td>
+<td>0.701</td>
+<td>0.383</td>
+</tr>
+<tr>
+<td>Video-Gate</td>
+<td>Activate only when PIR &gt; 0.5</td>
+<td>0.283</td>
+<td>0.454</td>
+<td>0.347</td>
+</tr>
+<tr>
+<td>Sensor-Fusion</td>
+<td>Weighted combination of PIR + audio &gt; threshold</td>
+<td>0.213</td>
+<td>0.595</td>
+<td>0.353</td>
+</tr>
+<tr>
+<td>Untrained LLM</td>
+<td>Qwen3-4B-Instruct, zero-shot</td>
+<td>0.345</td>
+<td>0.666</td>
+<td>0.419</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>Rule-Based</strong> policy is the strongest classical baseline (overall reward 0.529) and represents the state of the art for non-learning approaches in this environment. Despite its competitive privacy score (budget efficiency from staying off by default), it achieves only 0.345 detection — identical to Always-On — because its fixed threshold cannot discriminate genuine intrusions from benign events with similar sensor signatures (e.g., pet motion triggering PIR). The <strong>Untrained LLM</strong> achieves a higher reward (0.419) than all classical baselines except Rule-Based, suggesting strong zero-shot priors from pre-training — but still trails Rule-Based by 20.9%.</p>
+<p>The Pareto frontier of (detection, privacy) for all baselines is shown in Figure 1. No classical policy occupies the high-detection, high-privacy quadrant; this gap motivates the RL approach.</p>
+<blockquote>
+<p><strong>Figure 1</strong>: <em>Pareto frontier of detection vs. privacy for all baseline policies (triangles) and trained agents (stars). The trained agents — particularly Curriculum Medium — occupy a qualitatively different region of the Pareto space inaccessible to fixed-threshold strategies.</em></p>
+<p><img src="/assets/assets-privacy-guard/leakage_pareto_research.png" alt="Pareto frontier" /></p>
+</blockquote>
+<hr />
+<h2 id="main-training-results">5. Main Training Results</h2>
+<h3 id="grpo-training-setup">5.1 GRPO Training Setup</h3>
+<p>All experiments use the following shared configuration unless otherwise noted:</p>
+<p><strong>Table 4: Shared GRPO hyperparameters.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Hyperparameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base model</td>
+<td>Qwen3-4B-Instruct-2507</td>
+</tr>
+<tr>
+<td>Adaptation</td>
+<td>LoRA (all linear layers)</td>
+</tr>
+<tr>
+<td>Batch size</td>
+<td>128 rollouts</td>
+</tr>
+<tr>
+<td>Rollouts per example</td>
+<td>8</td>
+</tr>
+<tr>
+<td>Max tokens per turn</td>
+<td>512</td>
+</tr>
+<tr>
+<td>Training platform</td>
+<td>Prime Intellect</td>
+</tr>
+<tr>
+<td>Reward normalisation</td>
+<td>Group-relative (within batch)</td>
+</tr>
+</tbody>
+</table>
+<p>The training dataset contains ~180 examples generated from the scenario library (Section 3.2). With a batch size of 128 and 8 rollouts per example, each training step processes 1024 total trajectories.</p>
+<h3 id="main-training-results-1">5.2 Main Training Results</h3>
+<p>After 200 GRPO training steps on the full scenario distribution (all difficulty tiers), the 4B-Instruct agent achieves the results shown in Table 5 and Figure 2.</p>
+<p><strong>Table 5: Main GRPO training results vs. baselines.</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Untrained LLM</th>
+<th>Rule-Based</th>
+<th><strong>GRPO-Trained 4B</strong></th>
+<th>Δ vs. Untrained</th>
+<th>Δ vs. Rule-Based</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Overall Reward</td>
+<td>0.419</td>
+<td>0.529</td>
+<td><strong>0.871</strong></td>
+<td>+107.9%</td>
+<td>+64.7%</td>
+</tr>
+<tr>
+<td>Detection <span class="math inline">\(R_d\)</span></td>
+<td>0.345</td>
+<td>0.345</td>
+<td><strong>0.798</strong></td>
+<td>+131.3%</td>
+<td>+131.3%</td>
+</tr>
+<tr>
+<td>Privacy <span class="math inline">\(R_p\)</span></td>
+<td>0.666</td>
+<td>0.812</td>
+<td><strong>0.980</strong></td>
+<td>+47.1%</td>
+<td>+20.7%</td>
+</tr>
+<tr>
+<td>Format <span class="math inline">\(R_f\)</span></td>
+<td>—</td>
+<td>—</td>
+<td><strong>0.981</strong></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Budget remaining</td>
+<td>~34%</td>
+<td>~81%</td>
+<td><strong>~</strong>95%}</td>
+<td>+61 pp</td>
+<td>+14 pp</td>
+</tr>
+<tr>
+<td>Identity safety</td>
+<td>0.610</td>
+<td>0.952</td>
+<td><strong>0.994</strong></td>
+<td>+63%</td>
+<td>+4.4%</td>
+</tr>
+<tr>
+<td>Reconstruction safety</td>
+<td>—</td>
+<td>0.880</td>
+<td><strong>0.975</strong></td>
+<td>—</td>
+<td>+10.8%</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Figure 2</strong>: <em>Training curves for all Phase 5 experiments, showing reward, detection, privacy, and format metrics across training steps. Each curve is a per-metric 8-step moving average; faint lines are raw step values.</em></p>
+<p><img src="/assets/assets-privacy-guard/phase5_all_runs.png" alt="Phase 5 all runs" /></p>
+</blockquote>
+<p>The trained agent achieves a 131% improvement in detection over both the untrained LLM and the best rule-based policy. Critically, the privacy reward (0.980) and low leakage metrics emerge <strong>without any explicit leakage penalty</strong> in the reward function — they arise as a consequence of learning to reserve budget for genuine events. This is discussed further in Section 8.</p>
+<p>The budget remaining at episode end (95%) indicates that the agent uses only about 5 units per episode on average — compared to 6 units per timestep for a maximally active policy. This corresponds to approximately one LOW camera capture and no microphone per episode, on average, with high-cost activations reserved precisely for the timesteps where intrusion signals peak.</p>
+<h3 id="qualitative-behaviour-and-emergent-reasoning-traces">5.3 Qualitative Behaviour and Emergent Reasoning Traces</h3>
+<p>Beyond quantitative metrics, the agent’s <code>reasoning</code> field provides interpretable traces of its decision-making process. Inspection across multiple evaluation rollouts reveals a consistent three-phase strategy that does <em>not</em> appear to be directly encoded in the reward function — it emerges from the interaction of detection and privacy incentives.</p>
+<p><strong>Phase 1 — Passive Calibration (timesteps 1–5).</strong> The agent keeps all sensors OFF, spending no budget, while forming a mental baseline of the household’s normal state at the current time of day:</p>
+<blockquote>
+<p><em>“Timestep 1: All readings nominal. Living room PIR 0.0, kitchen 0.0, hallway 0.0. Time 11:45 PM — household appears at rest. No anomalous audio. Preserving full budget for confirmed threats. No action.”</em></p>
+</blockquote>
+<blockquote>
+<p><em>“Timestep 3: Bedroom PIR 0.1 — consistent with occupant shifting in sleep. No door events. Audio quiet. Baseline established: late-night quiet household. Maintaining passive state.”</em></p>
+</blockquote>
+<p><strong>Phase 2 — Selective Triangulation (timesteps 6–15).</strong> When anomalous signals appear, the agent responds first with LOW-resolution camera to confirm or rule out intrusion, before committing HIGH-resolution budget. Representative trace from the glass-break + pet-noise scenario:</p>
+<blockquote>
+<p><em>“Timestep 7: Hallway PIR elevated to 0.82. Audio: faint scraping in hallway AND cat movement in kitchen. Two simultaneous signals — ambiguous. Cat would explain kitchen motion but not hallway scraping at 0.82. Front door closed. Activating LOW camera hallway to observe pattern. Alert: NOTIFY — precautionary. Budget 68/100 remaining.”</em></p>
+</blockquote>
+<blockquote>
+<p><em>“Timestep 9: Hallway PIR still 0.75, now persistent for 3 steps. Scraping audio continues. Cat would have settled. Front door now shows OPEN status — was closed at timestep 7. This sequence (scraping → elevated PIR → door open) is intrusion-consistent. Switching to HIGH camera hallway. Budget cost: 4 units. Remaining: 60/100. Alert: ESCALATE.”</em></p>
+</blockquote>
+<p><strong>Phase 3 — Decisive Commitment (timesteps 16–20).</strong> Once intrusion is confirmed or ruled out, the agent commits and maintains the decision through episode end — explicitly calculating remaining budget versus remaining cost:</p>
+<blockquote>
+<p><em>“Timestep 17: Intrusion confirmed since timestep 9. Budget remaining: 44.5/100. Steps remaining: 4. Maximum expenditure remaining: 4 × 5 = 20 units. Budget more than sufficient. Maintaining HIGH camera hallway and ESCALATE. Consistent evidence over 8 steps establishes high confidence.”</em></p>
+</blockquote>
+<p>This three-phase structure — calibrate, triangulate, commit — is analogous to the <em>Observe-Orient-Decide-Act</em> (OODA) loop from decision-making frameworks (Boyd, 1976). It emerges without explicit programming, representing a sample-efficient solution to the exploration-exploitation problem under budget constraint: explore cheaply first (LOW camera, small cost) before committing fully (HIGH camera, full cost). The explicit budget-counting at Phase 3 reveals that the agent has implicitly learned to track and project its budget trajectory across turns.</p>
+<hr />
+<h2 id="ablation-study-architecture-and-curriculum">6. Ablation Study: Architecture and Curriculum</h2>
+<h3 id="model-architecture-comparison">6.1 Model Architecture Comparison</h3>
+<p>We test four model configurations on identical training conditions (200 steps, full scenario distribution, 512 max tokens):</p>
+<p><strong>Table 6: Model architecture comparison.</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>Model</th>
+<th>Architecture</th>
+<th>Active Params</th>
+<th>Max Tokens</th>
+<th>Peak Reward</th>
+<th>Detection</th>
+<th>Truncation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Qwen3-4B-Instruct</td>
+<td>Dense transformer</td>
+<td>4B</td>
+<td>512</td>
+<td>0.871</td>
+<td>0.798</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Qwen3-30B-A3B</td>
+<td>Mixture-of-Experts</td>
+<td>~3B active</td>
+<td>512</td>
+<td>0.875</td>
+<td>0.814</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>Qwen3-4B-Thinking</td>
+<td>Dense + CoT (<code>&lt;think&gt;</code>)</td>
+<td>4B</td>
+<td>1024</td>
+<td>0.590</td>
+<td>0.451</td>
+<td>**97</td>
+</tr>
+<tr>
+<td>Qwen3-30B-A3B-Thinking</td>
+<td>MoE + CoT</td>
+<td>~3B active</td>
+<td>1024</td>
+<td>0.666</td>
+<td>0.445</td>
+<td>6%</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Figure 3</strong>: <em>Peak performance comparison across all Phase 5 experiments (bar chart). Stars indicate best-per-metric across all runs. The gold bar (Curriculum Medium) dominates all metrics except privacy, where Easy training achieves the highest score due to low intrusion density.</em></p>
+<p><img src="/assets/assets-privacy-guard/phase5_final_leaderboard.png" alt="Phase 5 final leaderboard" /></p>
+</blockquote>
+<p><strong>Finding 1 — Scale confers negligible benefit.</strong> The 30B MoE model uses Mixture-of-Experts with ~3B parameters active per forward pass — comparable in compute to the 4B dense model. The marginal reward gain (0.875 vs. 0.871) is within noise and comes at the cost of substantially higher variance: the 30B model’s final-step reward dropped to 0.762, while the 4B model finished at 0.730 — a 14% gap in terminal performance. The task is <em>format-limited</em>, not <em>capacity-limited</em>: the bottleneck is producing reliable ~50-token JSON, not world-knowledge or deep chain reasoning. Scaling the model addresses the wrong bottleneck.</p>
+<p><strong>Finding 2 — Chain-of-thought reasoning is catastrophically incompatible with token-constrained multi-turn episodes.</strong> Qwen3-Thinking variants prepend <code>&lt;think&gt;...&lt;/think&gt;</code> blocks before each JSON action. These blocks range from 200–500 tokens of internal reasoning. With 512 max tokens per turn and 20 turns per episode, almost every output is truncated <em>before</em> reaching valid JSON, giving a 97% truncation rate for the 4B-Thinking model. The 4B-Thinking agent completed an average of only <strong>3.3 out of 20 turns</strong> before budget collapse. Even with a doubled token budget (1024), 30B-Thinking still showed 6% truncation.</p>
+<p>This finding generalises beyond our specific setup: any token-constrained multi-turn RL task will be degraded by internal reasoning prefixes that consume a large fraction of the per-turn token budget. The incompatibility is structural: more tokens per turn delays context truncation but does not eliminate it at scale.</p>
+<h3 id="curriculum-learning">6.2 Curriculum Learning</h3>
+<p>We train three independent agents — each starting from the same Qwen3-4B-Instruct base model — on difficulty-filtered scenario subsets:</p>
+<ul>
+<li><strong>Easy</strong>: 7 scenarios (benign activity, clear intrusion signals, no adversarial traps)</li>
+<li><strong>Medium</strong>: 7 scenarios (temporal ambiguity, moderate budget pressure, pattern recognition needed)</li>
+<li><strong>Hard</strong>: 4 scenarios (budget traps, stealth intruder, deliberate false-alarm setups)</li>
+</ul>
+<p>Each run uses 100 training steps (half the flat baseline). Results are shown in Table 7 and Figure 4.</p>
+<p><strong>Table 7: Curriculum learning results across difficulty stages.</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Scenarios</th>
+<th>Peak Reward</th>
+<th>Detection</th>
+<th>Privacy</th>
+<th>Format</th>
+<th>Budget Used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Easy</td>
+<td>7 easy</td>
+<td>0.692</td>
+<td>0.500</td>
+<td><strong>0.998</strong></td>
+<td>0.926</td>
+<td>~0.1%</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td><strong>7 medium</strong></td>
+<td><strong>0.912</strong></td>
+<td><strong>0.864</strong></td>
+<td>0.978</td>
+<td><strong>0.997</strong></td>
+<td>~2.2%</td>
+</tr>
+<tr>
+<td>Hard</td>
+<td>4 hard</td>
+<td>0.851</td>
+<td>0.817</td>
+<td>0.874</td>
+<td>0.988</td>
+<td>~12.6%</td>
+</tr>
+<tr>
+<td>Flat baseline</td>
+<td>All 18</td>
+<td>0.871</td>
+<td>0.798</td>
+<td>0.980</td>
+<td>0.981</td>
+<td>~5%</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Figure 4</strong>: <em>Curriculum learning training dynamics across all three stages and the flat 4B baseline. Medium (gold) rapidly surpasses all other configurations on reward. Note how Easy (green) achieves near-perfect privacy (lower-left panel) while detection barely rises above 0.5.</em></p>
+<p><img src="/assets/assets-privacy-guard/phase5_curriculum.png" alt="Curriculum learning" /></p>
+</blockquote>
+<p><strong>Curriculum Medium is the best configuration overall across all 9 experiments conducted</strong>, achieving 0.912 reward at half the compute (100 vs. 200 steps). We now analyse each stage.</p>
+<p><strong>Easy stage analysis.</strong> The Easy distribution comprises primarily benign scenarios. The agent quickly learns to keep sensors off — achieving near-perfect privacy (0.998) and 0% budget utilisation. However, the detection reward signal is sparse: with few genuine intrusions in the training data, the gradient for improving <span class="math inline">\(R_d\)</span> is weak. Detection stalls at 0.500, which corresponds to identifying roughly half of intrusion events — primarily the loud, obvious ones — while missing subtle signals.</p>
+<p><strong>Medium stage analysis.</strong> Medium scenarios provide what we term <em>Goldilocks difficulty</em>: intrusion events are present and clearly injected at defined timesteps, but are partially masked by benign co-occurring activity (pet noise, cooking sounds, resident movement). The agent must learn to disambiguate signals. This produces the richest reward gradient: good sensor choices (activating at the right time, right room, right resolution) are clearly rewarded; bad choices (early activation that depletes budget, wrong room, wrong fidelity) are clearly penalised. The detection signal is strong, privacy pressure is meaningful but not overwhelming, and the agent exits training with 0.912 overall reward and 86.4% detection — exceeding the flat baseline on both measures while using half the compute.</p>
+<p><strong>Hard stage analysis.</strong> Hard scenarios inject adversarial conditions: budget traps (events designed to provoke early high-cost sensor use), stealth intruders (very low-intensity motion that requires sustained HIGH-resolution sensing), and deliberate false-alarm setups (pet knocking objects, mimicking intrusion audio signatures). Learning in this distribution is slower: adversarial events produce near-zero or noisy reward gradients in early training, as the agent cannot distinguish genuine from fake signals. Despite this, the Hard-trained agent achieves 0.817 detection — higher than the flat 200-step baseline (0.798) — confirming that adversarial exposure does build detection capability. However, Hard training incurs a substantial privacy cost (0.874 vs. 0.978 for Medium): stealth intrusion and sustained evasion scenarios require aggressive sensor use that depletes budget. Hard stage training is thus better suited for <em>detection-first</em> applications where privacy is a secondary objective.</p>
+<p><strong>The privacy–detection tradeoff.</strong> The Hard results reveal the fundamental tradeoff that Easy and Medium scenarios rarely expose sharply. Figure 5 shows the full Pareto landscape.</p>
+<blockquote>
+<p><strong>Figure 5</strong>: <em>Privacy vs. detection Pareto plot for all configurations including baselines. The curriculum Medium agent (gold star) reaches the highest joint (detection, privacy) performance. The Hard agent (red star) achieves best detection after Medium but at a privacy cost. The grey triangle on the y-axis (Always-On) represents perfect detection at zero privacy.</em></p>
+<p><img src="/assets/assets-privacy-guard/pareto_and_sweep.png" alt="Pareto analysis" /></p>
+</blockquote>
+<hr />
+<h2 id="phase-6-episode-length-scaling">7. Phase 6: Episode Length Scaling</h2>
+<p>Phase 5 establishes that the Curriculum Medium strategy with 20-step episodes is the optimal policy under the base experimental conditions. <strong>Phase 6 asks</strong>: does this generalise to longer episodes? Specifically, does the agent’s detection and privacy management capability transfer to 40-step and 60-step episodes?</p>
+<h3 id="experimental-setup">7.1 Experimental Setup</h3>
+<p>Two additional configurations are trained:</p>
+<ul>
+<li><strong>40-step</strong>: <span class="math inline">\(T=40\)</span>, <span class="math inline">\(B=200\)</span> (5 units/turn), medium difficulty, 150 training steps</li>
+<li><strong>60-step</strong>: <span class="math inline">\(T=60\)</span>, <span class="math inline">\(B=300\)</span> (5 units/turn), medium difficulty, 150 training steps</li>
+</ul>
+<p>The budget-per-turn ratio (5 units/turn) is held constant across all episode lengths, maintaining the same <em>structural pressure</em> on the agent regardless of horizon.</p>
+<h3 id="results">7.2 Results</h3>
+<p><strong>Table 8: Episode length scaling results (Phase 6).</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>Episode Length</th>
+<th>Steps</th>
+<th>Peak Reward</th>
+<th>Detection</th>
+<th>Privacy</th>
+<th>Final Reward</th>
+<th>Truncated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20-step (Phase 5 best)</td>
+<td>100</td>
+<td><strong>0.912</strong></td>
+<td>0.864</td>
+<td><strong>0.978</strong></td>
+<td><strong>0.814</strong></td>
+<td>0%</td>
+</tr>
+<tr>
+<td>40-step</td>
+<td>149</td>
+<td>0.875</td>
+<td>0.799</td>
+<td><strong>0.986</strong></td>
+<td>0.715</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>60-step</td>
+<td>149</td>
+<td>0.858</td>
+<td><strong>0.865</strong></td>
+<td>0.798</td>
+<td>0.770</td>
+<td>0%</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Figure 6</strong>: <em>Episode-length scaling training dynamics. Each row shows overall reward, detection, privacy, and format across training steps. The gold 20-step baseline (solid) achieves the best overall reward. The striking finding is in the detection panel (top right): 60-step (red dashed) ends at detection 0.865, nearly identical to 20-step, while privacy (bottom left) collapses to 0.798.</em></p>
+<p><img src="/assets/assets-privacy-guard/phase6_episode_scaling.png" alt="Phase 6 episode scaling curves" /></p>
+</blockquote>
+<blockquote>
+<p><strong>Figure 7</strong>: <em>Bar chart comparison of peak metrics across episode lengths. The counter-intuitive finding is evident: detection is roughly invariant to episode length (all three bars nearly equal), while privacy correlates non-monotonically, with 40-step being best.</em></p>
+<p><img src="/assets/assets-privacy-guard/phase6_scaling_bars.png" alt="Phase 6 scaling bars" /></p>
+</blockquote>
+<h3 id="analysis-the-detectionprivacy-dissociation">7.3 Analysis: The Detection–Privacy Dissociation</h3>
+<p>The 60-step result is the most informative: despite tripling the episode length, <strong>detection matches the 20-step score</strong> (0.865 vs. 0.864). Yet <strong>privacy degrades substantially</strong> (0.798 vs. 0.978). This dissociation — detection stable, privacy degraded — reveals that detection and privacy management are learned through qualitatively different mechanisms.</p>
+<p><strong>Detection as pattern recognition.</strong> Intrusion signals (glass breaks, forced door, sustained unusual PIR patterns) have consistent local signatures regardless of where in the episode they occur. Once the agent learns to associate these local patterns with high-alert actions, it applies this knowledge whether the pattern appears at timestep 5 or timestep 45. Detection is thus an <em>intrinsic capability</em> that generalises across episode lengths with no additional training.</p>
+<p><strong>Privacy as temporal planning.</strong> Effective budget management across a 60-step episode requires the agent to anticipate how many high-energy events are likely to occur over the <em>remaining</em> 50+ steps, and to hold budgetary reserves accordingly. This is a fundamentally different skill — it requires calibrated uncertainty about future events and sequential commitment to budget allocations. At 60 steps, the inter-event gaps (periods of no intrusion activity) are substantially longer than at 20 steps. The agent, trained on 20-step medium-difficulty patterns, has not developed the expectation that these gaps can be extremely long. It tends to spend budget at a similar <em>rate</em> to 20-step training, exhausting it before genuine threats emerge in the second half of the episode.</p>
+<p><strong>The 40-step intermediate case.</strong> At 40 steps, detection <em>dips</em> (0.799 vs. 0.864) while privacy <em>improves</em> (0.986 vs. 0.978). This pattern is consistent with a <em>density</em> explanation: at 40 steps with the same number of scenarios (each containing roughly the same number of intrusion events), intrusion events are sparser per unit time, making the detection problem harder. But the longer horizon also gives the agent more turns to practice conservative budgeting, temporarily improving privacy before the horizon grows long enough to break the planning assumptions.</p>
+<p><strong>Implications.</strong> These results suggest:</p>
+<ol type="1">
+<li>For applications where <em>detection is the only constraint</em> (e.g., security-only, where residents accept higher surveillance), episode length can be freely extended without retraining</li>
+<li>For applications requiring <em>both</em> detection and privacy, 20-step episodes with curriculum medium training remain the Pareto-optimal configuration in our experiments</li>
+<li>Extending episode length while maintaining privacy likely requires explicit temporal credit assignment — either intermediate privacy rewards, horizon-aware budget allocation in the reward shaping, or explicit multi-step planning via chain-of-thought (though token constraints must be managed separately)</li>
+</ol>
+<hr />
+<h2 id="privacy-leakage-analysis">8. Privacy Leakage Analysis</h2>
+<p>The budget-based privacy reward (<span class="math inline">\(R_p\)</span>) measures budget efficiency but does not directly quantify <em>information leakage</em> — what a passive observer could infer about occupant behaviour from the agent’s sensor activation sequence. We introduce two post-hoc metrics that characterise information exposure independently of the task reward.</p>
+<h3 id="identity-leakage-proxy">8.1 Identity Leakage Proxy</h3>
+<p>HIGH-resolution camera captures and HIGH-sensitivity microphone activations can capture biometric identifiers (face geometry, voiceprint). We define the identity leakage proxy as the fraction of timesteps free of high-resolution activations:</p>
+<p><span class="math display">\[
+L_\text{identity} = 1 - \frac{\#\{\text{timesteps where camera=HIGH or mic=HIGH}\}}{T}
+\]</span></p>
+<p>A value of 1.0 means no biometric capture occurred; 0.0 means every timestep was at maximum resolution.</p>
+<h3 id="reconstruction-risk-proxy">8.2 Reconstruction Risk Proxy</h3>
+<p>Even low-resolution sensor activations leave an <em>activity footprint</em> — a record of which rooms were observed at which times — that can be used to reconstruct occupant routines. We approximate reconstruction risk as the inverse of budget efficiency:</p>
+<p><span class="math display">\[
+L_\text{recon} = 1 - \frac{\text{budget consumed}}{B}
+\]</span></p>
+<p>A value of 1.0 means no sensors were activated (zero activity footprint); 0.0 means the full budget was consumed.</p>
+<h3 id="results-1">8.3 Results</h3>
+<p>These metrics are logged but not optimised during training. Their values emerge from the agent’s learned policy.</p>
+<p><strong>Table 9: Privacy leakage analysis across policies.</strong></p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Identity Safety <span class="math inline">\(L_\text{identity}\)</span></th>
+<th>Reconstruction Safety <span class="math inline">\(L_\text{recon}\)</span></th>
+<th>Overall Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Always-On</td>
+<td>0.000</td>
+<td>0.000</td>
+<td>0.245</td>
+</tr>
+<tr>
+<td>Rule-Based</td>
+<td>0.952</td>
+<td>0.880</td>
+<td>0.529</td>
+</tr>
+<tr>
+<td>Untrained LLM</td>
+<td>0.610</td>
+<td>—</td>
+<td>0.419</td>
+</tr>
+<tr>
+<td><strong>GRPO-Trained 4B</strong></td>
+<td><strong>0.994</strong></td>
+<td><strong>0.975</strong></td>
+<td>0.871</td>
+</tr>
+<tr>
+<td><strong>Curriculum Medium</strong></td>
+<td><strong>0.995</strong></td>
+<td><strong>0.978</strong></td>
+<td><strong>0.912</strong></td>
+</tr>
+<tr>
+<td>Curriculum Hard</td>
+<td>0.916</td>
+<td>0.874</td>
+<td>0.851</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Figure 8</strong>: <em>Privacy leakage heatmap across all experimental configurations. Rows are policies; columns are leakage dimensions. The trained agents achieve the darkest (best) cells across both dimensions, while Always-On achieves the worst on both.</em></p>
+<p><img src="/assets/assets-privacy-guard/leakage_heatmap.png" alt="Leakage heatmap" /></p>
+</blockquote>
+<p><strong>Key finding</strong>: Both trained agents achieve near-perfect leakage scores without any explicit leakage penalty in <span class="math inline">\(\mathcal{R}\)</span>. The Curriculum Medium agent (0.995 identity, 0.978 reconstruction) outperforms even the carefully designed Rule-Based policy (0.952, 0.880) — a policy explicitly designed to minimise unnecessary activation.</p>
+<p>The mechanism is instructive: the agent learned to use <em>LOW-resolution</em> sensors as a first-response, escalating to HIGH only when multiple independent signals corroborate an intrusion. This two-tier sensing strategy emerges from the interaction of the detection reward (which credits ESCALATE+HIGH most, but also credits NOTIFY+LOW/MED) with the privacy reward (which penalises any budget expenditure). The optimal policy under this reward structure naturally minimises HIGH activations — and thus minimises biometric exposure — as a side-effect of budget conservation.</p>
+<p>This result suggests that <strong>budget-constrained optimisation may be a sufficient proxy for information minimisation</strong> in sensing domains, without requiring an explicit privacy-aware reward term. The economic logic is simple: HIGH-resolution activations are expensive; an agent optimising for budget efficiency will naturally avoid them except when their detection value clearly justifies the cost.</p>
+<hr />
+<h1 id="appendix-e-interactive-3d-simulation-and-visualisation-framework">Appendix E: Interactive 3D Simulation and Visualisation Framework</h1>
+<blockquote>
+<p><strong>Note to reader</strong>: This appendix documents the interactive security-camera visualisation we built to replay, inspect, and present the trained agent’s real rollout behaviour. All screenshots below are genuine renders from the simulation replaying <code>rollouts_step190.json</code> — actual inference outputs from the Curriculum-Medium (step-190) checkpoint.</p>
+</blockquote>
+<hr />
+<h2 id="e.1-motivation">E.1 Motivation</h2>
+<p>Quantitative metrics — reward curves, detection scores, privacy efficiency — tell us <em>that</em> the trained agent performs well, but they do not tell us <em>how</em> it behaves moment to moment. The reasoning traces in Section 5.3 provide one window into the agent’s decision process; a real-time visual replay provides another that is richer, more intuitive, and more useful for communication with non-specialist audiences.</p>
+<p>We built a <strong>Security Camera Monitor</strong> simulation in Python/Pygame that:</p>
+<ol type="1">
+<li>Loads the raw rollout file (<code>rollouts_step190.json</code>) produced by the Prime Intellect training run</li>
+<li>Renders a four-room CCTV-style interface with perspective room interiors, furniture, and sensor-state overlays</li>
+<li>Allows frame-by-frame or auto-play navigation through all 8 evaluation episodes</li>
+<li>Faithfully represents every agent action — camera room/fidelity, microphone level, alert status, reasoning text — extracted directly from the real rollout data</li>
+</ol>
+<p>The result is a tool that serves three purposes: <strong>debugging</strong> (identifying which scenario steps caused reward drops), <strong>demonstration</strong> (communicating agent behaviour to stakeholders without requiring ML expertise), and <strong>documentation</strong> (generating the screenshots in this appendix).</p>
+<hr />
+<h2 id="e.2-interface-design">E.2 Interface Design</h2>
+<p>The monitor replicates the visual language of professional CCTV/DVR security systems, which is intentional: the agent’s task <em>is</em> to operate a security monitoring system, and making the visualisation look like one helps viewers immediately contextualise agent decisions.</p>
+<pre><code># Security Camera Monitor layout (1440 x 900 px)
+# +---------------------------+------------+
+# |  Main feed  (960 x 720)  |  Room 0    |
+# |                           |  Room 1    |
+# |                           |  Room 2    |
+# |                           |  Room 3    |
+# +---------------------------+------------+
+# |  Status bar  (1440 x 180)              |
+# +----------------------------------------+</code></pre>
+<p><strong>Left panel (960×720 px)</strong> — the currently active camera feed, rendered in perspective with:</p>
+<ul>
+<li>Room-specific wall, floor, and ceiling colours</li>
+<li>Furnished room interiors (sofa/TV/bookshelf − living room; counter/sink/table − kitchen; corridor/door − hallway; bed/wardrobe/window − bedroom)</li>
+<li><strong>CRT scanlines</strong> on every active feed</li>
+<li><strong>Colour tint</strong>: yellow for LOW fidelity, red for HIGH fidelity</li>
+<li><strong>Motion detection boxes</strong> (animated red corner brackets) when PIR fires in the active room</li>
+<li><strong>Alert banner</strong> (NOTIFY / RECORD / ESCALATE) centred at top with pulse animation</li>
+<li><strong>Blinking REC dot</strong> when camera is active</li>
+<li>Timestamp, time-of-day label, microphone waveform</li>
+</ul>
+<p><strong>Right panel (480 px wide, 4 stacked)</strong> — thumbnail feeds for all four rooms:</p>
+<ul>
+<li><strong>NO SIGNAL</strong> static when camera is OFF</li>
+<li>Dim live view when camera is online but not the active feed</li>
+<li>Yellow border highlight on the active thumbnail</li>
+</ul>
+<p><strong>Bottom bar (180 px)</strong> — agent status:</p>
+<ul>
+<li>Privacy budget bar (green → orange → red as budget depletes)</li>
+<li>Episode metrics (Overall, Detection, Privacy Efficiency)</li>
+<li>Full agent reasoning text (extracted from <code>reasoning</code> field in rollout)</li>
+<li>Step-progress dots</li>
+</ul>
+<hr />
+<h2 id="e.3-simulation-screenshots">E.3 Simulation Screenshots</h2>
+<p>The following eight screenshots capture the key behaviours exhibited by the Curriculum-Medium step-190 agent across the evaluation episodes.</p>
+<hr />
+<h3 id="figure-e.1-all-cameras-offline-passive-calibration-phase">Figure E.1 — All Cameras Offline (Passive Calibration Phase)</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/01_cameras_offline.png" alt="All cameras offline" />
+<figcaption aria-hidden="true">All cameras offline</figcaption>
+</figure>
+<p><strong>What we see</strong>: The main feed shows <code>ALL CAMERAS OFFLINE</code> with grey static. All four room thumbnails display <code>NO SIGNAL</code>. The privacy budget bar is full green at 100/100 units. Time of day: 0.70 (evening).</p>
+<p><strong>What this means</strong>: At episode start, the agent reads all PIR sensors as clear (0.0 across all rooms) and correctly keeps every sensor deactivated. This is the <strong>passive calibration phase</strong> described in Section 5.3 — the agent establishes a baseline of household normalcy before spending any budget. The reasoning panel confirms this is deliberate: <em>“No motion detected. All sensors nominal for evening. No action required. Preserving budget.”</em></p>
+<hr />
+<h3 id="figure-e.2-low-fidelity-camera-living-room-triangulation-phase">Figure E.2 — LOW-Fidelity Camera: Living Room (Triangulation Phase)</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/02_living_room_camera_low.png" alt="Low fidelity camera" />
+<figcaption aria-hidden="true">Low fidelity camera</figcaption>
+</figure>
+<p><strong>What we see</strong>: The living room camera feed is active. The <strong>yellow CRT tint</strong> and scanlines mark LOW-fidelity mode (cost: 1 privacy unit). The sofa, coffee table, TV, and bookshelf are visible in perspective. A <code>RECORD</code> badge blinks in the top-right.</p>
+<p><strong>What this means</strong>: After detecting ambiguous PIR activity, the agent has activated a LOW-fidelity camera to observe before committing to an expensive HIGH-resolution capture. This is the <strong>triangulation phase</strong> — the agent is gathering evidence cheaply. The yellow tint visually distinguishes this from the more committed HIGH (red tint) mode.</p>
+<hr />
+<h3 id="figure-e.3-escalate-high-camera-intrusion-confirmed">Figure E.3 — ESCALATE + HIGH Camera: Intrusion Confirmed</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/03_escalate_high_camera.png" alt="Escalate HIGH" />
+<figcaption aria-hidden="true">Escalate HIGH</figcaption>
+</figure>
+<p><strong>What we see</strong>: The main feed displays a room interior in <strong>red CRT tint</strong> (HIGH fidelity). Red <code>⚠ ESCALATE</code> alert banner at the top. Red corner brackets (motion-detection boxes) overlay the room. The <code>● HIGH</code> indicator blinks in the top-right. Three of the four thumbnails show <code>NO SIGNAL</code>.</p>
+<p><strong>What this means</strong>: Multiple corroborating signals have been detected across timesteps. The agent has committed to <strong>full surveillance mode</strong> — HIGH camera fidelity plus ESCALATE alert. This is the most expensive action (4 privacy units/timestep) and is used sparingly. In the <code>multi_room_intrusion</code> episode (reward=0.991, detection=1.00), this commitment is correctly timed and correctly sustained.</p>
+<hr />
+<h3 id="figure-e.4-hallway-camera-door-sensor-triggered">Figure E.4 — Hallway Camera: Door Sensor Triggered</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/04_hallway_door_triggered.png" alt="Door triggered" />
+<figcaption aria-hidden="true">Door triggered</figcaption>
+</figure>
+<p><strong>What we see</strong>: The hallway camera feed shows the corridor interior — dark floor carpet, ceiling light fixtures, and the front door visible at the far end. The <code>🚪 DOOR SENSOR TRIGGERED</code> banner is displayed. The door frame glows with an orange pulse.</p>
+<p><strong>What this means</strong>: In the <code>cooking_then_break_in</code> scenario, the front-door sensor fires during a period when PIR readings were ambiguous (cooking activity in the kitchen). The agent immediately activates the hallway camera to monitor the entry point. This is a critical decision: the agent must distinguish a forced entry from a legitimate late-night return.</p>
+<hr />
+<h3 id="figure-e.5-kitchen-camera-pet-motion-false-alarm-correctly-avoided">Figure E.5 — Kitchen Camera: Pet Motion (False Alarm Correctly Avoided)</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/05_kitchen_pet_motion.png" alt="Kitchen pet motion" />
+<figcaption aria-hidden="true">Kitchen pet motion</figcaption>
+</figure>
+<p><strong>What we see</strong>: Kitchen camera feed with <strong>yellow LOW-fidelity tint</strong>. The kitchen interior is visible — counter, sink, overhead pendant light, table. PIR intensity 0.3 is indicated. <strong>No alert banner is shown.</strong></p>
+<p><strong>What this means</strong>: From the <code>pet_only</code> scenario. Kitchen PIR detects 0.3 intensity — consistent with a pet. The agent activates LOW camera to observe, but correctly <strong>raises no alert</strong>. The agent has learned to distinguish low-intensity single-room motion (pet) from sustained multi-room elevated motion (intrusion). Avoiding a false ESCALATE here preserves the privacy budget and prevents alert fatigue.</p>
+<hr />
+<h3 id="figure-e.6-bedroom-camera-tracking-suspicious-footsteps">Figure E.6 — Bedroom Camera: Tracking Suspicious Footsteps</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/06_bedroom_camera_high.png" alt="Bedroom HIGH" />
+<figcaption aria-hidden="true">Bedroom HIGH</figcaption>
+</figure>
+<p><strong>What we see</strong>: Bedroom camera at <strong>HIGH fidelity</strong> (red CRT tint). The bedroom interior shows the bed with pillows, bedside tables with lamps, window with curtains, and wardrobe. <code>⚠ NOTIFY</code> alert banner is shown — not yet ESCALATE.</p>
+<p><strong>What this means</strong>: In the <code>unknown_footsteps</code> scenario, the agent detects motion patterns moving toward the bedroom and responds with HIGH camera + NOTIFY. The NOTIFY — rather than ESCALATE — reflects appropriate uncertainty: signals are suspicious but not yet definitive. The agent is gathering HIGH-quality evidence before committing to escalation.</p>
+<hr />
+<h3 id="figure-e.7-privacy-budget-pressure-orange-warning-state">Figure E.7 — Privacy Budget Pressure (Orange Warning State)</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/07_budget_pressure.png" alt="Budget pressure" />
+<figcaption aria-hidden="true">Budget pressure</figcaption>
+</figure>
+<p><strong>What we see</strong>: The bottom status bar shows the privacy budget bar in <strong>orange</strong> (budget below 30% threshold). Episode is <code>multi_room_intrusion</code>. Multiple completed step-progress dots indicate mid-episode.</p>
+<p><strong>What this means</strong>: After sustaining HIGH-fidelity capture across multiple intrusion timesteps, the privacy budget is partially depleted. The agent’s reasoning panel shows explicit budget-counting: *“Budget: 44/100. Steps remaining:  This emergent arithmetic reasoning — not explicitly trained — demonstrates learned temporal resource planning.</p>
+<hr />
+<h3 id="figure-e.8-full-monitor-overview-best-episode-multi">Figure E.8 — Full Monitor Overview: Best Episode (multi</h3>
+<figure>
+<img src="/assets/assets-privacy-guard/08_full_monitor_multi_intrusion.png" alt="Full monitor" />
+<figcaption aria-hidden="true">Full monitor</figcaption>
+</figure>
+<p><strong>What we see</strong>: The complete 1440×900 security monitor interface. Left: large main camera feed with alert overlays. Right: four stacked thumbnail feeds — one lit (active camera), three showing <code>NO SIGNAL</code>. Bottom: privacy budget (green), episode metrics (Overall: 0.991, Detection: 1.00, Privacy Eff.: 1.00), agent reasoning, step-progress dots.</p>
+<p><strong>What this means</strong>: This is the canonical view during Episode 4 (<code>multi_room_intrusion</code>) — the highest-reward episode in the evaluation set. All three metric bars are nearly full. The agent has achieved simultaneous maximum detection and near-perfect privacy efficiency in a multi-room adversarial scenario. Only one camera is active at any given timestep, illustrating the selective activation strategy underlying the 95% budget retention figure.</p>
+<hr />
+<h2 id="e.4-implementation-notes">E.4 Implementation Notes</h2>
+<h3 id="data-pipeline">Data Pipeline</h3>
+<p>The simulation loads <code>rollouts_step190.json</code> — a raw JSON file produced by the Prime Intellect GRPO harness. It parses both the <code>prompt</code> field (user-turn observations) and <code>completion</code> field (assistant-turn actions), interleaving them by message role to reconstruct the chronological episode timeline. Robust <code>strict=False</code> JSON parsing was required to handle literal newlines embedded in multi-turn message strings.</p>
+<h3 id="room-perspective-rendering">Room Perspective Rendering</h3>
+<p>Each room is rendered using a fixed vanishing-point perspective system simulating a security camera mounted in the upper portion of a room wall (approximately 52% horizontal, 36% vertical of the frame):</p>
+<pre class="python"><code>VP_X, VP_Y = 0.52, 0.36   # vanishing point as fraction of frame
+
+def project(x, y, depth):
+    &quot;&quot;&quot;Project floor-plane point toward vanishing point.&quot;&quot;&quot;
+    vx = int(VP_X * W + (x - VP_X * W) * depth)
+    vy = int(VP_Y * H + (y - VP_Y * H) * depth)
+    return vx, vy</code></pre>
+<p>Floor-plane objects (furniture, carpet strips) are drawn as trapezoids projected toward this vanishing point. Vertical surfaces (walls, headboards, shelving) are drawn at the correct depth scale. Night/day tinting is applied uniformly using the <code>time_of_day</code> field extracted from each timestep’s observation.</p>
+<h3 id="sensor-state-visual-mapping">Sensor State → Visual Mapping</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Sensor State</th>
+<th>Visual Representation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Camera OFF</td>
+<td>Grey static (<code>NO SIGNAL</code>)</td>
+</tr>
+<tr>
+<td>Camera LOW</td>
+<td>Yellow CRT tint + scanlines</td>
+</tr>
+<tr>
+<td>Camera HIGH</td>
+<td>Red CRT tint + scanlines + vignette</td>
+</tr>
+<tr>
+<td>PIR motion</td>
+<td>Orange ambient glow + red MOTION corner brackets</td>
+</tr>
+<tr>
+<td>Alert NOTIFY</td>
+<td>Blue banner at top of main feed</td>
+</tr>
+<tr>
+<td>Alert RECORD</td>
+<td>Amber banner</td>
+</tr>
+<tr>
+<td>Alert ESCALATE</td>
+<td>Red banner + pulsing glow ring around banner</td>
+</tr>
+<tr>
+<td>Door triggered</td>
+<td>Orange <code>🚪 DOOR SENSOR TRIGGERED</code> banner</td>
+</tr>
+<tr>
+<td>Night (TOD &lt; 0.3)</td>
+<td>All rooms darkened; windows show dark sky</td>
+</tr>
+<tr>
+<td>Day (TOD &gt; 0.6)</td>
+<td>Full brightness; kitchen window shows bright daylight</td>
+</tr>
+</tbody>
+</table>
+<h3 id="running-the-simulation">Running the Simulation</h3>
+<pre class="bash"><code>cd privacy_guard
+python sim3d.py
+# Loads privacy_guard/results/rollouts_step190.json automatically
+# Controls: SPACE/-&gt; next step  &lt;- prev  A auto-play
+#           N/P next/prev episode  0-7 jump  +/- speed  S screenshot  Q quit</code></pre>
+<p>The simulation loads <code>privacy_guard/results/rollouts_step190.json</code> automatically. Controls: <code>SPACE</code>/<code>→</code> − next timestep; <code>←</code> − previous; <code>A</code> − auto-play; <code>N</code>/<code>P</code> − next/previous episode; <code>0</code>–<code>7</code> − jump to episode; <code>+</code>/<code>–</code> − adjust speed; <code>S</code> − save screenshot; <code>Q</code> − quit.</p>
+<hr />
+<h2 id="e.5-key-observations-from-visual-inspection">E.5 Key Observations from Visual Inspection</h2>
+<p>Reviewing all 8 evaluation episodes frame by frame through the simulation reveals several qualitative patterns that extend the quantitative findings of the main paper:</p>
+<p><strong>1. Consistent three-phase structure across episodes.</strong> Virtually every episode — regardless of scenario — exhibits the Calibrate → Triangulate → Commit structure described in Section 5.3. The passive opening phase spans 2–5 timesteps; LOW-camera triangulation is typically 2–4 timesteps; HIGH-camera commitment is sustained until episode end. This regularity suggests the three-phase strategy is a robust emergent policy, not an artefact of specific scenarios.</p>
+<p><strong>2. Room targeting follows intrusion trajectories.</strong> In <code>multi_room_intrusion</code>, the agent correctly tracks the intruder as they move between rooms — updating camera targets to follow the active PIR signal. This spatial tracking capability is not directly encoded in the reward function (which scores alert level, not camera room) and implies the agent has learned spatial reasoning about intrusion paths from the training distribution.</p>
+<p><strong>3. Pet-only episodes show clean non-response.</strong> In all three <code>pet_only</code> evaluation episodes, the agent correctly avoids ESCALATE despite sustained PIR motion. Visual inspection confirms the agent uses LOW camera to observe, reads the low-intensity single-room motion pattern, and withholds escalation. This discriminative capability is a key functional achievement: the deployed system would not generate false alarms for routine household activity.</p>
+<p><strong>4. Budget conservation is visually salient.</strong> The main camera feed is dark (NO SIGNAL) for 12–16 consecutive timesteps per episode before the first activation. This directly reflects the 95% average budget retention figure in Table 5 — the agent is almost always inactive, preserving full capacity for the timesteps that matter.</p>
+<p><strong>5. Hallway is the preferred initial monitoring point.</strong> Across scenarios, the agent disproportionately activates the hallway camera when first responding to ambiguous signals. This is physically reasonable: the hallway is the natural transit corridor for any intruder entering from the front door, and monitoring it provides early warning regardless of the intruder’s intended destination. The agent appears to have learned this spatial topology implicitly from the scenario distribution.</p>
+<hr />
+<p>*Source: <code>privacy_*guard/sim3d.py</code>. Screenshots: <code>privacy_guard/capture_screenshots.py}. All figures generated from Curriculum-Medium step-190 rollout data with no manual adjustment or post-processing.</code></p>
+<h2 id="discussion">9. Discussion</h2>
+<h3 id="training-distribution-as-the-primary-design-lever">9.1 Training Distribution as the Primary Design Lever</h3>
+<p>The central empirical finding — curriculum medium beats architecturally larger models at half the compute — challenges a common assumption in applied LLM research: that model scale is the primary lever for task performance. Our results suggest that for a specific and increasingly common class of tasks (structured-output, resource-constrained, multi-turn sequential RL), the <em>quality and calibration of the training distribution</em> matters more than parameter count.</p>
+<p>The intuition is Darwinian: the agent learns what the training distribution rewards. An uncalibrated distribution (too easy → sparse detection gradient; too hard → noisy adversarial gradient; mixed → diluted both) produces a suboptimal policy regardless of model capacity. A well-calibrated distribution — where reward clearly discriminates good from bad decisions, and hard cases are introduced at a rate matched to current agent capability — produces a strong policy faster and with fewer parameters.</p>
+<p>This finding has practical implications. In applied settings, researchers and practitioners often default to larger models as the first response to performance gaps. Our results suggest that investment in scenario design, difficulty calibration, and training distribution engineering may yield larger returns per compute dollar for this class of tasks.</p>
+<h3 id="the-structural-incompatibility-of-cot-and-token-constrained-multi-turn-rl">9.2 The Structural Incompatibility of CoT and Token-Constrained Multi-Turn RL</h3>
+<p>The 97% truncation rate for Qwen3-4B-Thinking deserves careful analysis because it is not an implementation bug but a fundamental structural conflict. In single-turn settings, chain-of-thought reasoning provides clear benefits: the model reasons internally, produces a final answer, and the reasoning tokens impose no cost on future turns. In multi-turn settings, every reasoning token consumed by the current turn’s <code>&lt;think&gt;</code> block reduces the observation history that can be retained for future turns. In a 20-turn episode with 512-token turns, the effective observation budget per turn is approximately 400 tokens after system prompt and action format overhead — and <code>&lt;think&gt;</code> blocks routinely consume this entire budget.</p>
+<p>The fix is not obvious. Simply increasing max_tokens delays but does not eliminate the problem (the 30B-Thinking model with 1024 tokens still showed 6% truncation). Truncating <code>&lt;think&gt;</code> blocks at inference time (stripping reasoning before JSON generation) would require modifying the inference pipeline. An alternative — <em>compressed reasoning</em>, where the model produces a single reasoning token summarising its chain of thought — remains an open research direction.</p>
+<p>Our result identifies a specific failure mode that the multi-turn RL community should watch for when deploying reasoning models in token-constrained environments. The failure is silent in evaluation metrics (the model still receives some reward from the 3.3 turns it completes) but catastrophic in practice.</p>
+<h3 id="emergent-privacy-and-the-alignment-of-objectives">9.3 Emergent Privacy and the Alignment of Objectives</h3>
+<p>Section 8 shows that budget efficiency and information minimisation are <em>empirically aligned</em> in our setting: training for budget efficiency produces an agent that also minimises leakage. This is not guaranteed by the reward structure — an agent could, in principle, achieve high budget efficiency by activating sensors at uniformly LOW resolution throughout every episode (spreading cost evenly while capturing continuous low-quality footage). Instead, the agent learned to remain entirely passive for most timesteps and activate sparingly.</p>
+<p>We conjecture that this stems from the <em>sparsity</em> of the detection signal: most timesteps are non-intrusion, offering no detection reward. Activating sensors during these timesteps yields only privacy penalty. The optimal strategy is therefore to detect the <em>minimum</em> set of timesteps that captures the intrusion — which, under the scenario designs, tends to be 2–4 timesteps per episode. This naturally produces near-zero activation density and near-zero leakage.</p>
+<p>The policy implication is encouraging: budget-constrained optimisation may be a practically sufficient proxy for privacy objectives in sensing domains, without requiring complex information-theoretic reward formulations that are difficult to compute and calibrate.</p>
+<h3 id="phase-6-and-the-limitation-of-current-episode-designs">9.4 Phase 6 and the Limitation of Current Episode Designs</h3>
+<p>Phase 6 reveals that our scenarios — designed for 20-step episodes — do not straightforwardly transfer to 60-step training. The intrusion events remain at the same scenario positions (e.g., event at timestep 7, escalation at timestep 12), which means at 60-step training the events are in the first third of the episode. The agent learns to handle the 20-step scenario structure but is not challenged on budgeting across a genuinely long horizon with late-appearing events. An improved Phase 6 experimental design would rescale event timing proportionally to episode length, ensuring that budget decisions made early in the episode have genuine consequences for events appearing near the end.</p>
+<hr />
+<h2 id="limitations">10. Limitations</h2>
+<p>We identify six significant limitations of the current work. These are stated not to diminish the findings but to provide an honest account of what they do and do not establish.</p>
+<p><strong>Limitation 1 — Simulated environment.</strong> The <code>SmartHomeSim</code> generates sensor events at predetermined timesteps with no environmental noise, sensor latency, read jitter, or physical occlusion. Real PIR sensors exhibit thermal drift, signal attenuation through walls, and detection blind spots. Real audio event classifiers produce uncertain, probability-weighted outputs rather than clean natural-language descriptions. The sim-to-real gap is unknown and may be substantial: a policy trained on clean, unambiguous language observations may fail when faced with real sensor outputs that require upstream interpretation. Future work should integrate the policy with real sensor streams formatted as the same observation schema, evaluating the degree to which sensor noise and ambiguity degrade performance.</p>
+<p><strong>Limitation 2 — Single training seed per configuration.</strong> Each of the 12 experiments used one training run per configuration. Without multiple random seeds at both model initialisation and scenario ordering levels, we cannot report confidence intervals, statistical significance, or between-run variance estimates. The stability observations in Section 6.1 (e.g., the 30B-MoE’s high within-run variance) are descriptive of single runs and cannot be generalised to statements about the model’s typical behaviour. Replication with 3–5 seeds per configuration would substantially strengthen the empirical claims.</p>
+<p><strong>Limitation 3 — Independent rather than sequential curriculum.</strong> The three curriculum stages (Easy, Medium, Hard) are each trained from the Qwen3-4B-Instruct base model independently. The standard interpretation of curriculum learning in both supervised and RL settings involves <em>sequential</em> training: beginning with easy examples and gradually introducing harder ones as performance improves. Our design isolates the quality of each <em>training distribution</em> rather than measuring transfer benefit. The hypothesis that <em>sequential</em> fine-tuning (warm-starting from Easy, then fine-tuning on Medium, then on Hard) yields further improvement beyond the Medium-only result is untested and remains an important open question.</p>
+<p><strong>Limitation 4 — Qwen3 model family only.</strong> All experiments use variants of Qwen3 (Qwen Team, 2024). The findings regarding chain-of-thought truncation may be specific to Qwen3-Thinking’s particular <code>&lt;think&gt;</code> block formatting and verbosity profile. Other reasoning models (DeepSeek-R1, OpenAI o1, Gemma-Thinking) may produce shorter or longer reasoning prefixes and thus exhibit different truncation thresholds. The curriculum finding may also be architecture-dependent if different model families have different susceptibilities to easy-scenario reward sparsity or hard-scenario gradient noise. Systematic replication across model families is necessary to establish the generality of these findings.</p>
+<p><strong>Limitation 5 — Fixed and predetermined event timing.</strong> All intrusion and benign events are injected at fixed, predetermined timesteps from a static scenario script. This means: (a) the agent could in principle learn scenario-specific timing patterns (e.g., “intrusion always starts between steps 6 and 10 on this distribution”) rather than genuine event-detection reasoning; (b) the scenario library of 18 training scenarios is too small to fully cover the space of realistic intrusion patterns; and (c) the absence of stochastic event timing prevents evaluation of the agent’s uncertainty calibration across episodes with different event positions. A more rigorous evaluation would use stochastic event timing drawn from scenario-type-specific distributions, with held-out episodes guaranteed not to overlap with training timing patterns.</p>
+<p><strong>Limitation 6 — Phase 6 scenario event timing not rescaled.</strong> The 40-step and 60-step training experiments (Phase 6) use the same scenario scripts as the 20-step experiments, with intrusion events occurring at the same absolute timestep positions (steps 6–15). In a 60-step episode, these events therefore occur almost entirely within the first 25% of the episode. This means Phase 6 does not test the agent’s ability to allocate budget in anticipation of <em>late-episode</em> events — arguably the hardest long-horizon planning challenge. The finding that privacy degrades at 60 steps (Section 7.3) is likely a consequence of this confound as much as a fundamental limitation of the policy. True long-horizon scaling experiments would require proportionally rescaled event timing.</p>
+<hr />
+<h2 id="future-work">11. Future Work</h2>
+<p>We identify six high-priority directions for extending this research.</p>
+<p><strong>Sequential curriculum warm-start.</strong> Our experiments train each difficulty tier independently. The natural next step is sequential fine-tuning: initialise from the Easy-trained model, then fine-tune on Medium; initialise from the Medium-trained model, then fine-tune on Hard. This preserves the learned capabilities from each stage while introducing progressively harder challenges. The prediction is that sequential curriculum would achieve <em>better</em> Hard-stage results than independent Hard training (because the agent begins with a strong Medium-trained prior rather than a zero-shot base), and potentially achieve <em>better</em> Medium results than independent Medium training (because the Easy stage establishes reliable format compliance and passive observation habits before introducing harder detection challenges). This would also more faithfully implement the classical curriculum learning design of Bengio et al. (2009).</p>
+<p><strong>Long-horizon budget planning with proportionally rescaled scenarios.</strong> Phase 6 reveals that privacy management degrades at 60 steps, but the confound of fixed event timing makes it difficult to separate “agent’s planning horizon is too short” from “events are concentrated in the first 25% and disappear before the agent needs to budget them.” A clean experiment would scale event timing proportionally (e.g., in a 60-step scenario, place the primary intrusion event at step 30–45 rather than step 7–12), directly testing whether the agent can plan budget allocations across a full long horizon. Additional reward shaping (e.g., intermediate privacy checkpoints at step <span class="math inline">\(T/2\)</span>) may also be necessary to provide the agent with credit-assignment signals along the full horizon.</p>
+<p><strong>Adversarial intruder co-training.</strong> All current experiments train the sensor agent against a <em>fixed</em> intruder (whose entry pattern is defined by the scenario script). A minimax extension would simultaneously train both an intruder agent (choosing entry timing, room sequencing, and stealth level) and the sensor agent, with the intruder rewarded for evading detection and the sensor rewarded for detecting. This co-evolutionary setup would generate automatically expanding intrusion complexity without requiring human scenario design, and would produce a sensor agent that is robust to novel, previously-unseen intrusion strategies rather than overfit to the finite scenario library.</p>
+<p><strong>Multi-agent distributed sensing.</strong> Our current setup uses a single agent controlling all rooms sequentially. A natural extension is a multi-agent system where each room has a dedicated sensor agent with its own local budget share and local observations, coordinating through a shared global budget constraint and a communication channel. This would allow room-specific specialisation (e.g., hallway agent learns entry-pattern detection; living room agent learns ambush-point monitoring) while maintaining the global privacy constraint. Multi-agent RL for shared-constraint resource problems is an active research area (Lowe et al., 2017; Rashid et al., 2018) and our environment would provide a concrete, well-instrumented testbed.</p>
+<p><strong>Compressed reasoning for multi-turn CoT compatibility.</strong> Section 6.1 and Section 9.2 identify that standard <code>&lt;think&gt;</code> blocks are structurally incompatible with token-constrained multi-turn RL. Rather than abandoning reasoning entirely, future work should explore <em>latent</em> or <em>compressed</em> reasoning: the model produces a short (e.g., 32-token) reasoning summary rather than a full chain-of-thought trace, compressing its internal deliberation into a compact representation. This could be implemented as a separate lightweight reasoning head, or by training the full model to produce compressed reasoning summaries via distillation from an unconstrained reasoning teacher. The goal is to preserve the decision-quality benefits of CoT while eliminating its token cost in multi-turn settings.</p>
+<p><strong>Real sensor integration and sim-to-real evaluation.</strong> The most important applied extension is deployment on real IoT hardware. This requires: (a) a sensor data formatter that maps real PIR, contact sensor, and audio classifier outputs to the observation schema; (b) latency management for real-time action generation (the current 512-token LLM inference at ~0.3s per turn scales to 6s for a 20-turn episode, which is acceptable for a 5-minute security episode but not for real-time response); (c) a human evaluation study where occupants interact with the Privacy Guard system and rate both its detection accuracy (did it catch the intrusion?) and privacy comfort (did it feel like surveillance?). Such a study would provide the ground-truth data needed to calibrate the reward weights <span class="math inline">\((w_d, w_p, w_f)\)</span> to actual user preferences rather than our currently assumed values.</p>
+<hr />
+<h2 id="conclusion">12. Conclusion</h2>
+<p>We have presented <strong>Privacy Guard</strong>, a reinforcement learning framework for training LLM agents to perform <em>privacy-budgeted active sensing</em> in a simulated smart-home environment. The system combines a custom multi-turn RL environment (<code>PrivacyGuardEnv</code>) with GRPO-based training on Prime Intellect infrastructure, producing agents that dramatically outperform both hand-crafted baselines and untrained LLMs, while achieving near-perfect privacy compliance as an emergent property.</p>
+<p>Our experimental programme of 12 training runs across six phases yields three principal findings that we believe have broad implications for the field of LLM-based reinforcement learning.</p>
+<p><strong>Finding 1 — Training distribution design is the primary lever.</strong> A 4B-parameter model trained on medium-difficulty scenarios for 100 steps (Curriculum Medium) achieves 0.912 overall reward and 86.4% detection recall — outperforming a 30B Mixture-of-Experts model trained for 200 steps, and all seven baseline policies including carefully engineered rule-based approaches. The calibration of scenario difficulty, not model capacity, determines the learning signal quality, and learning signal quality is the dominant determinant of final policy quality. Curriculum Medium is approximately 70× more compute-efficient than architectural scaling in this setting. This result challenges the scale-first assumption common in applied LLM deployment and suggests that <em>training distribution engineering</em> deserves substantially more attention as a design variable.</p>
+<p><strong>Finding 2 — Chain-of-thought reasoning is structurally incompatible with token-constrained multi-turn RL.</strong> Qwen3-Thinking variants exhibit 97% output truncation in our 20-turn, 512-token-per-turn setting — not because of a configuration error but because internal <code>&lt;think&gt;</code> blocks exhaust the per-turn token budget before valid JSON is emitted. This failure is silent in some metrics (partial episode reward still accumulates) but catastrophic in practice (3.3 of 20 turns completed). The structural conflict between reasoning verbosity and multi-turn token budgets is expected to apply broadly to any reasoning-capable LLM deployed in token-constrained agentic settings, and the community should treat it as a first-order design concern when combining recent reasoning models with multi-turn RL.</p>
+<p><strong>Finding 3 — Detection generalises across episode lengths; privacy management does not.</strong> Phase 6 reveals a clean dissociation: the agent’s trained ability to recognise and respond to intrusion signal patterns transfers freely to 3× longer episodes (detection 0.865 at 60 steps vs. 0.864 at 20 steps). But its budget planning degrades (privacy 0.798 at 60 steps vs. 0.978 at 20 steps). Detection is an intrinsic pattern-recognition capability; privacy management is a temporal planning capability that is tightly coupled to the training episode length. This dissociation identifies intertemporal budget planning — not detection — as the key capability requiring further methodological development for long-horizon privacy-sensitive sensing applications.</p>
+<p>Across all configurations, one finding cuts through: <strong>privacy-preserving behaviour emerges as a side-effect of budget-efficient sensing</strong>. Without any explicit leakage penalty in the reward, trained agents achieve 0.994–0.995 identity safety and 0.975–0.978 reconstruction safety — outperforming even carefully designed rule-based policies. Budget-constrained optimisation appears to be a practically sufficient proxy for information minimisation in sparse-signal sensing domains. This is perhaps the most practically significant finding for system designers: it suggests that getting the <em>budget structure</em> right matters more than explicitly modelling privacy leakage in the reward function.</p>
+<hr />
+<h2 id="references">References</h2>
+<p>Bai, Y., Jones, A., Ndousse, K., et al. (2022). Training a helpful and harmless assistant with reinforcement learning from human feedback. <em>arXiv preprint arXiv:2204.05862</em>.</p>
+<p>Bengio, Y., Louradour, J., Collobert, R., &amp; Weston, J. (2009). Curriculum learning. <em>Proceedings of the 26th International Conference on Machine Learning (ICML)</em>, 41–48.</p>
+<p>Chen, M., Tworek, J., Jun, H., et al. (2021). Evaluating large language models trained on code. <em>arXiv preprint arXiv:2107.03374</em>.</p>
+<p>Christiano, P., Leike, J., Brown, T. B., et al. (2017). Deep reinforcement learning from human preferences. <em>Advances in Neural Information Processing Systems (NeurIPS)</em>, 30.</p>
+<p>Dwork, C., &amp; Roth, A. (2014). The algorithmic foundations of differential privacy. <em>Foundations and Trends in Theoretical Computer Science</em>, 9(3–4), 211–407.</p>
+<p>Florensa, C., Held, D., Wulfmeier, M., Zhang, M., &amp; Abbeel, P. (2017). Reverse curriculum generation for reinforcement learning. <em>Proceedings of the 1st Annual Conference on Robot Learning (CoRL)</em>.</p>
+<p>Graves, A., Bellemare, M. G., Menick, J., Munos, R., &amp; Kavukcuoglu, K. (2017). Automated curriculum learning for neural networks. <em>Proceedings of the 34th International Conference on Machine Learning (ICML)</em>.</p>
+<p>McMahan, H. B., Moore, E., Ramage, D., Hampson, S., &amp; Arcas, B. A. (2017). Communication-efficient learning of deep networks from decentralized data. <em>Proceedings of the 20th International Conference on Artificial Intelligence and Statistics (AISTATS)</em>.</p>
+<p>Nakano, R., Hilton, J., Balwit, A., et al. (2021). WebGPT: Browser-assisted question-answering with human feedback. <em>arXiv preprint arXiv:2112.09332</em>.</p>
+<p>Nandakumar, K., Ratha, N., Pankanti, S., et al. (2020). Towards deep neural network architectures for detecting privacy sensitive data in IoT. <em>IEEE Internet of Things Journal</em>.</p>
+<p>Poesia, G., Polozov, A., Le, V., et al. (2022). Synchromesh: Reliable code generation from pre-trained language models. <em>International Conference on Learning Representations (ICLR)</em>.</p>
+<p>Portelas, R., Colas, C., Weng, L., Barbaroux, T., &amp; Oudeyer, P. Y. (2020). Automatic curriculum learning for deep RL: A short survey. <em>Proceedings of the 29th International Joint Conference on Artificial Intelligence (IJCAI)</em>.</p>
+<p>Schick, T., Dwivedi-Yu, J., Dessì, R., et al. (2023). Toolformer: Language models can teach themselves to use tools. <em>Advances in Neural Information Processing Systems (NeurIPS)</em>, 36.</p>
+<p>Shao, Z., Wang, P., Zhu, Q., et al. (2024). DeepSeekMath: Pushing the limits of mathematical reasoning in open language models. <em>arXiv preprint arXiv:2402.03300</em>. [GRPO introduced as training algorithm].</p>
+<p>Wang, R., Lehman, J., Clune, J., &amp; Stanley, K. O. (2019). Paired open-ended trailblazer (POET): Endlessly generating increasingly complex and diverse learning environments and their solutions. <em>arXiv preprint arXiv:1901.01753</em>.</p>
+<p>Wang, G., Xie, Y., Jiang, Y., et al. (2023). Voyager: An open-ended embodied agent with large language models. <em>arXiv preprint arXiv:2305.16291</em>.</p>
+<p>Yao, S., Zhao, J., Yu, D., et al. (2022). ReAct: Synergizing reasoning and acting in language models. <em>arXiv preprint arXiv:2210.03629</em>.</p>
+<hr />
+<h2 id="appendix-a-complete-run-registry">Appendix A: Complete Run Registry</h2>
+<p><strong>Table A1: All 12 training runs, configurations, and peak results.</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Experiment</th>
+<th>Steps</th>
+<th>Peak Reward</th>
+<th>Detection</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>4B-Instruct (flat, 200 steps)</td>
+<td>200</td>
+<td>0.871</td>
+<td>0.798</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td>30B-MoE (flat, 200 steps)</td>
+<td>200</td>
+<td>0.875</td>
+<td>0.814</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td>4B-Thinking / CoT (flat, 200 steps)</td>
+<td>199</td>
+<td>0.590</td>
+<td>0.451</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td>30B-MoE-Thinking (flat, 200 steps)</td>
+<td>200</td>
+<td>0.666</td>
+<td>0.445</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Curriculum Easy (100 steps)</td>
+<td>100</td>
+<td>0.692</td>
+<td>0.500</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Curriculum Medium (100 steps) 🏆</strong></td>
+<td>100</td>
+<td><strong>0.912</strong></td>
+<td><strong>0.864</strong></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Curriculum Hard (100 steps)</td>
+<td>99</td>
+<td>0.851</td>
+<td>0.817</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>6</td>
+<td>40-step episodes (medium)</td>
+<td>149</td>
+<td>0.875</td>
+<td>0.799</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>6</td>
+<td>60-step episodes (medium)</td>
+<td>149</td>
+<td>0.858</td>
+<td>0.865</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p>Note: Phase 4 (budget sweep) produced 6 additional training runs at privacy budgets of 25, 50, 75, 100, 150, and 200. These are not tabulated here as they are analysed separately in the budget sweep experiments.</p>
+<h2 id="appendix-b-environment-version-history">Appendix B: Environment Version History</h2>
+<p><strong>Table B1: Environment version changelog.</strong></p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Version</th>
+<th>Key Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.7.0</td>
+<td>Initial release — 18 training scenarios, 20-step episodes, basic PIR + door observations</td>
+</tr>
+<tr>
+<td>0.8.0</td>
+<td>Added 6 held-out test scenarios; added identity leakage and reconstruction risk proxy metrics</td>
+</tr>
+<tr>
+<td>0.9.0</td>
+<td>Added per-scenario difficulty tags (easy/medium/hard); thinking-model output parser (strips <code>&lt;think&gt;</code> blocks); <code>difficulty</code> curriculum parameter in <code>load_environment()</code></td>
+</tr>
+<tr>
+<td>1.0.0</td>
+<td>Added <code>max_turns</code> parameter for variable episode lengths; auto-scaled privacy budget (<span class="math inline">\(B = 5 \times T\)</span>); used by Phase 6 experiments</td>
+</tr>
+</tbody>
+</table>
+<h2 id="appendix-c-reward-function-implementation">Appendix C: Reward Function Implementation</h2>
+<p>The detection reward implementation, accounting for intrusion timesteps, alert matching, and false-alarm penalties:</p>
+<pre class="python"><code>def detection_reward(trajectory: list[dict], scenario: Scenario) -&gt; float:
+    &quot;&quot;&quot;
+    Episode-level detection reward in [0, 1].
+    Gives full credit (1.0) for ESCALATE+HIGH at intrusion timesteps,
+    partial credit (0.5) for NOTIFY/ESCALATE with non-OFF camera,
+    and penalises false alarms on non-intrusion timesteps (-0.1 each).
+    &quot;&quot;&quot;
+    if not scenario.intrusion_timesteps:
+        # Benign scenario: reward is purely based on no false alarms
+        fp_count = sum(
+            1 for t, a in enumerate(trajectory)
+            if a.get(&quot;alert&quot;, &quot;NONE&quot;) != &quot;NONE&quot;
+        )
+        return max(0.0, 1.0 - 0.1 * fp_count)
+    score = 0.0
+    intrusion_set = set(scenario.intrusion_timesteps)
+    false_positive_penalty = 0.0
+    for t, action in enumerate(trajectory):
+        alert   = action.get(&quot;alert&quot;, &quot;NONE&quot;)
+        cam_lvl = action.get(&quot;camera_level&quot;, &quot;OFF&quot;)
+        if t in intrusion_set:
+            if alert == &quot;ESCALATE&quot; and cam_lvl == &quot;HIGH&quot;:
+                score += 1.0          # Full credit
+            elif alert in (&quot;NOTIFY&quot;, &quot;ESCALATE&quot;) and cam_lvl != &quot;OFF&quot;:
+                score += 0.5          # Partial credit
+            # No credit if alert=NONE or camera=OFF during intrusion
+        else:
+            if alert != &quot;NONE&quot;:
+                false_positive_penalty += 0.1   # Penalise false alarms
+    normalised = score / len(intrusion_set)
+    return max(0.0, normalised - false_positive_penalty)</code></pre>
+<h2 id="appendix-d-observation-format">Appendix D: Observation Format</h2>
+<p>A representative formatted observation string (timestep 7 of 20, budget-25 configuration):</p>
+<pre><code>+==========================================================+
+| SMART HOME SECURITY MONITOR - TIMESTEP 7 of 20          |
+|                                                          |
+| Privacy Budget: 11.0 / 25.0 remaining (44%)             |
+|                                                          |
+| Time of Day: 02:14 (late night)                         |
+|                                                          |
++==========================================================+
+| MOTION SENSORS (PIR):                                    |
+|                                                          |
+|   Living Room : 0.00  ..........                        |
+|   Kitchen     : 0.00  ..........                        |
+|   Hallway     : 0.82  ########.. &lt;- elevated            |
+|   Bedroom     : 0.10  #.........                        |
+|                                                          |
++==========================================================+
+| DOORS: front_door = OPEN (opened 2 steps ago)           |
+|                                                          |
+| AUDIO: faint scraping sound detected in hallway         |
+|                                                          |
++==========================================================+
+| Respond with a JSON action. Fields required:             |
+|   camera_room, camera_level, mic_level, alert, reasoning |
++==========================================================+</code></pre>
+<hr />
+
+</div>
