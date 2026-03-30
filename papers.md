@@ -1,5 +1,4 @@
 ---
-title: Projects
 permalink: /papers/
 ---
 

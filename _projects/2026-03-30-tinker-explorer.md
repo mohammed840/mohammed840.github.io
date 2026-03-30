@@ -3,7 +3,8 @@ title: "Teaching an LLM to Explore: Reinforcement Learning for Document Navigati
 date: 2026-03-30
 authors: "Mohammed Alshehri"
 year: 2026
-code: "https://github.com/mohammed840/tinker-explorer"
+pdf: "/autoresearch-explorer.pdf"
+code: "https://github.com/mohammed840/autoresearch-explorer"
 tldr: "We trained a Qwen3-8B model to efficiently search through documents using GRPO, inspired by Karpathy's autoresearch — and what Goodhart's Law taught us along the way."
 highlights:
   - "Lower training reward = better model: the run with the lowest training reward produced the best model."
@@ -38,8 +39,8 @@ abstract: "We present Tinker-Explorer, a reinforcement learning agent that learn
 .paper-content pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; font-size: 0.84em; }
 .paper-content pre code { background: none; padding: 0; }
 .paper-content hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
-.paper-content ol, .paper-content ul { padding-left: 1.5em; }
-.paper-content li { margin-bottom: 0.3em; }
+.paper-content ol, .paper-content ul { list-style: none; padding-left: 0; margin: 0.5em 0; }
+.paper-content li { margin-bottom: 0.3em; padding: 0; }
 </style>
 
 <div class="paper-content">
@@ -109,25 +110,13 @@ abstract: "We present Tinker-Explorer, a reinforcement learning agent that learn
 <p><em>"Which film has the director born first, Once A Gentleman or The Girl In White?"</em></p>
 </blockquote>
 
-<p>A human researcher would:</p>
-<ol>
-<li>Look at the available sources</li>
-<li>Open the article about "Once A Gentleman" to find the director's birth year</li>
-<li>Open the article about "The Girl In White" to do the same</li>
-<li>Compare the two dates and answer</li>
-</ol>
+<p>A human researcher would: look at the available sources, open the article about "Once A Gentleman" to find the director's birth year, open the article about "The Girl In White" to do the same, then compare the two dates and answer.</p>
 
 <p>This process requires <strong>sequential decision-making under uncertainty</strong> — the agent doesn't know which documents are useful until it reads them. This is fundamentally a reinforcement learning problem.</p>
 
 <h3>Why Not Just Retrieve Everything?</h3>
 
-<p>You could argue: "Just open all the documents." But in real-world settings:</p>
-<ul>
-<li>API calls cost money (think: calling a paid knowledge base)</li>
-<li>Context windows have limits</li>
-<li>Irrelevant information introduces noise that degrades LLM performance</li>
-<li>Some documents are red herrings that actively mislead</li>
-</ul>
+<p>You could argue: "Just open all the documents." But in real-world settings, API calls cost money (think: calling a paid knowledge base), context windows have limits, irrelevant information introduces noise that degrades LLM performance, and some documents are red herrings that actively mislead.</p>
 
 <p>The goal isn't just to answer correctly — it's to answer correctly <strong>while reading as few documents as possible</strong>. This is the efficiency-accuracy tradeoff that makes the problem interesting.</p>
 
@@ -140,12 +129,10 @@ abstract: "We present Tinker-Explorer, a reinforcement learning agent that learn
 <h3>State Space</h3>
 
 <p>At each step, the agent observes:</p>
-<ul>
-<li><strong>The question</strong> (e.g., "Who is Marie Zéphyrine Of France's paternal grandmother?")</li>
-<li><strong>A list of chunk previews</strong> — one-line titles of all available documents, but NOT their contents</li>
-<li><strong>Previously opened chunks</strong> — full text of any documents the agent has chosen to read</li>
-<li><strong>Remaining step budget</strong> — how many actions it has left</li>
-</ul>
+<p><strong>The question</strong> (e.g., "Who is Marie Zéphyrine Of France's paternal grandmother?")<br/>
+<strong>A list of chunk previews</strong> — one-line titles of all available documents, but NOT their contents<br/>
+<strong>Previously opened chunks</strong> — full text of any documents the agent has chosen to read<br/>
+<strong>Remaining step budget</strong> — how many actions it has left</p>
 
 <h3>Action Space</h3>
 
@@ -155,21 +142,17 @@ abstract: "We present Tinker-Explorer, a reinforcement learning agent that learn
 {"action": "SUMMARIZE", "target": 3, "text": "Born 1750, daughter of Louis XV..."}
 {"action": "ANSWER", "text": "Marie Leszczyńska"}</code></pre>
 
-<ul>
-<li><strong>OPEN(i)</strong>: Read chunk <code>i</code>'s full text. This is the exploration action.</li>
-<li><strong>SUMMARIZE(i)</strong>: Write a summary of chunk <code>i</code>. This helps manage context length.</li>
-<li><strong>ANSWER(text)</strong>: Submit a final answer. Ends the episode.</li>
-</ul>
+<p><strong>OPEN(i)</strong> — Read chunk <code>i</code>'s full text. This is the exploration action.<br/>
+<strong>SUMMARIZE(i)</strong> — Write a summary of chunk <code>i</code>. This helps manage context length.<br/>
+<strong>ANSWER(text)</strong> — Submit a final answer. Ends the episode.</p>
 
 <h3>Reward Function</h3>
 
 <p>The agent receives reward only when it answers. The reward is the <strong>token-level F1 score</strong> between its predicted answer and the gold answer — a standard metric from the SQuAD literature that gives partial credit for overlapping words.</p>
 
 <p>For example:</p>
-<ul>
-<li>Gold: "The Mask Of Fu Manchu" → Predicted: "The Mask of Fu Manchu" → F1 = 1.0 ✅</li>
-<li>Gold: "Małgorzata Braunek" → Predicted: "Chunk 4 has been opened" → F1 = 0.0 ❌</li>
-</ul>
+<p>Gold: "The Mask Of Fu Manchu" → Predicted: "The Mask of Fu Manchu" → F1 = 1.0 ✅<br/>
+Gold: "Małgorzata Braunek" → Predicted: "Chunk 4 has been opened" → F1 = 0.0 ❌</p>
 
 <h3>Episode Flow</h3>
 
@@ -189,19 +172,15 @@ abstract: "We present Tinker-Explorer, a reinforcement learning agent that learn
 
 <p><strong>Why this dataset?</strong></p>
 
-<ol>
-<li><strong>Natural chunk structure</strong>: Each Wikipedia article is a chunk. The agent must decide which articles to read.</li>
-<li><strong>Ground truth supporting facts</strong>: The dataset provides <code>supporting_facts</code> — which paragraphs contain the answer evidence. This lets us measure whether the agent opens the <em>right</em> documents.</li>
-<li><strong>Multi-hop reasoning</strong>: Questions require combining information from two sources. The agent can't answer from a single document.</li>
-<li><strong>Varied question types</strong>: Comparison ("which film came first"), bridge ("who is the mother of the director of..."), and compositional questions.</li>
-</ol>
+<p><strong>Natural chunk structure</strong> — Each Wikipedia article is a chunk. The agent must decide which articles to read.<br/>
+<strong>Ground truth supporting facts</strong> — The dataset provides <code>supporting_facts</code> — which paragraphs contain the answer evidence. This lets us measure whether the agent opens the <em>right</em> documents.<br/>
+<strong>Multi-hop reasoning</strong> — Questions require combining information from two sources. The agent can't answer from a single document.<br/>
+<strong>Varied question types</strong> — Comparison ("which film came first"), bridge ("who is the mother of the director of..."), and compositional questions.</p>
 
 <h3>Dataset Split</h3>
-<ul>
-<li><strong>Training</strong>: 5,000 tasks (randomly sampled from the full 167K)</li>
-<li><strong>Validation</strong>: 200 held-out tasks for evaluation</li>
-<li><strong>Chunk pool</strong>: Each task has ~10 candidate chunks (2 relevant, ~8 distractors)</li>
-</ul>
+<p><strong>Training</strong>: 5,000 tasks (randomly sampled from the full 167K)<br/>
+<strong>Validation</strong>: 200 held-out tasks for evaluation<br/>
+<strong>Chunk pool</strong>: Each task has ~10 candidate chunks (2 relevant, ~8 distractors)</p>
 
 <hr />
 
@@ -210,12 +189,10 @@ abstract: "We present Tinker-Explorer, a reinforcement learning agent that learn
 <h3>Tinker Platform</h3>
 
 <p>All training runs on <a href="https://tinker.computer/">Tinker</a> (Temporal Intelligence via Neural Knowledge Extraction and Reasoning) — a cloud platform that provides:</p>
-<ul>
-<li><strong>Hosted model weights</strong> — Qwen3-8B with LoRA adapters, no local GPU needed</li>
-<li><strong>Sampling API</strong> — generate completions from the current policy</li>
-<li><strong>Training API</strong> — submit gradient updates (importance-sampled policy gradient)</li>
-<li><strong>Checkpointing</strong> — save/restore model states</li>
-</ul>
+<p><strong>Hosted model weights</strong> — Qwen3-8B with LoRA adapters, no local GPU needed<br/>
+<strong>Sampling API</strong> — generate completions from the current policy<br/>
+<strong>Training API</strong> — submit gradient updates (importance-sampled policy gradient)<br/>
+<strong>Checkpointing</strong> — save/restore model states</p>
 
 <p>This architecture is powerful: the model lives in the cloud, and our local code just orchestrates rollouts and computes gradients. We ran all experiments on a MacBook with no GPU.</p>
 
@@ -223,19 +200,12 @@ abstract: "We present Tinker-Explorer, a reinforcement learning agent that learn
 
 <p>We use <strong>GRPO</strong> — a variant of policy optimization from <a href="https://arxiv.org/abs/2501.12948">DeepSeek-R1</a> — instead of PPO. The key idea:</p>
 
-<ol>
-<li>For each task, sample <code>G = 16</code> trajectories from the current policy</li>
-<li>Compute rewards for all 16</li>
-<li>Normalize rewards within the group: <code>advantage_i = (r_i - mean(r)) / std(r)</code></li>
-<li>Update the policy to increase probability of above-average trajectories</li>
-</ol>
+<p>For each task, sample <code>G = 16</code> trajectories from the current policy. Compute rewards for all 16. Normalize rewards within the group: <code>advantage_i = (r_i - mean(r)) / std(r)</code>. Update the policy to increase probability of above-average trajectories.</p>
 
 <p><strong>Why GRPO over PPO?</strong></p>
-<ul>
-<li><strong>No value function needed</strong> — PPO requires a separate critic network. GRPO computes baselines from the group.</li>
-<li><strong>Natural for language</strong> — each trajectory is a sequence of tokens. GRPO treats the whole sequence as one "action."</li>
-<li><strong>Simpler implementation</strong> — just a weighted policy gradient update, no GAE, no clipping ratio (handled by importance sampling).</li>
-</ul>
+<p><strong>No value function needed</strong> — PPO requires a separate critic network. GRPO computes baselines from the group.<br/>
+<strong>Natural for language</strong> — each trajectory is a sequence of tokens. GRPO treats the whole sequence as one "action."<br/>
+<strong>Simpler implementation</strong> — just a weighted policy gradient update, no GAE, no clipping ratio (handled by importance sampling).</p>
 
 <h3>Hyperparameters</h3>
 
@@ -257,12 +227,7 @@ abstract: "We present Tinker-Explorer, a reinforcement learning agent that learn
 
 <p>Before RL training, we performed supervised fine-tuning (SFT) on 450 demonstration episodes generated by a heuristic policy. This gives the model a reasonable starting point — it knows the action format and basic exploration strategy.</p>
 
-<p>The heuristic policy simply:</p>
-<ol>
-<li>Computes TF-IDF overlap between the question and each chunk title</li>
-<li>Opens the highest-overlap chunk</li>
-<li>Answers with the chunk title (which is often the Wikipedia article title — and therefore the exact entity name)</li>
-</ol>
+<p>The heuristic policy simply: computes TF-IDF overlap between the question and each chunk title, opens the highest-overlap chunk, and answers with the chunk title (which is often the Wikipedia article title — and therefore the exact entity name).</p>
 
 <p>This heuristic achieves <strong>F1 = 0.246</strong> — a surprisingly strong baseline.</p>
 
@@ -371,11 +336,7 @@ abstract: "We present Tinker-Explorer, a reinforcement learning agent that learn
 <figcaption>Prediction breakdown showing 50% of outputs were status text instead of answers</figcaption>
 </figure>
 
-<p><strong>50% of outputs were status text</strong> — things like:</p>
-<ul>
-<li>"Chunk(s) 4 and 7 ('Polish-Russian War' and 'Xawery Żuławski') have been opened."</li>
-<li>"Chunk 0 ('Blind Shaft') has highest overlap with the question."</li>
-</ul>
+<p><strong>50% of outputs were status text</strong> — things like: "Chunk(s) 4 and 7 ('Polish-Russian War' and 'Xawery Żuławski') have been opened." or "Chunk 0 ('Blind Shaft') has highest overlap with the question."</p>
 
 <p>The model was outputting <strong>descriptions of its own actions</strong> instead of answers. It opened the right chunks, formed the right reasoning — then put the reasoning in the answer field instead of the actual answer.</p>
 
@@ -436,12 +397,10 @@ if any(answer_text.lower().startswith(p) for p in _STATUS_PREFIXES):
 </table>
 
 <p>🎉 <strong>Best results across every metric:</strong></p>
-<ul>
-<li><strong>F1 = 0.172</strong> — 40% better than Run 1, 21% better than SFT</li>
-<li><strong>EM = 0.085</strong> — 8.5× better than Run 1</li>
-<li><strong>Answer Rate = 99.5%</strong> — the model almost always gives an answer now</li>
-<li><strong>Efficiency = 1.2 opens</strong> — same as the heuristic, better than SFT</li>
-</ul>
+<p><strong>F1 = 0.172</strong> — 40% better than Run 1, 21% better than SFT<br/>
+<strong>EM = 0.085</strong> — 8.5× better than Run 1<br/>
+<strong>Answer Rate = 99.5%</strong> — the model almost always gives an answer now<br/>
+<strong>Efficiency = 1.2 opens</strong> — same as the heuristic, better than SFT</p>
 
 <figure>
 <img src="/assets/tinker-explorer/comparison/val_all_models.png" alt="Val Results" />
@@ -458,11 +417,9 @@ if any(answer_text.lower().startswith(p) for p in _STATUS_PREFIXES):
 </figure>
 
 <p>Example 2 tells the whole story:</p>
-<ul>
-<li><strong>Run 1</strong>: "Chunk(s) 4 and 7 have been opened." → F1 = 0.00</li>
-<li><strong>Run 2</strong>: "Chunk(s) 4 and 7 have been opened." → F1 = 0.00</li>
-<li><strong>Run 3</strong>: "Małgorzata Braunek" → F1 = 1.00</li>
-</ul>
+<p><strong>Run 1</strong>: "Chunk(s) 4 and 7 have been opened." → F1 = 0.00<br/>
+<strong>Run 2</strong>: "Chunk(s) 4 and 7 have been opened." → F1 = 0.00<br/>
+<strong>Run 3</strong>: "Małgorzata Braunek" → F1 = 1.00</p>
 
 <p>The model opened the right documents in all three runs. The reasoning was correct in all three runs. The only difference was <strong>what it put in the answer field</strong>.</p>
 
@@ -491,11 +448,9 @@ if any(answer_text.lower().startswith(p) for p in _STATUS_PREFIXES):
 <p><strong>The run with the lowest training reward produced the best model.</strong></p>
 
 <p>Why? Because each successive run used a <strong>stricter, more honest reward function</strong>:</p>
-<ul>
-<li>Run 1's reward was easy to earn (bonus for opens) but misleading</li>
-<li>Run 2's reward was harder (F1 only) but still didn't penalize status text</li>
-<li>Run 3's reward was the hardest (F1 + status text penalty) but most aligned with what we actually want</li>
-</ul>
+<p>Run 1's reward was easy to earn (bonus for opens) but misleading.<br/>
+Run 2's reward was harder (F1 only) but still didn't penalize status text.<br/>
+Run 3's reward was the hardest (F1 + status text penalty) but most aligned with what we actually want.</p>
 
 <p>Each time we made the reward harder, the training curves looked worse — but the model learned better behaviors. This is the opposite of what intuition suggests. Most practitioners assume higher training reward = better learning. Our experience shows that <strong>reward quality matters more than reward quantity</strong>.</p>
 
@@ -542,11 +497,9 @@ if any(answer_text.lower().startswith(p) for p in _STATUS_PREFIXES):
 
 <p>The heuristic still leads by 30%. Why?</p>
 
-<ol>
-<li><strong>Exact entity names</strong>: The heuristic uses Wikipedia article titles as answers, which happen to be the exact entity names that 2WikiMultiHopQA expects. The RL model generates free-text that may paraphrase or include minor variations.</li>
-<li><strong>Formatting</strong>: "The Mask Of Fu Manchu" vs "The Mask of Fu Manchu" — capitalization differences reduce F1.</li>
-<li><strong>Inherent difficulty</strong>: Some questions require reasoning chains the 8B model struggles with, regardless of which documents it reads.</li>
-</ol>
+<p><strong>Exact entity names</strong> — The heuristic uses Wikipedia article titles as answers, which happen to be the exact entity names that 2WikiMultiHopQA expects. The RL model generates free-text that may paraphrase or include minor variations.<br/>
+<strong>Formatting</strong> — "The Mask Of Fu Manchu" vs "The Mask of Fu Manchu" — capitalization differences reduce F1.<br/>
+<strong>Inherent difficulty</strong> — Some questions require reasoning chains the 8B model struggles with, regardless of which documents it reads.</p>
 
 <h3>Cumulative Reward</h3>
 
@@ -583,12 +536,7 @@ if any(answer_text.lower().startswith(p) for p in _STATUS_PREFIXES):
 
 <h3>5. Infrastructure Resilience is a First-Class Concern</h3>
 
-<p>Across three runs (~300 total batches), we experienced:</p>
-<ul>
-<li>2 network timeouts requiring session restart</li>
-<li>1 tensor alignment bug requiring code fix</li>
-<li>Multiple loss spikes from importance sampling ratios</li>
-</ul>
+<p>Across three runs (~300 total batches), we experienced: 2 network timeouts requiring session restart, 1 tensor alignment bug requiring code fix, and multiple loss spikes from importance sampling ratios.</p>
 
 <p>Long-running RL experiments need: checkpointing every N batches, automatic resume logic, and gradient clipping. These aren't optional — they're survival features.</p>
 
@@ -606,26 +554,20 @@ if any(answer_text.lower().startswith(p) for p in _STATUS_PREFIXES):
 
 <h3>Near-Term (Runs 4-5)</h3>
 
-<ol>
-<li><strong>Exact Match reward</strong> — Replace token F1 with binary EM. The heuristic wins because its answers are exact matches. Training for EM directly would close the gap, though the sparser signal needs a larger GROUP_SIZE (32 or 64).</li>
-<li><strong>Post-processing cleanup</strong> — Strip common prefixes ("The answer is...", "Based on the text...") at eval time. This is a free 2-3% F1 improvement.</li>
-<li><strong>Few-shot prompting</strong> — Add 3-4 worked examples to the system prompt showing the complete question → open → answer flow.</li>
-</ol>
+<p><strong>Exact Match reward</strong> — Replace token F1 with binary EM. The heuristic wins because its answers are exact matches. Training for EM directly would close the gap, though the sparser signal needs a larger GROUP_SIZE (32 or 64).<br/>
+<strong>Post-processing cleanup</strong> — Strip common prefixes ("The answer is...", "Based on the text...") at eval time. This is a free 2-3% F1 improvement.<br/>
+<strong>Few-shot prompting</strong> — Add 3-4 worked examples to the system prompt showing the complete question → open → answer flow.</p>
 
 <h3>Medium-Term</h3>
 
-<ol start="4">
-<li><strong>Larger GROUP_SIZE</strong> (32-64) — More rollouts per task reduce variance, which is critical with sparser rewards.</li>
-<li><strong>Curriculum learning</strong> — Start with easier questions (single-hop) and gradually introduce multi-hop. This provides denser early reward without sacrificing eventual difficulty.</li>
-<li><strong>SEARCH(q) sub-action</strong> — Let the agent compose sub-queries. Instead of just opening chunks by index, it could search for "director of Polish-Russian War" and get filtered results.</li>
-</ol>
+<p><strong>Larger GROUP_SIZE</strong> (32-64) — More rollouts per task reduce variance, which is critical with sparser rewards.<br/>
+<strong>Curriculum learning</strong> — Start with easier questions (single-hop) and gradually introduce multi-hop. This provides denser early reward without sacrificing eventual difficulty.<br/>
+<strong>SEARCH(q) sub-action</strong> — Let the agent compose sub-queries. Instead of just opening chunks by index, it could search for "director of Polish-Russian War" and get filtered results.</p>
 
 <h3>Long-Term</h3>
 
-<ol start="7">
-<li><strong>Larger models</strong> — Qwen3-8B is capable but limited. 14B or 32B models may have stronger reasoning that translates to better exploration.</li>
-<li><strong>Multi-hop reasoning chains</strong> — Visualize and reward intermediate reasoning steps, not just the final answer.</li>
-</ol>
+<p><strong>Larger models</strong> — Qwen3-8B is capable but limited. 14B or 32B models may have stronger reasoning that translates to better exploration.<br/>
+<strong>Multi-hop reasoning chains</strong> — Visualize and reward intermediate reasoning steps, not just the final answer.</p>
 
 <hr />
 
@@ -657,11 +599,9 @@ if any(answer_text.lower().startswith(p) for p in _STATUS_PREFIXES):
 <h3>Reproducibility</h3>
 
 <p>All metrics, checkpoints, and evaluation results are saved in the repository:</p>
-<ul>
-<li><code>logs/rl-run-v{1,2,3}/metrics.jsonl</code> — per-batch training metrics</li>
-<li><code>logs/eval-rl-v1.json</code> — full per-task evaluation results</li>
-<li><code>runs/run_{1,2,3}_*.md</code> — detailed run reports with interpretation</li>
-</ul>
+<p><code>logs/rl-run-v{1,2,3}/metrics.jsonl</code> — per-batch training metrics<br/>
+<code>logs/eval-rl-v1.json</code> — full per-task evaluation results<br/>
+<code>runs/run_{1,2,3}_*.md</code> — detailed run reports with interpretation</p>
 
 <hr />
 
