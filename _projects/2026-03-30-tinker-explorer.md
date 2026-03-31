@@ -72,7 +72,7 @@ abstract: "We present Tinker-Explorer, a reinforcement learning agent that learn
 
 <h2 id="1-introduction--the-autoresearch-connection">1. Introduction — The Autoresearch Connection</h2>
 
-<p>In January 2025, Andrej Karpathy <a href="https://x.com/karpathy/status/1884359634653819353">announced autoresearch</a> — a project where an AI agent autonomously improves a language model by searching over code edits, running experiments within a 5-minute budget, and optimizing validation perplexity. The core insight was simple but profound: <strong>give an agent a search space, a budget, and a scalar reward, then let reinforcement learning do the rest.</strong></p>
+<p>In March 2025, Andrej Karpathy <a href="https://x.com/karpathy/status/2031135152349524125?s=20">announced autoresearch</a> — a project where an AI agent autonomously improves a language model by searching over code edits, running experiments within a 5-minute budget, and optimizing validation perplexity. The core insight was simple but profound: <strong>give an agent a search space, a budget, and a scalar reward, then let reinforcement learning do the rest.</strong></p>
 
 <p>Karpathy's search space was code modifications. Ours is something different: <strong>document exploration</strong>.</p>
 
@@ -188,7 +188,7 @@ Gold: "Małgorzata Braunek" → Predicted: "Chunk 4 has been opened" → F1 = 0.
 
 <h3>Tinker Platform</h3>
 
-<p>All training runs on <a href="https://tinker.computer/">Tinker</a> (Temporal Intelligence via Neural Knowledge Extraction and Reasoning) — a cloud platform that provides:</p>
+<p>All training runs on <a href="https://thinkingmachines.ai/tinker/">Tinker</a> (Temporal Intelligence via Neural Knowledge Extraction and Reasoning) — a cloud platform that provides:</p>
 <p><strong>Hosted model weights</strong> — Qwen3-8B with LoRA adapters, no local GPU needed<br/>
 <strong>Sampling API</strong> — generate completions from the current policy<br/>
 <strong>Training API</strong> — submit gradient updates (importance-sampled policy gradient)<br/>
@@ -594,7 +594,7 @@ Run 3's reward was the hardest (F1 + status text penalty) but most aligned with 
 
 <h3>Compute</h3>
 
-<p>All experiments ran on a MacBook Pro with no local GPU. Model inference and gradient computation happened on <a href="https://tinker.computer/">Tinker's</a> cloud infrastructure. Total wall-clock time across 3 runs: ~40 hours. Estimated cloud compute: ~120 GPU-hours (Qwen3-8B with LoRA on A100-equivalent).</p>
+<p>All experiments ran on a MacBook Pro with no local GPU. Model inference and gradient computation happened on <a href="https://thinkingmachines.ai/tinker/">Tinker's</a> cloud infrastructure. Total wall-clock time across 3 runs: ~40 hours. Estimated cloud compute: ~120 GPU-hours (Qwen3-8B with LoRA on A100-equivalent).</p>
 
 <h3>Reproducibility</h3>
 
@@ -605,6 +605,6 @@ Run 3's reward was the hardest (F1 + status text penalty) but most aligned with 
 
 <hr />
 
-<p><em>This project was built as a research experiment exploring RL for language agent training. The code, data, and this post are available for educational purposes. Inspired by <a href="https://x.com/karpathy/status/1884359634653819353">Karpathy's autoresearch</a>, built on <a href="https://tinker.computer/">Tinker</a>.</em></p>
+<p><em>This project was built as a research experiment exploring RL for language agent training. The code, data, and this post are available for educational purposes. Inspired by <a href="https://x.com/karpathy/status/2031135152349524125?s=20">Karpathy's autoresearch</a>, built on <a href="https://thinkingmachines.ai/tinker/">Tinker</a>.</em></p>
 
 </div>
