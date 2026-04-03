@@ -7,7 +7,9 @@ description: "On calibration, compromise, and the art of remaining fully yoursel
 
 ## How to Live When You Feel Like an Outlier
 
-![A breathtaking view of Europe — there is something timeless and deeply stirring about this image, the kind of scene that makes you stop scrolling and just feel. It captures the quiet grandeur of a continent that has shaped so much of art, philosophy, and human thought. The perfect visual anchor for a piece about finding your place in the world.](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbChb0H6wBfMxcZmgQskZS3VpuzvZnSFuKYA&s)
+<div style="text-align: center; margin: 2rem auto;">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbChb0H6wBfMxcZmgQskZS3VpuzvZnSFuKYA&s" alt="A breathtaking view of Europe — there is something timeless and deeply stirring about this image, the kind of scene that makes you stop scrolling and just feel. It captures the quiet grandeur of a continent that has shaped so much of art, philosophy, and human thought. The perfect visual anchor for a piece about finding your place in the world." style="width: 100%; max-width: 700px; border-radius: 8px;" />
+</div>
 
 There is a strange kind of loneliness that comes with feeling like you do not naturally belong to the room you are standing in.
 
