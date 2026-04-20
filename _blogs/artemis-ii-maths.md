@@ -38,7 +38,7 @@ $$ v = \sqrt{\frac{GM}{r}} $$
 At this stage, the problem becomes significantly more complex. Near Earth, the motion can be approximated as a two-body system involving only the Earth and the spacecraft. However, as the spacecraft moves farther away, the Moon's gravitational influence becomes non-negligible.
 
 <div style="text-align: center; margin: 2rem auto;">
-  <img src="https://prod-storage20241010144745140900000001.s3.amazonaws.com/63dbb64e-dcee-4186-b4c0-da9743468e6c.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UOK6OVBOUYL7WYA%2F20260414%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260414T093516Z&X-Amz-Expires=43200&X-Amz-SignedHeaders=host&X-Amz-Signature=8ea08e634edc2d5d441548aec26ea6194dd388c19a94294fe1ba69fb7f9180bd" alt="Artemis II Lunar Orbit Visualization" style="width: 100%; max-width: 700px; border-radius: 8px;" />
+  <img src="/assets/artemis-ii/6159ee3b-b38b-4028-8873-6d9f5f418113.png" alt="Artemis II Lunar Orbit Visualization" style="width: 100%; max-width: 700px; border-radius: 8px;" />
 </div>
 
 The equation of motion must then include contributions from both the Earth and the Moon:
@@ -70,7 +70,7 @@ The precise optimization of these paths often utilizes the Euler-Lagrange framew
 $$ \frac{d}{dt} \left( \frac{\partial L}{\partial \dot{\mathbf{r}}} \right) - \frac{\partial L}{\partial \mathbf{r}} = 0 $$
 
 <div style="text-align: center; margin: 2rem auto;">
-  <img src="https://prod-storage20241010144745140900000001.s3.amazonaws.com/850ab8d0-76a2-46ef-9405-d4dcc6bf07db.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UOK6OVBOUYL7WYA%2F20260414%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260414T093507Z&X-Amz-Expires=43200&X-Amz-SignedHeaders=host&X-Amz-Signature=de93b388cf01c987c6479da9fa82c586ff7dfe3648dcd19926b782b436a4d9c6" alt="Earth-Moon Trajectory Optimization" style="width: 100%; max-width: 700px; border-radius: 8px;" />
+  <img src="/assets/artemis-ii/6d299182-9aea-4e8c-a571-d75b68b89c90.png" alt="Earth-Moon Trajectory Optimization" style="width: 100%; max-width: 700px; border-radius: 8px;" />
 </div>
 
 ### From Apollo to Artemis
