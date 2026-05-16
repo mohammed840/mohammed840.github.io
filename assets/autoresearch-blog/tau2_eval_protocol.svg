@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="360" viewBox="0 0 1180 360" role="img" aria-labelledby="title desc">
+  <title id="title">tau2 evaluation protocol</title>
+  <desc id="desc">The evaluation protocol uses discovery tasks, candidate development, and a heldout split.</desc>
+  <rect width="1180" height="360" fill="#f9fafb"/>
+  <text x="50" y="56" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="700" fill="#0f172a">tau2 Evaluation Protocol</text>
+  <text x="50" y="86" font-family="Inter, Arial, sans-serif" font-size="15" fill="#475569">Candidate changes are judged on heldout task IDs, with a gate that can reject reward-only improvements.</text>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="70" y="140" width="295" height="118" rx="12" fill="#e0f2fe" stroke="#0284c7"/>
+    <text x="218" y="172" text-anchor="middle" font-size="17" font-weight="700" fill="#075985">Discovery / Train</text>
+    <text x="218" y="202" text-anchor="middle" font-size="13" fill="#0369a1">retail tasks 0-23</text>
+    <text x="218" y="226" text-anchor="middle" font-size="13" fill="#0369a1">find recurring failures</text>
+    <rect x="443" y="140" width="295" height="118" rx="12" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="590" y="172" text-anchor="middle" font-size="17" font-weight="700" fill="#4c1d95">Candidate Program</text>
+    <text x="590" y="202" text-anchor="middle" font-size="13" fill="#5b21b6">v5 reliable cross-order</text>
+    <text x="590" y="226" text-anchor="middle" font-size="13" fill="#5b21b6">single editable file</text>
+    <rect x="815" y="140" width="295" height="118" rx="12" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="963" y="172" text-anchor="middle" font-size="17" font-weight="700" fill="#14532d">Heldout Evaluation</text>
+    <text x="963" y="202" text-anchor="middle" font-size="13" fill="#166534">retail tasks 20-29</text>
+    <text x="963" y="226" text-anchor="middle" font-size="13" fill="#166534">reward + action match</text>
+    <path d="M365 199 H435" stroke="#64748b" stroke-width="2.4"/>
+    <path d="M738 199 H807" stroke="#64748b" stroke-width="2.4"/>
+    <text x="590" y="306" text-anchor="middle" font-size="14" fill="#475569">Promotion requires improved heldout reward plus no action-quality regressions, no task regressions, and no max-step loops.</text>
+  </g>
+</svg>

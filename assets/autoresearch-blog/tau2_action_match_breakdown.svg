@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="480" viewBox="0 0 1180 480" role="img" aria-labelledby="title desc">
+  <title id="title">Action match breakdown</title>
+  <desc id="desc">Grouped bar chart comparing baseline and candidate action match metrics.</desc>
+  <rect width="1180" height="480" fill="#ffffff"/>
+  <text x="54" y="54" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="700" fill="#111827">Action Discipline Improved</text>
+  <text x="54" y="84" font-family="Inter, Arial, sans-serif" font-size="15" fill="#4b5563">The candidate did not only improve final reward; it also aligned better with expected read/write tool behavior.</text>
+  <line x1="100" y1="390" x2="1080" y2="390" stroke="#d1d5db"/>
+  <line x1="100" y1="150" x2="1080" y2="150" stroke="#e5e7eb"/>
+  <line x1="100" y1="210" x2="1080" y2="210" stroke="#e5e7eb"/>
+  <line x1="100" y1="270" x2="1080" y2="270" stroke="#e5e7eb"/>
+  <line x1="100" y1="330" x2="1080" y2="330" stroke="#e5e7eb"/>
+  <g font-family="Inter, Arial, sans-serif" font-size="12" fill="#6b7280">
+    <text x="75" y="394" text-anchor="end">0.0</text>
+    <text x="75" y="334" text-anchor="end">0.25</text>
+    <text x="75" y="274" text-anchor="end">0.50</text>
+    <text x="75" y="214" text-anchor="end">0.75</text>
+    <text x="75" y="154" text-anchor="end">1.0</text>
+  </g>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="205" y="288.5" width="56" height="101.5" fill="#94a3b8"/>
+    <rect x="271" y="205.4" width="56" height="184.6" fill="#2563eb"/>
+    <text x="233" y="276" text-anchor="middle" font-size="12" fill="#334155">0.423</text>
+    <text x="299" y="193" text-anchor="middle" font-size="12" fill="#1d4ed8">0.769</text>
+    <text x="266" y="428" text-anchor="middle" font-size="14" fill="#111827">overall</text>
+    <rect x="520" y="274" width="56" height="116" fill="#94a3b8"/>
+    <rect x="586" y="198" width="56" height="192" fill="#2563eb"/>
+    <text x="548" y="262" text-anchor="middle" font-size="12" fill="#334155">0.483</text>
+    <text x="614" y="186" text-anchor="middle" font-size="12" fill="#1d4ed8">0.800</text>
+    <text x="581" y="428" text-anchor="middle" font-size="14" fill="#111827">read actions</text>
+    <rect x="835" y="326" width="56" height="64" fill="#94a3b8"/>
+    <rect x="901" y="198" width="56" height="192" fill="#2563eb"/>
+    <text x="863" y="314" text-anchor="middle" font-size="12" fill="#334155">0.267</text>
+    <text x="929" y="186" text-anchor="middle" font-size="12" fill="#1d4ed8">0.800</text>
+    <text x="896" y="428" text-anchor="middle" font-size="14" fill="#111827">write actions</text>
+  </g>
+  <rect x="872" y="54" width="16" height="16" fill="#94a3b8"/>
+  <text x="896" y="67" font-family="Inter, Arial, sans-serif" font-size="13" fill="#475569">baseline</text>
+  <rect x="970" y="54" width="16" height="16" fill="#2563eb"/>
+  <text x="994" y="67" font-family="Inter, Arial, sans-serif" font-size="13" fill="#475569">candidate v5</text>
+</svg>

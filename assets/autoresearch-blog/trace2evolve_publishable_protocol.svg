@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="420" viewBox="0 0 980 420" role="img" aria-labelledby="title desc">
+  <title id="title">Trace2Evolve publishable research protocol</title>
+  <desc id="desc">Diagram showing real benchmark discovery, candidate design, unseen benchmark holdout, synthetic pressure testing, and keep/discard gate.</desc>
+  <rect width="980" height="420" fill="#f8fafc"/>
+  <text x="44" y="48" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#111827">Trace2Evolve Research Protocol</text>
+  <text x="44" y="78" font-family="Arial, sans-serif" font-size="14" fill="#475569">The proof comes from unseen tau2 benchmark tasks. Synthetic data is a final pressure test, not the main claim.</text>
+
+  <rect x="50" y="125" width="160" height="82" rx="8" fill="#fff" stroke="#94a3b8"/>
+  <text x="82" y="156" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">Real tau2</text>
+  <text x="72" y="181" font-family="Arial, sans-serif" font-size="13" fill="#475569">discovery traces</text>
+
+  <path d="M220 166 H292" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="305" y="125" width="160" height="82" rx="8" fill="#fff" stroke="#94a3b8"/>
+  <text x="337" y="156" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">Failure</text>
+  <text x="330" y="181" font-family="Arial, sans-serif" font-size="13" fill="#475569">classification</text>
+
+  <path d="M475 166 H547" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="560" y="125" width="160" height="82" rx="8" fill="#fff" stroke="#94a3b8"/>
+  <text x="595" y="156" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">Candidate</text>
+  <text x="587" y="181" font-family="Arial, sans-serif" font-size="13" fill="#475569">program change</text>
+
+  <path d="M730 166 H802" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="815" y="125" width="125" height="82" rx="8" fill="#ecfeff" stroke="#0891b2"/>
+  <text x="846" y="156" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#155e75">Freeze</text>
+  <text x="837" y="181" font-family="Arial, sans-serif" font-size="13" fill="#155e75">candidate</text>
+
+  <path d="M878 214 V263" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="730" y="275" width="210" height="82" rx="8" fill="#fff" stroke="#94a3b8"/>
+  <text x="766" y="306" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">Unseen tau2</text>
+  <text x="760" y="331" font-family="Arial, sans-serif" font-size="13" fill="#475569">final holdout proof</text>
+
+  <path d="M720 316 H648" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="445" y="275" width="190" height="82" rx="8" fill="#fff" stroke="#94a3b8"/>
+  <text x="477" y="306" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">Reliability gate</text>
+  <text x="475" y="331" font-family="Arial, sans-serif" font-size="13" fill="#475569">reward + regressions</text>
+
+  <path d="M435 316 H363" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="190" y="275" width="160" height="82" rx="8" fill="#fff" stroke="#94a3b8"/>
+  <text x="225" y="306" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">Decision</text>
+  <text x="213" y="331" font-family="Arial, sans-serif" font-size="13" fill="#475569">keep or discard</text>
+
+  <path d="M878 214 C878 242 594 238 594 263" stroke="#64748b" stroke-width="2" fill="none" stroke-dasharray="5 5" marker-end="url(#arrowMuted)"/>
+  <text x="548" y="246" font-family="Arial, sans-serif" font-size="12" fill="#64748b">synthetic hidden holdout: final pressure only</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <marker id="arrowMuted" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>

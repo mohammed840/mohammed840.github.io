@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="440" viewBox="0 0 1180 440" role="img" aria-labelledby="title desc">
+  <title id="title">Reliability gate matrix</title>
+  <desc id="desc">Matrix of promotion gate checks for candidate v5.</desc>
+  <rect width="1180" height="440" fill="#f8fafc"/>
+  <text x="54" y="56" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="700" fill="#111827">Promotion Gate Matrix</text>
+  <text x="54" y="86" font-family="Inter, Arial, sans-serif" font-size="15" fill="#475569">v5 is promoted because it improves reward and passes every reliability check.</text>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="80" y="126" width="1020" height="250" rx="12" fill="#ffffff" stroke="#e5e7eb"/>
+    <g font-size="14">
+      <text x="120" y="166" font-weight="700" fill="#111827">Check</text>
+      <text x="860" y="166" font-weight="700" fill="#111827">Status</text>
+      <line x1="100" y1="184" x2="1080" y2="184" stroke="#e5e7eb"/>
+      <text x="120" y="216" fill="#374151">Reward improved</text>
+      <text x="860" y="216" fill="#15803d" font-weight="700">PASS</text>
+      <text x="120" y="246" fill="#374151">Pass rate not worse</text>
+      <text x="860" y="246" fill="#15803d" font-weight="700">PASS</text>
+      <text x="120" y="276" fill="#374151">Overall/read/write action match not worse</text>
+      <text x="860" y="276" fill="#15803d" font-weight="700">PASS</text>
+      <text x="120" y="306" fill="#374151">No task reward regressions</text>
+      <text x="860" y="306" fill="#15803d" font-weight="700">PASS</text>
+      <text x="120" y="336" fill="#374151">No max-step loops</text>
+      <text x="860" y="336" fill="#15803d" font-weight="700">PASS</text>
+    </g>
+  </g>
+</svg>

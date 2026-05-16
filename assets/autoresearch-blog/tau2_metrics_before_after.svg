@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="460" viewBox="0 0 920 460" role="img" aria-labelledby="title desc">
+  <title id="title">Trace2Evolve tau2 retail before and after metrics</title>
+  <desc id="desc">Bar chart comparing baseline and promoted v5 candidate on reward, pass rate, action match, read action match, and write action match.</desc>
+  <rect width="920" height="460" fill="#fbfbf8"/>
+  <text x="40" y="48" fill="#1b1f24" font-family="Arial, sans-serif" font-size="24" font-weight="700">tau2 retail holdout: before vs promoted candidate</text>
+  <text x="40" y="78" fill="#606975" font-family="Arial, sans-serif" font-size="14">Holdout split: retail tasks 20-29. Candidate: tau2-retail-candidate-v5-reliable-cross-order.</text>
+  <line x1="86" y1="365" x2="870" y2="365" stroke="#c7ccd1" stroke-width="1"/>
+  <line x1="86" y1="305" x2="870" y2="305" stroke="#e6e8ea" stroke-width="1"/>
+  <line x1="86" y1="245" x2="870" y2="245" stroke="#e6e8ea" stroke-width="1"/>
+  <line x1="86" y1="185" x2="870" y2="185" stroke="#e6e8ea" stroke-width="1"/>
+  <line x1="86" y1="125" x2="870" y2="125" stroke="#e6e8ea" stroke-width="1"/>
+  <text x="52" y="369" fill="#6b7280" font-family="Arial, sans-serif" font-size="12">0.0</text>
+  <text x="52" y="309" fill="#6b7280" font-family="Arial, sans-serif" font-size="12">0.2</text>
+  <text x="52" y="249" fill="#6b7280" font-family="Arial, sans-serif" font-size="12">0.4</text>
+  <text x="52" y="189" fill="#6b7280" font-family="Arial, sans-serif" font-size="12">0.6</text>
+  <text x="52" y="129" fill="#6b7280" font-family="Arial, sans-serif" font-size="12">0.8</text>
+  <text x="52" y="99" fill="#6b7280" font-family="Arial, sans-serif" font-size="12">1.0</text>
+
+  <g font-family="Arial, sans-serif" font-size="13" text-anchor="middle">
+    <rect x="118" y="275" width="34" height="90" rx="4" fill="#9aa4b2"/>
+    <rect x="158" y="185" width="34" height="180" rx="4" fill="#2f7d5c"/>
+    <text x="155" y="393" fill="#1b1f24">Reward</text>
+    <text x="135" y="267" fill="#4b5563">0.30</text>
+    <text x="175" y="177" fill="#1f513e">0.60</text>
+
+    <rect x="270" y="275" width="34" height="90" rx="4" fill="#9aa4b2"/>
+    <rect x="310" y="185" width="34" height="180" rx="4" fill="#2f7d5c"/>
+    <text x="307" y="393" fill="#1b1f24">Pass rate</text>
+    <text x="287" y="267" fill="#4b5563">0.30</text>
+    <text x="327" y="177" fill="#1f513e">0.60</text>
+
+    <rect x="422" y="238" width="34" height="127" rx="4" fill="#9aa4b2"/>
+    <rect x="462" y="134" width="34" height="231" rx="4" fill="#4169a8"/>
+    <text x="459" y="393" fill="#1b1f24">Action match</text>
+    <text x="439" y="230" fill="#4b5563">0.423</text>
+    <text x="479" y="126" fill="#27436b">0.769</text>
+
+    <rect x="574" y="220" width="34" height="145" rx="4" fill="#9aa4b2"/>
+    <rect x="614" y="125" width="34" height="240" rx="4" fill="#4169a8"/>
+    <text x="611" y="393" fill="#1b1f24">Read match</text>
+    <text x="591" y="212" fill="#4b5563">0.483</text>
+    <text x="631" y="117" fill="#27436b">0.800</text>
+
+    <rect x="726" y="285" width="34" height="80" rx="4" fill="#9aa4b2"/>
+    <rect x="766" y="125" width="34" height="240" rx="4" fill="#b15f2a"/>
+    <text x="763" y="393" fill="#1b1f24">Write match</text>
+    <text x="743" y="277" fill="#4b5563">0.267</text>
+    <text x="783" y="117" fill="#763f1c">0.800</text>
+  </g>
+
+  <rect x="630" y="34" width="16" height="16" rx="3" fill="#9aa4b2"/>
+  <text x="654" y="47" fill="#4b5563" font-family="Arial, sans-serif" font-size="13">Baseline</text>
+  <rect x="730" y="34" width="16" height="16" rx="3" fill="#2f7d5c"/>
+  <text x="754" y="47" fill="#4b5563" font-family="Arial, sans-serif" font-size="13">Promoted v5</text>
+  <text x="40" y="435" fill="#6b7280" font-family="Arial, sans-serif" font-size="12">Source: results/tau2_scores.tsv and runs/research/tau2_harness/2026-05-16T164149Z0000.json</text>
+</svg>

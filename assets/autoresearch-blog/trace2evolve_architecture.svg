@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="520" viewBox="0 0 1180 520" role="img" aria-labelledby="title desc">
+  <title id="title">Trace2Evolve architecture</title>
+  <desc id="desc">Architecture layers for the benchmark, candidate, harness, evidence, and dashboard.</desc>
+  <rect width="1180" height="520" fill="#ffffff"/>
+  <text x="50" y="54" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700" fill="#111827">Trace2Evolve Architecture</text>
+  <text x="50" y="84" font-family="Inter, Arial, sans-serif" font-size="15" fill="#4b5563">Locked evaluation world stays separate from the editable candidate and research harness.</text>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="60" y="126" width="240" height="270" rx="12" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="180" y="160" text-anchor="middle" font-size="18" font-weight="700" fill="#111827">Locked World</text>
+    <text x="180" y="190" text-anchor="middle" font-size="13" fill="#374151">support data</text>
+    <text x="180" y="216" text-anchor="middle" font-size="13" fill="#374151">policies</text>
+    <text x="180" y="242" text-anchor="middle" font-size="13" fill="#374151">tools</text>
+    <text x="180" y="268" text-anchor="middle" font-size="13" fill="#374151">scoring contracts</text>
+    <text x="180" y="320" text-anchor="middle" font-size="12" fill="#6b7280">trace2evolve/locked/</text>
+    <text x="180" y="346" text-anchor="middle" font-size="12" fill="#6b7280">tau2-bench retail</text>
+    <rect x="365" y="126" width="230" height="270" rx="12" fill="#ecfeff" stroke="#0891b2"/>
+    <text x="480" y="160" text-anchor="middle" font-size="18" font-weight="700" fill="#164e63">Editable Candidate</text>
+    <text x="480" y="194" text-anchor="middle" font-size="13" fill="#155e75">program.py</text>
+    <text x="480" y="220" text-anchor="middle" font-size="13" fill="#155e75">routing rules</text>
+    <text x="480" y="246" text-anchor="middle" font-size="13" fill="#155e75">tool discipline</text>
+    <text x="480" y="272" text-anchor="middle" font-size="13" fill="#155e75">candidate metadata</text>
+    <text x="480" y="320" text-anchor="middle" font-size="12" fill="#0e7490">trace2evolve/program.py</text>
+    <rect x="660" y="126" width="220" height="270" rx="12" fill="#fefce8" stroke="#ca8a04"/>
+    <text x="770" y="160" text-anchor="middle" font-size="18" font-weight="700" fill="#713f12">Harness</text>
+    <text x="770" y="194" text-anchor="middle" font-size="13" fill="#854d0e">prepare</text>
+    <text x="770" y="220" text-anchor="middle" font-size="13" fill="#854d0e">evaluate</text>
+    <text x="770" y="246" text-anchor="middle" font-size="13" fill="#854d0e">auto_tau2</text>
+    <text x="770" y="272" text-anchor="middle" font-size="13" fill="#854d0e">reliability gate</text>
+    <text x="770" y="320" text-anchor="middle" font-size="12" fill="#a16207">trace2evolve/autoresearch/</text>
+    <rect x="945" y="126" width="190" height="270" rx="12" fill="#f0fdf4" stroke="#16a34a"/>
+    <text x="1040" y="160" text-anchor="middle" font-size="18" font-weight="700" fill="#14532d">Evidence</text>
+    <text x="1040" y="194" text-anchor="middle" font-size="13" fill="#166534">scoreboard</text>
+    <text x="1040" y="220" text-anchor="middle" font-size="13" fill="#166534">summary JSON</text>
+    <text x="1040" y="246" text-anchor="middle" font-size="13" fill="#166534">dashboard</text>
+    <text x="1040" y="272" text-anchor="middle" font-size="13" fill="#166534">blog assets</text>
+    <text x="1040" y="320" text-anchor="middle" font-size="12" fill="#15803d">results/ + runs/</text>
+    <path d="M300 260 H357" stroke="#6b7280" stroke-width="2.2" marker-end="url(#arrow)"/>
+    <path d="M595 260 H652" stroke="#6b7280" stroke-width="2.2" marker-end="url(#arrow)"/>
+    <path d="M880 260 H937" stroke="#6b7280" stroke-width="2.2" marker-end="url(#arrow)"/>
+    <rect x="220" y="430" width="740" height="48" rx="8" fill="#111827"/>
+    <text x="590" y="460" text-anchor="middle" font-size="14" fill="#f9fafb">Rule: patch candidate/harness, never mutate the locked benchmark to improve a score.</text>
+  </g>
+</svg>

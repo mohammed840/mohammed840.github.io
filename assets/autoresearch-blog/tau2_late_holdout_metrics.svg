@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="480" viewBox="0 0 1180 480" role="img" aria-labelledby="title desc">
+  <title id="title">Late holdout before and after metrics</title>
+  <desc id="desc">Baseline versus candidate metrics for tau2 retail tasks 100-113.</desc>
+  <rect width="1180" height="480" fill="#ffffff"/>
+  <text x="54" y="54" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="700" fill="#111827">Late Holdout: Baseline vs Frozen Candidate</text>
+  <text x="54" y="84" font-family="Inter, Arial, sans-serif" font-size="15" fill="#4b5563">Retail tasks 100-113: reward and action discipline improve, but the split remains hard.</text>
+  <line x1="100" y1="390" x2="1080" y2="390" stroke="#d1d5db"/>
+  <line x1="100" y1="150" x2="1080" y2="150" stroke="#e5e7eb"/>
+  <line x1="100" y1="210" x2="1080" y2="210" stroke="#e5e7eb"/>
+  <line x1="100" y1="270" x2="1080" y2="270" stroke="#e5e7eb"/>
+  <line x1="100" y1="330" x2="1080" y2="330" stroke="#e5e7eb"/>
+  <g font-family="Inter, Arial, sans-serif" font-size="12" fill="#6b7280">
+    <text x="75" y="394" text-anchor="end">0.0</text>
+    <text x="75" y="334" text-anchor="end">0.25</text>
+    <text x="75" y="274" text-anchor="end">0.50</text>
+    <text x="75" y="214" text-anchor="end">0.75</text>
+    <text x="75" y="154" text-anchor="end">1.0</text>
+  </g>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="210" y="390" width="56" height="0" fill="#94a3b8"/>
+    <rect x="276" y="338.6" width="56" height="51.4" fill="#2563eb"/>
+    <text x="238" y="374" text-anchor="middle" font-size="12" fill="#334155">0.000</text>
+    <text x="304" y="326" text-anchor="middle" font-size="12" fill="#1d4ed8">0.214</text>
+    <text x="271" y="428" text-anchor="middle" font-size="14" fill="#111827">reward</text>
+    <rect x="500" y="390" width="56" height="0" fill="#94a3b8"/>
+    <rect x="566" y="338.6" width="56" height="51.4" fill="#2563eb"/>
+    <text x="528" y="374" text-anchor="middle" font-size="12" fill="#334155">0.000</text>
+    <text x="594" y="326" text-anchor="middle" font-size="12" fill="#1d4ed8">0.214</text>
+    <text x="561" y="428" text-anchor="middle" font-size="14" fill="#111827">pass rate</text>
+    <rect x="790" y="343.3" width="56" height="46.7" fill="#94a3b8"/>
+    <rect x="856" y="316.7" width="56" height="73.3" fill="#2563eb"/>
+    <text x="818" y="331" text-anchor="middle" font-size="12" fill="#334155">0.194</text>
+    <text x="884" y="304" text-anchor="middle" font-size="12" fill="#1d4ed8">0.306</text>
+    <text x="851" y="428" text-anchor="middle" font-size="14" fill="#111827">action match</text>
+  </g>
+  <rect x="872" y="54" width="16" height="16" fill="#94a3b8"/>
+  <text x="896" y="67" font-family="Inter, Arial, sans-serif" font-size="13" fill="#475569">baseline</text>
+  <rect x="970" y="54" width="16" height="16" fill="#2563eb"/>
+  <text x="994" y="67" font-family="Inter, Arial, sans-serif" font-size="13" fill="#475569">candidate v5</text>
+</svg>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="410" viewBox="0 0 1180 410" role="img" aria-labelledby="title desc">
+  <title id="title">Late holdout task deltas</title>
+  <desc id="desc">Task-level reward deltas for retail tasks 100-113.</desc>
+  <rect width="1180" height="410" fill="#ffffff"/>
+  <text x="54" y="54" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="700" fill="#111827">Task-Level Reward Deltas: 100-113</text>
+  <text x="54" y="84" font-family="Inter, Arial, sans-serif" font-size="15" fill="#4b5563">Three tasks improve from 0 to 1; none regress because the baseline passed zero tasks.</text>
+  <g font-family="Inter, Arial, sans-serif" font-size="13">
+    <g transform="translate(70 135)">
+      <rect width="64" height="64" rx="8" fill="#e5e7eb"/><text x="32" y="28" text-anchor="middle" fill="#374151">100</text><text x="32" y="49" text-anchor="middle" fill="#6b7280">0</text>
+    </g>
+    <g transform="translate(145 135)">
+      <rect width="64" height="64" rx="8" fill="#bbf7d0"/><text x="32" y="28" text-anchor="middle" fill="#14532d">101</text><text x="32" y="49" text-anchor="middle" fill="#15803d">+1</text>
+    </g>
+    <g transform="translate(220 135)">
+      <rect width="64" height="64" rx="8" fill="#bbf7d0"/><text x="32" y="28" text-anchor="middle" fill="#14532d">102</text><text x="32" y="49" text-anchor="middle" fill="#15803d">+1</text>
+    </g>
+    <g transform="translate(295 135)">
+      <rect width="64" height="64" rx="8" fill="#e5e7eb"/><text x="32" y="28" text-anchor="middle" fill="#374151">103</text><text x="32" y="49" text-anchor="middle" fill="#6b7280">0</text>
+    </g>
+    <g transform="translate(370 135)">
+      <rect width="64" height="64" rx="8" fill="#e5e7eb"/><text x="32" y="28" text-anchor="middle" fill="#374151">104</text><text x="32" y="49" text-anchor="middle" fill="#6b7280">0</text>
+    </g>
+    <g transform="translate(445 135)">
+      <rect width="64" height="64" rx="8" fill="#bbf7d0"/><text x="32" y="28" text-anchor="middle" fill="#14532d">105</text><text x="32" y="49" text-anchor="middle" fill="#15803d">+1</text>
+    </g>
+    <g transform="translate(520 135)">
+      <rect width="64" height="64" rx="8" fill="#e5e7eb"/><text x="32" y="28" text-anchor="middle" fill="#374151">106</text><text x="32" y="49" text-anchor="middle" fill="#6b7280">0</text>
+    </g>
+    <g transform="translate(595 135)">
+      <rect width="64" height="64" rx="8" fill="#e5e7eb"/><text x="32" y="28" text-anchor="middle" fill="#374151">107</text><text x="32" y="49" text-anchor="middle" fill="#6b7280">0</text>
+    </g>
+    <g transform="translate(670 135)">
+      <rect width="64" height="64" rx="8" fill="#e5e7eb"/><text x="32" y="28" text-anchor="middle" fill="#374151">108</text><text x="32" y="49" text-anchor="middle" fill="#6b7280">0</text>
+    </g>
+    <g transform="translate(745 135)">
+      <rect width="64" height="64" rx="8" fill="#e5e7eb"/><text x="32" y="28" text-anchor="middle" fill="#374151">109</text><text x="32" y="49" text-anchor="middle" fill="#6b7280">0</text>
+    </g>
+    <g transform="translate(820 135)">
+      <rect width="64" height="64" rx="8" fill="#e5e7eb"/><text x="32" y="28" text-anchor="middle" fill="#374151">110</text><text x="32" y="49" text-anchor="middle" fill="#6b7280">0</text>
+    </g>
+    <g transform="translate(895 135)">
+      <rect width="64" height="64" rx="8" fill="#e5e7eb"/><text x="32" y="28" text-anchor="middle" fill="#374151">111</text><text x="32" y="49" text-anchor="middle" fill="#6b7280">0</text>
+    </g>
+    <g transform="translate(970 135)">
+      <rect width="64" height="64" rx="8" fill="#e5e7eb"/><text x="32" y="28" text-anchor="middle" fill="#374151">112</text><text x="32" y="49" text-anchor="middle" fill="#6b7280">0</text>
+    </g>
+    <g transform="translate(1045 135)">
+      <rect width="64" height="64" rx="8" fill="#e5e7eb"/><text x="32" y="28" text-anchor="middle" fill="#374151">113</text><text x="32" y="49" text-anchor="middle" fill="#6b7280">0</text>
+    </g>
+  </g>
+  <g font-family="Inter, Arial, sans-serif" font-size="14">
+    <rect x="414" y="280" width="18" height="18" fill="#bbf7d0"/>
+    <text x="442" y="294" fill="#374151">improved reward</text>
+    <rect x="594" y="280" width="18" height="18" fill="#e5e7eb"/>
+    <text x="622" y="294" fill="#374151">unchanged</text>
+  </g>
+</svg>

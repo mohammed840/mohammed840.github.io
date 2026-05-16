@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="300" viewBox="0 0 920 300" role="img" aria-labelledby="title desc">
+  <title id="title">Frozen hidden holdout generation</title>
+  <desc id="desc">Diagram showing candidate freeze, hidden case generation, and final-only pressure testing.</desc>
+  <rect width="920" height="300" fill="#f8fafc"/>
+  <text x="48" y="48" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#111827">Frozen Hidden Holdout Factory</text>
+  <text x="48" y="78" font-family="Arial, sans-serif" font-size="14" fill="#4b5563">Fresh synthetic edge cases are generated after candidate freeze and are not used for tuning.</text>
+  <rect x="70" y="126" width="170" height="78" rx="8" fill="#fff" stroke="#94a3b8"/>
+  <text x="105" y="158" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">Freeze candidate</text>
+  <text x="94" y="182" font-family="Arial, sans-serif" font-size="12" fill="#475569">v5 instruction fixed</text>
+  <path d="M250 165 H330" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="340" y="126" width="220" height="78" rx="8" fill="#fff" stroke="#94a3b8"/>
+  <text x="377" y="158" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">Generate hidden holdout</text>
+  <text x="395" y="182" font-family="Arial, sans-serif" font-size="12" fill="#475569">36 adversarial cases</text>
+  <path d="M570 165 H650" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="660" y="126" width="190" height="78" rx="8" fill="#fff" stroke="#94a3b8"/>
+  <text x="700" y="158" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#111827">Final pressure test</text>
+  <text x="691" y="182" font-family="Arial, sans-serif" font-size="12" fill="#475569">no tuning on failures</text>
+  <rect x="305" y="230" width="310" height="38" rx="6" fill="#ecfeff" stroke="#06b6d4"/>
+  <text x="331" y="254" font-family="Arial, sans-serif" font-size="13" fill="#155e75">Artifact: runs/research/tau2_expansion/hidden_holdout.json</text>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+  </defs>
+</svg>

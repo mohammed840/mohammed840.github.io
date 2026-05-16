@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="380" viewBox="0 0 920 380" role="img" aria-labelledby="title desc">
+  <title id="title">GPT-5.5 qualitative judge scores</title>
+  <desc id="desc">Qualitative judge scores for retail candidate v5 and airline cross-domain run.</desc>
+  <rect width="920" height="380" fill="#f8fafc"/>
+  <text x="48" y="48" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#111827">GPT-5.5 Qualitative Judge</text>
+  <text x="48" y="78" font-family="Arial, sans-serif" font-size="14" fill="#4b5563">tau2 reward stays primary. The judge adds tone, helpfulness, policy clarity, and tool discipline pressure.</text>
+  <line x1="120" y1="310" x2="850" y2="310" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="120" y1="110" x2="120" y2="310" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="120" y1="210" x2="850" y2="210" stroke="#e2e8f0"/>
+  <text x="82" y="314" font-family="Arial, sans-serif" font-size="12" fill="#64748b">0.0</text>
+  <text x="82" y="214" font-family="Arial, sans-serif" font-size="12" fill="#64748b">0.5</text>
+  <text x="82" y="114" font-family="Arial, sans-serif" font-size="12" fill="#64748b">1.0</text>
+  <rect x="180" y="200" width="42" height="110" fill="#2563eb"/>
+  <rect x="230" y="185" width="42" height="125" fill="#7c3aed"/>
+  <rect x="280" y="210" width="42" height="100" fill="#0891b2"/>
+  <rect x="330" y="220" width="42" height="90" fill="#0f766e"/>
+  <rect x="530" y="185" width="42" height="125" fill="#2563eb"/>
+  <rect x="580" y="233" width="42" height="77" fill="#7c3aed"/>
+  <rect x="630" y="212" width="42" height="98" fill="#0891b2"/>
+  <rect x="680" y="197" width="42" height="113" fill="#0f766e"/>
+  <text x="194" y="193" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#1e3a8a">.55</text>
+  <text x="244" y="178" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#5b21b6">.47</text>
+  <text x="294" y="203" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#155e75">.50</text>
+  <text x="344" y="213" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#115e59">.45</text>
+  <text x="544" y="178" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#1e3a8a">.63</text>
+  <text x="594" y="226" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#5b21b6">.39</text>
+  <text x="644" y="205" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#155e75">.49</text>
+  <text x="694" y="190" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#115e59">.57</text>
+  <text x="210" y="340" font-family="Arial, sans-serif" font-size="13" fill="#111827">retail v5, 6 judged</text>
+  <text x="560" y="340" font-family="Arial, sans-serif" font-size="13" fill="#111827">airline cross-domain, 6 judged</text>
+  <rect x="735" y="112" width="14" height="14" fill="#2563eb"/><text x="755" y="124" font-family="Arial, sans-serif" font-size="12" fill="#111827">tone</text>
+  <rect x="735" y="134" width="14" height="14" fill="#7c3aed"/><text x="755" y="146" font-family="Arial, sans-serif" font-size="12" fill="#111827">helpfulness</text>
+  <rect x="735" y="156" width="14" height="14" fill="#0891b2"/><text x="755" y="168" font-family="Arial, sans-serif" font-size="12" fill="#111827">policy clarity</text>
+  <rect x="735" y="178" width="14" height="14" fill="#0f766e"/><text x="755" y="190" font-family="Arial, sans-serif" font-size="12" fill="#111827">tool discipline</text>
+</svg>

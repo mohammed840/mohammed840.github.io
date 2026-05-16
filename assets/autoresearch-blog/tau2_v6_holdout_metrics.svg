@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="380" viewBox="0 0 920 380" role="img" aria-labelledby="title desc">
+  <title id="title">tau2 retail v6 late-split metrics</title>
+  <desc id="desc">Bar chart comparing baseline, v5, and v6 on retail tasks 100-113, with v6 labeled as development evidence.</desc>
+  <rect width="920" height="380" fill="#f8fafc"/>
+  <text x="48" y="48" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#111827">Retail Late Split: Tasks 100-113</text>
+  <text x="48" y="78" font-family="Arial, sans-serif" font-size="14" fill="#475569">v5 is the clean holdout proof; v6 is stronger retail development evidence after ablation.</text>
+  <line x1="110" y1="310" x2="850" y2="310" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="110" y1="110" x2="110" y2="310" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="110" y1="210" x2="850" y2="210" stroke="#e2e8f0"/>
+  <text x="72" y="314" font-family="Arial, sans-serif" font-size="12" fill="#64748b">0.0</text>
+  <text x="72" y="214" font-family="Arial, sans-serif" font-size="12" fill="#64748b">0.5</text>
+  <text x="72" y="114" font-family="Arial, sans-serif" font-size="12" fill="#64748b">1.0</text>
+
+  <rect x="190" y="310" width="48" height="0" fill="#94a3b8"/>
+  <rect x="246" y="267" width="48" height="43" fill="#2563eb"/>
+  <rect x="302" y="224" width="48" height="86" fill="#16a34a"/>
+  <text x="214" y="336" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#111827">baseline</text>
+  <text x="270" y="336" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#111827">v5</text>
+  <text x="326" y="336" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#111827">v6</text>
+  <text x="230" y="292" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#1e3a8a">Reward</text>
+  <text x="270" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1e3a8a">.214</text>
+  <text x="326" y="217" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#166534">.429</text>
+
+  <rect x="570" y="271" width="48" height="39" fill="#94a3b8"/>
+  <rect x="626" y="249" width="48" height="61" fill="#2563eb"/>
+  <rect x="682" y="221" width="48" height="89" fill="#16a34a"/>
+  <text x="594" y="336" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#111827">baseline</text>
+  <text x="650" y="336" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#111827">v5</text>
+  <text x="706" y="336" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#111827">v6</text>
+  <text x="650" y="292" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#1e3a8a">Write Match</text>
+  <text x="594" y="264" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#475569">.194</text>
+  <text x="650" y="242" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1e3a8a">.306</text>
+  <text x="706" y="214" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#166534">.444</text>
+</svg>

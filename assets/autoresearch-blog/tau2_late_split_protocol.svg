@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="360" viewBox="0 0 1180 360" role="img" aria-labelledby="title desc">
+  <title id="title">Late tau2 retail split protocol</title>
+  <desc id="desc">Discovery tasks 0-49, dev tasks 50-99, final holdout tasks 100-113.</desc>
+  <rect width="1180" height="360" fill="#f8fafc"/>
+  <text x="52" y="56" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="700" fill="#111827">Stronger tau2 Retail Split</text>
+  <text x="52" y="86" font-family="Inter, Arial, sans-serif" font-size="15" fill="#475569">Retail has 114 tasks, so the requested 100-149 holdout is capped to the real available final range: 100-113.</text>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="80" y="142" width="310" height="120" rx="12" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="235" y="176" text-anchor="middle" font-size="18" font-weight="700" fill="#1e3a8a">Discovery</text>
+    <text x="235" y="206" text-anchor="middle" font-size="14" fill="#1d4ed8">tasks 0-49</text>
+    <text x="235" y="232" text-anchor="middle" font-size="13" fill="#1d4ed8">find failure patterns</text>
+    <rect x="435" y="142" width="310" height="120" rx="12" fill="#fef3c7" stroke="#d97706"/>
+    <text x="590" y="176" text-anchor="middle" font-size="18" font-weight="700" fill="#78350f">Development</text>
+    <text x="590" y="206" text-anchor="middle" font-size="14" fill="#92400e">tasks 50-99</text>
+    <text x="590" y="232" text-anchor="middle" font-size="13" fill="#92400e">candidate pressure</text>
+    <rect x="790" y="142" width="310" height="120" rx="12" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="945" y="176" text-anchor="middle" font-size="18" font-weight="700" fill="#14532d">Final Holdout</text>
+    <text x="945" y="206" text-anchor="middle" font-size="14" fill="#166534">tasks 100-113</text>
+    <text x="945" y="232" text-anchor="middle" font-size="13" fill="#166534">baseline vs frozen v5</text>
+  </g>
+  <text x="590" y="318" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="14" fill="#475569">The final comparison uses the same task IDs before and after, but those task IDs are later unseen tasks.</text>
+</svg>

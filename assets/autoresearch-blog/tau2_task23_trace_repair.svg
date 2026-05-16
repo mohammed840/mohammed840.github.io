@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="470" viewBox="0 0 1180 470" role="img" aria-labelledby="title desc">
+  <title id="title">Task 23 trace repair</title>
+  <desc id="desc">Before and after trace behavior for the cross-order reference failure.</desc>
+  <rect width="1180" height="470" fill="#ffffff"/>
+  <text x="52" y="54" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="700" fill="#111827">Task 23: Cross-Order Reference Repair</text>
+  <text x="52" y="84" font-family="Inter, Arial, sans-serif" font-size="15" fill="#4b5563">The candidate learned to resolve "same as the one I already received" against delivered orders, not the pending item itself.</text>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="70" y="130" width="485" height="270" rx="12" fill="#fff1f2" stroke="#e11d48"/>
+    <text x="312" y="164" text-anchor="middle" font-size="18" font-weight="700" fill="#881337">Before: failed trace</text>
+    <text x="110" y="206" font-size="14" fill="#9f1239">1. authenticate customer</text>
+    <text x="110" y="236" font-size="14" fill="#9f1239">2. inspect some order records</text>
+    <text x="110" y="266" font-size="14" fill="#9f1239">3. interpret "same as received" locally</text>
+    <text x="110" y="296" font-size="14" fill="#9f1239">4. try to modify pending item to itself</text>
+    <text x="110" y="326" font-size="14" fill="#9f1239">5. ask extra confirmation / continue looping</text>
+    <rect x="110" y="350" width="170" height="32" rx="8" fill="#fecdd3"/>
+    <text x="195" y="371" text-anchor="middle" font-size="13" font-weight="700" fill="#881337">reward 0, max-step risk</text>
+    <rect x="625" y="130" width="485" height="270" rx="12" fill="#ecfdf5" stroke="#10b981"/>
+    <text x="868" y="164" text-anchor="middle" font-size="18" font-weight="700" fill="#064e3b">After: repaired trace</text>
+    <text x="665" y="206" font-size="14" fill="#065f46">1. authenticate customer</text>
+    <text x="665" y="236" font-size="14" fill="#065f46">2. call get_user_details and inspect orders</text>
+    <text x="665" y="266" font-size="14" fill="#065f46">3. search delivered orders for matching product type</text>
+    <text x="665" y="296" font-size="14" fill="#065f46">4. use delivered item as target reference</text>
+    <text x="665" y="326" font-size="14" fill="#065f46">5. perform confirmed write path and stop</text>
+    <rect x="665" y="350" width="170" height="32" rx="8" fill="#bbf7d0"/>
+    <text x="750" y="371" text-anchor="middle" font-size="13" font-weight="700" fill="#065f46">reward 1, normal stop</text>
+  </g>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="360" viewBox="0 0 920 360" role="img" aria-labelledby="title desc">
+  <title id="title">tau2 airline multi-domain check</title>
+  <desc id="desc">Bar chart comparing airline baseline and cross-domain candidate reward and action matching.</desc>
+  <rect width="920" height="360" fill="#f8fafc"/>
+  <text x="48" y="48" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#111827">Multi-Domain Check: tau2 Airline Tasks 40-49</text>
+  <text x="48" y="78" font-family="Arial, sans-serif" font-size="14" fill="#4b5563">The retail-derived instruction transfers imperfectly: action matching improves, but task reward drops.</text>
+  <line x1="120" y1="290" x2="840" y2="290" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="120" y1="120" x2="120" y2="290" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="74" y="126" font-family="Arial, sans-serif" font-size="12" fill="#64748b">1.0</text>
+  <text x="74" y="210" font-family="Arial, sans-serif" font-size="12" fill="#64748b">0.5</text>
+  <text x="82" y="294" font-family="Arial, sans-serif" font-size="12" fill="#64748b">0</text>
+  <line x1="120" y1="205" x2="840" y2="205" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="120" y1="120" x2="840" y2="120" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="220" y="188" width="70" height="102" fill="#2563eb"/>
+  <rect x="300" y="222" width="70" height="68" fill="#ef4444"/>
+  <text x="225" y="314" font-family="Arial, sans-serif" font-size="13" fill="#111827">Reward</text>
+  <text x="232" y="181" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#1e3a8a">0.60</text>
+  <text x="312" y="215" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#991b1b">0.40</text>
+  <rect x="530" y="179" width="70" height="111" fill="#2563eb"/>
+  <rect x="610" y="172" width="70" height="118" fill="#16a34a"/>
+  <text x="512" y="314" font-family="Arial, sans-serif" font-size="13" fill="#111827">Action Match</text>
+  <text x="535" y="172" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#1e3a8a">0.65</text>
+  <text x="615" y="165" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#166534">0.69</text>
+  <rect x="690" y="92" width="150" height="64" rx="6" fill="#fff" stroke="#cbd5e1"/>
+  <rect x="708" y="112" width="14" height="14" fill="#2563eb"/>
+  <text x="732" y="124" font-family="Arial, sans-serif" font-size="13" fill="#111827">baseline</text>
+  <rect x="708" y="134" width="14" height="14" fill="#16a34a"/>
+  <text x="732" y="146" font-family="Arial, sans-serif" font-size="13" fill="#111827">candidate up</text>
+  <rect x="805" y="134" width="14" height="14" fill="#ef4444"/>
+  <text x="824" y="146" font-family="Arial, sans-serif" font-size="13" fill="#111827">down</text>
+</svg>

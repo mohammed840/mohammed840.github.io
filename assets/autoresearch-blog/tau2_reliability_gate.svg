@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="380" viewBox="0 0 920 380" role="img" aria-labelledby="title desc">
+  <title id="title">Reliability gate checks for promoted candidate</title>
+  <desc id="desc">All reliability checks passed for the promoted v5 candidate.</desc>
+  <rect width="920" height="380" fill="#fbfbf8"/>
+  <text x="40" y="48" fill="#1b1f24" font-family="Arial, sans-serif" font-size="24" font-weight="700">Reliability gate: promote</text>
+  <text x="40" y="78" fill="#606975" font-family="Arial, sans-serif" font-size="14">Promotion required reward improvement without regressions or max-step loops.</text>
+  <g font-family="Arial, sans-serif" font-size="15">
+    <rect x="40" y="112" width="840" height="38" rx="6" fill="#eef5f0"/>
+    <text x="62" y="137" fill="#1b1f24">Held-out reward improved</text>
+    <text x="780" y="137" fill="#2f7d5c" font-weight="700">PASS</text>
+    <rect x="40" y="154" width="840" height="38" rx="6" fill="#ffffff"/>
+    <text x="62" y="179" fill="#1b1f24">Pass rate did not regress</text>
+    <text x="780" y="179" fill="#2f7d5c" font-weight="700">PASS</text>
+    <rect x="40" y="196" width="840" height="38" rx="6" fill="#eef5f0"/>
+    <text x="62" y="221" fill="#1b1f24">Overall action matching did not regress</text>
+    <text x="780" y="221" fill="#2f7d5c" font-weight="700">PASS</text>
+    <rect x="40" y="238" width="840" height="38" rx="6" fill="#ffffff"/>
+    <text x="62" y="263" fill="#1b1f24">Read action matching did not regress</text>
+    <text x="780" y="263" fill="#2f7d5c" font-weight="700">PASS</text>
+    <rect x="40" y="280" width="840" height="38" rx="6" fill="#eef5f0"/>
+    <text x="62" y="305" fill="#1b1f24">Write action matching did not regress</text>
+    <text x="780" y="305" fill="#2f7d5c" font-weight="700">PASS</text>
+    <rect x="40" y="322" width="840" height="38" rx="6" fill="#ffffff"/>
+    <text x="62" y="347" fill="#1b1f24">No task reward regressions and no max-step loops</text>
+    <text x="780" y="347" fill="#2f7d5c" font-weight="700">PASS</text>
+  </g>
+</svg>
