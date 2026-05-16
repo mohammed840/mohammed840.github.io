@@ -3,6 +3,7 @@ title: "Trace2Evolve: A Karpathy-Style AutoResearch Harness for Customer-Support
 date: 2026-05-16
 authors: "Mohammed Alshehri"
 year: 2026
+code: "https://github.com/mohammed840/trace2evolve-autoresearch"
 description: "An AutoResearch-style harness for improving tool-using customer-support agents with benchmark traces, heldout tau2 evaluations, and reliability-gated promotion."
 tldr: "Trace2Evolve turns support-agent improvement into an evidence loop: run a locked benchmark, diagnose trace failures, propose a candidate patch, rerun heldout tasks, and promote only if reliability gates pass."
 highlights:
