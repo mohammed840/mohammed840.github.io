@@ -7,7 +7,9 @@ description: "My notes from Dwarkesh Patel and Eric Jang on rebuilding AlphaGo, 
 
 # AlphaGo, Search, and Automated AI Research
 
-![Go board dissolving into search and neural networks](/assets/alphago_search_blog/hero_mcts_alpha_go.png)
+<div style="text-align: center; margin: 1.5rem auto 2rem;">
+  <img src="/assets/alphago_search_blog/hero_mcts_alpha_go.png" alt="Go board dissolving into search and neural networks" style="width: 72%; max-width: 860px; border-radius: 8px;" />
+</div>
 
 I watched the Dwarkesh Patel conversation with Eric Jang about rebuilding AlphaGo from scratch, and the thing that stayed with me was not only that AlphaGo is still beautiful. It was that AlphaGo gives a very concrete mental model for many questions that now feel central to language models, agents, robotics, and automated AI research.
 
@@ -19,7 +21,13 @@ I also reread the NeurIPS 2023 paper [Tree of Thoughts: Deliberate Problem Solvi
 
 This post is my attempt to connect those pieces.
 
-## 1. The core AlphaGo idea is not just RL
+The post is not a transcript summary. It is more like a map of the ideas that I think matter after listening to the episode and reading the paper. The interesting theme is that many systems we call reinforcement learning are really trying to solve a labeling problem. The agent acts in the world, but the hard part is not only exploration. The hard part is discovering which local decisions should receive credit, which decisions should be corrected, and how to turn sparse outcomes into training targets that do not destroy the model with variance.
+
+That framing makes AlphaGo feel less like an isolated historical result and more like a template. Search gives better local labels. The neural network absorbs those labels. The improved neural network makes future search cheaper and stronger. In language models, we are still searching for an equivalent loop. Current RL for LLMs often waits for the whole answer to succeed or fail. Tree of Thoughts tries to make reasoning less like one long sample and more like a deliberate search process. Automated research agents try to do something similar at the level of experiments, where the nodes are hypotheses, the branches are runs, and the value function is some mixture of benchmark score, experiment taste, and judgment about what is actually worth pursuing.
+
+That is why the conversation felt important to me. It gives one clean solved case, Go, and several messy open cases, language reasoning, robotics, and AI research itself. The clean case does not directly solve the messy ones, but it gives a vocabulary for talking about them.
+
+## The core AlphaGo idea is not just RL
 
 When people say AlphaGo is a reinforcement learning system, that is true, but it can hide the most important part. The elegant part is that AlphaGo converts search into supervised learning targets.
 
@@ -53,7 +61,9 @@ $$
 
 That is one of the underrated lessons. AlphaGo is not merely learning from wins. It is distilling a search procedure into a neural network. The search improves the label. The network amortizes the search. Then the next search starts from a better network.
 
-![MCTS labeling loop with Go boards, search, and neural network](/assets/alphago_search_blog/mcts_labeling_loop.png)
+<div style="text-align: center; margin: 1.5rem auto 2rem;">
+  <img src="/assets/alphago_search_blog/mcts_labeling_loop.png" alt="MCTS labeling loop with Go boards, search, and neural network" style="width: 72%; max-width: 860px; border-radius: 8px;" />
+</div>
 
 The loop is:
 
@@ -71,7 +81,17 @@ The loop is:
 
 That loop is why MCTS labeling feels like an alternative to naive RL. It turns an outcome signal into dense local targets.
 
-## 2. How MCTS labeling works
+This is the part that changes how I think about the phrase reinforcement learning. The word reward makes it sound like the system is mostly learning from a final scalar. But AlphaGo’s practical strength comes from building a better supervised learning dataset out of search. The reward still matters. The final game result trains the value head. But the policy head is not just told that the winning player’s moves were good. It is told what search believed after looking ahead from each state.
+
+That difference matters because the naive trajectory level signal has a credit assignment problem. Imagine a game with 300 moves. If the black player wins, we could upweight all black moves. But maybe 280 of those moves were obvious, 19 were neutral, and one move was genuinely brilliant. The final win does not tell us which is which. MCTS creates a more local training signal. At move 87, it searches from the actual board and returns a new distribution. At move 122, it does the same. Each state gets its own correction.
+
+In that sense, the search policy is a teacher. It is not a perfect teacher, because it depends on the value function and the number of simulations. But it is a teacher that can produce a label for every state the learner actually visits. That is the bridge to imitation learning and DAGGER. You let the learner visit its own states, then you ask a stronger policy what the learner should have done there.
+
+The beautiful part is that the student eventually makes the teacher cheaper. Early on, MCTS may need many simulations to turn a weak policy prior into a useful distribution. Later, after training on many MCTS targets, the raw policy already resembles the search output. That means the next round of search begins from a stronger prior and can spend its compute on harder distinctions. Expensive deliberation becomes cheap intuition.
+
+That is also one way to understand test time scaling. The model can spend compute at inference time to search, but training can distill some of that search into the weights. The frontier between explicit reasoning and amortized reasoning moves as the model improves.
+
+## How MCTS labeling works
 
 The most useful way to think about MCTS labeling is as a local improvement operator.
 
@@ -97,7 +117,15 @@ That is the deep reason initialization matters. You do not want to spend expensi
 
 In his phrasing, initialization is everything. Always start from something close to success, then make it better, rather than starting from a system that does not work and hoping learning will rescue it.
 
-## 3. UCB and PUCT are ways of spending attention
+I think this advice is easy to underestimate because it sounds almost too practical. But it is a deep research principle. A lot of failed RL work begins with a flat reward surface. The agent does not solve the task, so it gets no positive signal, so it cannot learn to solve the task. In language models, this is the same shape as asking a weak model to solve a hard programming task by random exploration. If it almost never passes the tests, most samples teach almost nothing.
+
+AlphaGo avoids the worst version of that trap by arranging the problem so that there is always a local improvement target. But even there, Eric emphasizes that the value function has to be grounded. If the value head is nonsense, search over nonsense can produce a worse policy target than the original policy. That is why expert games, open source Go bots, or small board pretraining are not philosophical compromises. They are ways of getting the system into the regime where the improvement operator is actually helpful.
+
+This maps directly to my own experience with post training and agent training. The first goal is not to be maximally pure. The first goal is to get into a nonzero signal regime. Once the system can do something, even imperfectly, you can evaluate, relabel, refine, and scale. Before that, you are often just staring at noise.
+
+There is also a subtle point about value and policy sharing representations. AlphaGo Lee used separate networks. Later versions moved toward a shared trunk with two heads. That makes intuitive sense because the policy and value should not be independent. If the policy says a move is excellent but the value head says the resulting state is terrible, something is inconsistent. Search exposes that inconsistency. Training pushes the two heads toward a shared representation of what matters on the board.
+
+## UCB and PUCT are ways of spending attention
 
 The search problem in Go has two sides: breadth and depth.
 
@@ -121,15 +149,21 @@ $$
 
 That \(P(s,a)\) term is important. It is the neural network saying, before search, this action looks plausible. So PUCT does not explore uniformly. It explores in a policy guided way. The neural network tells search where to look first, and search corrects the neural network when deeper evaluation disagrees.
 
-![Sparse PUCT search tree over a Go board](/assets/alphago_search_blog/puct_search_tree.png)
-
 This is also where the notion of probability enters a deterministic game.
 
 Go itself is deterministic. If we had infinite compute, there would be no need to talk about probabilities. From a given state, perfect play has a definite answer. But we do not search the whole tree. We sample a tiny part of it. The probabilities come from the search process and the policy prior. They describe uncertainty over which parts of the tree we will explore and which actions are promising under limited compute.
 
 So probability in AlphaGo is not randomness in the game. It is randomness and uncertainty in the computation we can afford.
 
-## 4. The four step MCTS process
+That distinction is useful outside Go too. Many AI systems are deterministic once you fix the model weights, prompt, sampling seed, and environment. But the training process still uses probability because the system cannot evaluate every possible continuation. It samples. It estimates. It allocates compute. In that sense, probability is often not a property of the world. It is a property of bounded reasoning.
+
+UCB and PUCT are compute allocation rules. They answer the question: where should I spend my next simulation? A bad rule wastes search on hopeless branches. A good rule keeps enough exploration to avoid missing surprises while still concentrating on high value regions.
+
+PUCT is especially interesting because it mixes learned intuition with explicit uncertainty. The policy prior \(P(s,a)\) is the network’s instinct. The visit count \(N(s,a)\) is the search process remembering what it has already investigated. The value \(Q(s,a)\) is the current estimate from simulation. None of these alone is enough. The prior can be wrong. The value can be noisy. The count bonus can overexplore. Together, they form a practical balance.
+
+This is one of the reasons I do not think of MCTS as brute force. It is not enumerating the tree. It is an attention mechanism over possible futures. The policy prior tells it where to look. The value head tells it when it can stop. The count bonus keeps it from becoming too greedy too early.
+
+## The four step MCTS process
 
 Eric breaks MCTS into four steps:
 
@@ -159,7 +193,17 @@ After enough simulations, the visit counts become the search policy. That is the
 
 The important conceptual point is that the tree is built while it is searched. Go is too large for an exhaustive tree. MCTS only expands the parts that look worth expanding.
 
-## 5. Neural networks make search tractable
+Selection is where the algorithm decides which already known path deserves another look. It starts at the root, evaluates each child with the PUCT score, chooses the best child, then repeats until it reaches a leaf or an expandable state.
+
+Expansion is where the tree grows. The algorithm takes a state that has not been fully explored and adds children for possible legal moves. In AlphaGo style systems, these children are initialized with priors from the policy network. So the tree is not born blank. It is born with a learned guess about which moves are worth considering.
+
+Evaluation is where the value network replaces a full rollout. In early AlphaGo, the system partly grounded evaluation with actual playouts. Later systems leaned more heavily on the learned value function. This is a major compute saving because a value function can summarize the expected outcome of a position without rolling the game to completion.
+
+Backup is the part that makes search cumulative. The evaluated value is pushed back up along the path. Counts increase. Mean values update. Future selections are changed by this new information.
+
+If you stare at this loop long enough, it starts to look like a micro version of research. Select a promising direction. Expand it into concrete experiments. Evaluate the result. Back up what you learned into your beliefs. Repeat. That analogy is imperfect, but it explains why this episode naturally ends up talking about automated research. Search, learning, and research are all versions of the same loop when they are formalized enough.
+
+## Neural networks make search tractable
 
 The neural network has two heads.
 
@@ -185,7 +229,7 @@ That does not mean the network solves Go in the formal worst case sense. It mean
 
 This connects to a bigger theme in AI. Many hard problems are hard in the worst case, but real distributions contain structure. Protein folding, board games, robotics, and language all contain patterns that networks can exploit. AlphaGo was one of the first systems that made that feel concrete.
 
-## 6. Test time scaling and reasoning
+## Test time scaling and reasoning
 
 One of the most interesting parts of the conversation is the connection between MCTS and test time scaling.
 
@@ -199,7 +243,7 @@ AlphaGo gives one clean answer in a clean domain: search can produce better labe
 
 For LLMs, the domain is much messier. Language actions are too broad, values are harder to define, and the same child is rarely sampled twice. Still, the shape of the idea is deeply relevant.
 
-## 7. Why LLM RL often treats a whole answer as one action
+## Why LLM RL often treats a whole answer as one action
 
 Eric makes a useful point about why current LLM RL often treats an entire sampled completion as one action rather than a long multi step action sequence.
 
@@ -233,7 +277,7 @@ With RL, if the model guesses wrong, it mostly learns that this sampled attempt 
 
 That is why initialization matters again. If your pass rate is zero, RL may never find the first success. AlphaGo avoids much of this because MCTS can improve the local policy before the agent has to solve the entire game by luck.
 
-## 8. Why language trees are harder than Go trees
+## Why language trees are harder than Go trees
 
 Eric’s example of where LLMs break down is simple and important.
 
@@ -253,7 +297,9 @@ This is why applying tree search to LLM reasoning is difficult. The breadth is t
 
 Still, the Tree of Thoughts paper is valuable because it tries to move the unit of search from tokens to thoughts.
 
-![Tree of Thoughts search diagram](/assets/alphago_search_blog/tree_of_thoughts_reasoning.png)
+<div style="text-align: center; margin: 1.5rem auto 2rem;">
+  <img src="/assets/alphago_search_blog/tree_of_thoughts_reasoning.png" alt="Tree of Thoughts search diagram" style="width: 72%; max-width: 860px; border-radius: 8px;" />
+</div>
 
 Tree of Thoughts frames problem solving as a search over coherent language states:
 
@@ -279,7 +325,129 @@ That does not mean ToT solves reasoning. It means there are tasks where explicit
 
 The relationship to AlphaGo is not identity. AlphaGo has a clean simulator and a grounded value function. ToT has language based self evaluation. But the philosophical connection is real: reasoning improves when the model can explore a tree rather than commit to one sample.
 
-## 9. NFSP, best response policies, AlphaStar, and OpenAI Dota
+## A closer breakdown of Tree of Thoughts
+
+The Tree of Thoughts paper starts from a simple criticism of normal language model inference. A language model generates tokens left to right. Once it chooses a token, the next token is conditioned on that choice. This is powerful, but it creates a commitment problem. If the model makes a bad early decision, the rest of the completion may be trapped by that decision.
+
+Chain of thought prompting improves this by making the model produce intermediate reasoning. But ordinary chain of thought still usually follows one path. The model writes a reasoning chain, then an answer. Self consistency improves this by sampling many independent chains and choosing the most common answer. But even self consistency does not do local search inside a reasoning path. It samples separate full trajectories.
+
+Tree of Thoughts changes the unit of reasoning. Instead of treating each token as the only decision point, it treats a thought as a coherent intermediate step. A thought could be a line of arithmetic in Game of 24, a paragraph level writing plan in creative writing, or a proposed word in a crossword. This matters because tokens are usually too small to evaluate, while a full answer is often too large to correct. A thought sits in the middle. It is big enough to judge and small enough to branch.
+
+Formally, the paper defines a state as:
+
+$$
+s=[x,z_{1:i}]
+$$
+
+where \(x\) is the problem input and \(z_{1:i}\) is the sequence of thoughts chosen so far. A candidate next thought extends the state:
+
+$$
+s'=[x,z_{1:i},z_{i+1}]
+$$
+
+The method then needs four components.
+
+First, it needs a thought decomposition. This is domain dependent. In Game of 24, a thought is one arithmetic operation that combines two numbers and leaves a smaller set of numbers. In creative writing, a thought can be a plan. In crosswords, a thought can be a proposed clue fill. This is not a minor implementation detail. The choice of thought unit determines whether search is useful. If the unit is too small, evaluation becomes meaningless. If the unit is too large, branching becomes too expensive.
+
+Second, it needs a thought generator. The paper describes two modes. One mode samples independent thoughts from a normal chain of thought style prompt. This works when the space is rich and diversity is natural, such as writing plans. Another mode proposes several thoughts sequentially in the same prompt. This is useful when the space is constrained, because it reduces duplicate proposals. In Game of 24, for example, the model can propose multiple arithmetic next steps from the same current state.
+
+Third, it needs a state evaluator. This is the paper’s substitute for a learned value function. Instead of training a neural value model like AlphaGo, Tree of Thoughts asks the language model itself to evaluate the promise of partial states. There are two main styles. One is value evaluation, where the model independently scores a state as promising or not. The other is voting, where the model compares several states and chooses the best one.
+
+Fourth, it needs a search algorithm. The paper uses breadth first search and depth first search. Breadth first search keeps a frontier of promising states at each step. Depth first search explores a promising path until it succeeds or the evaluator says the path is unlikely, then it backtracks.
+
+This is the conceptual algorithm:
+
+$$
+S'_t=\{[s,z] : s\in S_{t-1}, z\in G(p_{\theta},s,k)\}
+$$
+
+The candidate states \(S'_t\) are evaluated:
+
+$$
+V_t(s)=V(p_{\theta},s)
+$$
+
+Then the search keeps only a subset of promising states:
+
+$$
+S_t=\operatorname{TopB}_{s\in S'_t} V_t(s)
+$$
+
+That is the core of Tree of Thoughts. Generate possible thoughts, evaluate partial states, keep the best frontier, and continue.
+
+## The Tree of Thoughts tasks
+
+The most famous result in the paper is Game of 24. The input is four numbers, and the model must use each number exactly once to make 24. A normal chain of thought can easily make an early arithmetic decision that looks plausible but destroys the path to 24. Tree of Thoughts decomposes the problem into three arithmetic steps. At each step, the model proposes possible operations, evaluates whether the remaining numbers can still reach 24, and keeps promising candidates.
+
+The paper reports that GPT 4 with chain of thought solved 4 percent of the Game of 24 tasks, while Tree of Thoughts solved 74 percent. That result is striking because it is not about adding new model weights. It is about changing inference from one path generation into search.
+
+The second task is creative writing. Here, the problem is not a crisp mathematical target. The model receives random sentences and must write a coherent passage ending in those sentences. For this domain, the paper uses voting more than scalar value. The model generates several plans, compares them, chooses a strong plan, then writes and evaluates outputs. This shows that Tree of Thoughts is not only for arithmetic. It can also act as structured deliberation in open ended tasks.
+
+The third task is mini crosswords. This is closer to a classical search problem. The model proposes words for clues, fills partial grids, evaluates whether constraints remain feasible, and backtracks when a path becomes impossible. This is where the paper’s DFS framing matters. Backtracking is not an optional feature here. Without it, the model can fill itself into a corner.
+
+These tasks were chosen because ordinary left to right generation is weak on them. They require planning, lookahead, and correction. That is exactly the failure mode Tree of Thoughts targets.
+
+## How Tree of Thoughts relates to AlphaGo
+
+The AlphaGo connection is not that Tree of Thoughts is doing AlphaGo style MCTS. It is not. The paper mostly uses BFS and DFS. It does not have a perfect simulator, a trained value network, or repeated visits to the same stable action child in the way Go does.
+
+The connection is more abstract.
+
+AlphaGo says: do not trust the raw policy alone. Generate alternatives through search, evaluate them, and train or act using the improved result.
+
+Tree of Thoughts says: do not trust one chain of thought alone. Generate alternative thoughts, evaluate partial reasoning states, and choose a path using search.
+
+In AlphaGo, the value function is learned from games and grounded by win loss outcomes. In Tree of Thoughts, the evaluator is usually the language model itself. That is much weaker, but also more general. You can apply it without training a domain specific value network.
+
+In AlphaGo, the action space is legal moves on a board. In Tree of Thoughts, the action space is language thoughts. That is much harder because thoughts are not naturally discrete in the same clean way. Two different strings can represent the same plan. One thought can contain several hidden decisions. Evaluation can be biased by phrasing.
+
+In AlphaGo, the environment transition is exact. If you place a stone, the next board is determined. In Tree of Thoughts, the transition from one thought to the next is semantic. The model is not updating a formal world state unless the task has one, like Game of 24 or crosswords.
+
+So the correlation is real but limited. Tree of Thoughts borrows the search mindset, not the full AlphaGo machinery.
+
+The strongest version of the comparison is this:
+
+$$
+\text{AlphaGo}=\text{policy prior}+\text{value function}+\text{tree search}+\text{distillation}
+$$
+
+while:
+
+$$
+\text{Tree of Thoughts}=\text{thought generator}+\text{LM evaluator}+\text{tree search}
+$$
+
+The missing piece in Tree of Thoughts is distillation. The paper improves inference, but it does not train the model to internalize the improved search traces. That is where future work becomes interesting. If a model repeatedly solves problems through thought search, can we train it to predict the successful search distribution directly? Can we distill tree search into a stronger reasoning policy? That would be much closer to the AlphaGo loop.
+
+## What the paper gets right and where it is limited
+
+What Tree of Thoughts gets right is the unit of search. It recognizes that token level branching is usually the wrong abstraction. The meaningful unit is a thought. This is similar to how a human does not usually reason by considering every possible next word. A human considers approaches, partial plans, equations, proof moves, hypotheses, or subgoals.
+
+It also gets modularity right. The generator, evaluator, and search algorithm are separate. You can change how thoughts are proposed, how states are scored, and how the tree is traversed. That makes the method more like a framework than a single prompt trick.
+
+But the limitations are important.
+
+The evaluator can be wrong. A language model judging its own partial reasoning can be overconfident, style biased, or fooled by fluent nonsense. In Go, the value function is grounded by game outcomes. In Tree of Thoughts, the value function is often just another prompt.
+
+The search can be expensive. Sampling multiple thoughts, evaluating each one several times, and searching a tree can consume many more tokens than a single chain of thought. The paper acknowledges cost. This means Tree of Thoughts is most useful when the task is hard enough that extra inference compute is justified.
+
+The thought decomposition is hand designed. The paper does not solve the general problem of discovering the right reasoning unit. A good thought unit for Game of 24 is obvious. A good thought unit for research, negotiation, or long horizon software engineering is much less obvious.
+
+The method does not automatically learn from its own search. It can solve a problem better at inference time, but unless we store and train on the traces, the base model does not necessarily improve.
+
+These limitations do not make the paper weak. They define the next research program. The paper is valuable because it makes the search abstraction explicit, shows that it can work on tasks where chain of thought fails, and gives a concrete bridge between LLM reasoning and older search based AI.
+
+## Why the Tree of Thoughts result matters for reasoning models
+
+The reason I care about Tree of Thoughts is not only the Game of 24 number. It is that the paper separates reasoning into three objects: generation, evaluation, and search.
+
+Most prompting discourse collapses these together. We ask the model to think step by step, and the same sample contains the plan, the reasoning, the evaluation, and the answer. Tree of Thoughts makes those roles separable. The model can generate candidate thoughts. The model can judge candidate thoughts. A search algorithm can decide which candidates survive.
+
+That separation feels important for agents. In an agent system, generation might be proposing tool calls. Evaluation might be a verifier, a unit test, a reward model, a simulator, or another model. Search might be BFS, DFS, beam search, MCTS, or something more domain specific. Once those pieces are separated, we can improve each one.
+
+This is also why the paper correlates with Eric’s point about forward search. In Go, forward search is powerful because it can locally improve the next move. In language, we need domains where partial states are evaluable. Tree of Thoughts shows that some domains have enough structure for this to help. The challenge is extending that to richer tasks without making the search space explode.
+
+## NFSP, best response policies, AlphaStar, and OpenAI Dota
 
 The conversation then moves to cases where you cannot easily do MCTS.
 
@@ -305,7 +473,19 @@ The details differ, but the direction is similar:
 
 This is one of the main bridges between board game search and modern agent training.
 
-## 10. Why Q learning was huge
+NFSP is worth spelling out because it gives a different answer to the same question MCTS answers in Go. The question is: where do better labels come from?
+
+In Go, better labels come from search. The agent can simulate the future using exact rules, ask the value function to evaluate leaves, and back up values. In StarCraft or Dota, the full future is much harder to search. The state is partially observed. The number of possible actions is huge. The environment has timing, hidden information, and multi agent dynamics. A direct Go style tree is not practical.
+
+So a best response policy becomes a substitute teacher. You fix an opponent or a population of opponents, then train a policy to beat that opponent. Once the best response is strong, it contains information about what actions are effective against that opponent. You can distill those actions back into a broader policy.
+
+This creates a league dynamic. A policy learns to beat one opponent, then another, then another. If done well, the final policy does not merely overfit to one opponent. It becomes a mixed strategy that performs well across a distribution of opponents.
+
+That is why AlphaStar and OpenAI Five are relevant. They show that when explicit tree search is not available, you can still create improvement pressure through self play, opponent populations, best response training, and distillation. The improvement operator is no longer MCTS. It is a training system that produces stronger policies against carefully chosen opponents.
+
+The deeper connection is that both approaches are trying to avoid blind reinforcement learning. They add structure. AlphaGo adds search. AlphaStar adds league dynamics. Robotics often adds replay buffers, value learning, demonstrations, and relabeling. LLM agents add verifiers, tests, tool traces, and preference models. The shared goal is to create a stronger teaching signal than raw outcome reward.
+
+## Why Q learning was huge
 
 Q learning matters because it gives a way to propagate future value backward when direct search is not available.
 
@@ -327,7 +507,27 @@ Q learning learns from experienced transitions, then backs up value through a le
 
 One plans over futures the agent has not necessarily experienced. The other learns from futures the agent has visited. That distinction is key.
 
-## 11. Off policy data can help, but it can also poison training
+This is why Q learning was such a big conceptual step. It gave agents a way to learn from experience without needing to explicitly model every possible future. If you know that a future state has high value, then actions leading to that state should become more valuable. Value propagates backward through experience.
+
+That propagation is the heart of temporal difference learning. Instead of waiting until the end of an episode and assigning the final return backward all at once, TD learning updates estimates using the difference between a current prediction and a bootstrapped target:
+
+$$
+\delta = r+\gamma V(s')-V(s)
+$$
+
+or in action value form:
+
+$$
+\delta = r+\gamma \max_{a'}Q(s',a')-Q(s,a)
+$$
+
+The TD error \(\delta\) tells the learner how surprising the transition was relative to its current value estimate. This is a way of learning from partial experience. It is not as clean as AlphaGo search, because it depends on collected trajectories and bootstrapping can become unstable, but it works in domains where forward search is unavailable.
+
+For robotics, this matters because you often cannot cheaply search all possible motor futures. A robot has continuous actions, contact dynamics, sensor noise, and real world constraints. So the system collects transitions, stores them, learns values, and uses those values to improve behavior. The learning is less like exact planning and more like repeatedly asking: given what happened, what should my value estimate have been?
+
+That is why the MCTS versus Q learning contrast is useful. MCTS improves a decision by simulating possible futures from the current state. Q learning improves value estimates by learning consistency across experienced transitions. Both are ways of moving future information backward. They just differ in whether the futures are searched or sampled.
+
+## Off policy data can help, but it can also poison training
 
 The off policy discussion was one of the most practically useful parts of the episode.
 
@@ -338,8 +538,6 @@ The danger is distribution mismatch. If your new policy would never visit a stat
 But off policy data can also be exactly what you want. If your policy drifts slightly away from the optimal trajectory, you need correction data. A self driving car needs to know how to recover when it veers toward the edge of the lane. A robot arm needs to know how to recover when an object slips. A Go policy needs to respond when the opponent forces a weird position.
 
 That is why the useful off policy distribution is not arbitrary old data. It is a tube around the states your policy might reach.
-
-![Off policy replay and relabeling diagram](/assets/alphago_search_blog/off_policy_replay.png)
 
 Eric describes a robotics like setup:
 
@@ -355,7 +553,19 @@ His summary is that much of RL has moved toward more on policy setups because th
 
 That feels very relevant for language agents. We have huge offline data, but the question is not merely whether a trajectory exists. The question is whether it lies near the behavior distribution we want the agent to learn.
 
-## 12. Forward search as an alternative to RL
+The robotics analogy makes this concrete. Imagine a robot arm trained from a dataset of successful grasps. If deployment shifts slightly, the gripper may approach an object from a weird angle. If the dataset only contains perfect demonstrations, the robot may not know how to recover. Some off policy data near failure states is useful because it teaches correction. The policy learns not only the ideal trajectory, but also how to return to it.
+
+But if the replay buffer is full of states the current robot would never reach, the learner spends capacity solving irrelevant recovery problems. In the worst case, the policy becomes good at actions that never matter and worse at the states it actually visits. This is the tension Eric is pointing at.
+
+A useful replay buffer is not just large. It is shaped. It should contain the states the current policy visits, plus nearby perturbations that teach robustness. This is the DAGGER intuition again. The expert should label the learner’s state distribution, not only an idealized state distribution and not a totally unrelated one.
+
+This also explains why many modern RL setups prefer on policy updates or use off policy data carefully. On policy data is expensive because you have to collect fresh trajectories. But it is stable because it matches the current policy distribution. Off policy data is efficient because you can reuse it, but it can bias the objective if the distribution is wrong.
+
+The compromise Eric describes is to use off policy estimates to reduce variance or shape advantages rather than letting stale data fully determine the policy objective. In other words, the old data can inform the critic, the baseline, or the advantage estimate, but the main policy update should remain anchored to what the current policy actually does.
+
+For language models, this is an underrated issue. Internet text, old model outputs, human demonstrations, synthetic traces, and tool use logs are all off policy relative to the current model. Some of that data is useful. Some of it teaches behavior the current model will never need. Some of it is actively harmful because it represents older policies, weaker tools, or different objective functions. The question is not simply more data. The question is whether the data is near the distribution we want to improve.
+
+## Forward search as an alternative to RL
 
 One of my strongest takeaways is that search can be an alternative route to improvement.
 
@@ -373,7 +583,15 @@ Tree of Thoughts is one early version. It uses the LLM itself to generate though
 
 The hard part is not saying “use a tree.” The hard part is defining the node, the child, the value function, and the pruning rule in a way that does not collapse into expensive prompt sampling.
 
-## 13. Automated AI research is good at grinding, weaker at taste
+This is why I think the phrase forward search should be used carefully. It can mean many things. It can mean explicit MCTS over legal moves. It can mean beam search over tokens. It can mean sampling multiple plans and scoring them. It can mean running code, checking tests, and revising. It can mean a research agent branching over experiment ideas.
+
+The useful version depends on the domain having some local evaluability. In Go, local evaluation comes from the value function and exact rules. In code, it can come from tests, type checks, benchmarks, and static analysis. In math, it can come from proof checkers or symbolic verification. In tool using agents, it can come from environment state and task success conditions.
+
+If there is no local evaluator, search can become expensive theater. The model samples many thoughts, judges them with the same weak intuition that generated them, and then chooses the one that sounds best. That may help sometimes, but it is not the same as grounded search.
+
+The most promising direction is to combine language models with external evaluators. Let the model generate candidate thoughts or actions, but let the environment, verifier, unit test, simulator, or judge provide sharper feedback. That would bring language search closer to AlphaGo’s structure, where the learned policy proposes and the environment grounds.
+
+## Automated AI research is good at grinding, weaker at taste
 
 The automated research section is the part that connects most directly to what I care about.
 
@@ -387,15 +605,25 @@ That is the first principles gap.
 
 LLMs can be very strong locally. They can implement, debug, plot, and optimize. But research taste often requires lateral movement. It requires asking: why are we doing this experiment at all? What is the bottleneck? Is the metric lying? Is this failure an infrastructure bug or a false hypothesis? Should we abandon this direction?
 
-![Automated research loop diagram](/assets/alphago_search_blog/automated_ai_research_loop.png)
-
 This is why Go is an interesting research environment. It has a fast outer loop. You can test whether the bot is stronger. You can measure win rate. You can verify rules. You can run small controlled experiments. It is not the same as automating all AI research, but it creates a training ground for research skills.
 
 The big question is whether skills learned in fast verifiable domains transfer to messier domains like robotics, drug discovery, or AI training itself.
 
 I think the answer is probably yes, but only partially. Games teach useful habits: experiment discipline, scaling intuition, debugging, search, value estimation, infrastructure. But they can also create the wrong biases. The lesson is not that games solve research. The lesson is that automated researchers need environments where feedback is fast enough to train taste.
 
-## 14. Local improvements do not always stack
+The strongest part of current AI research agents is execution. If I know the experiment I want, a model can often help write the code, run the sweep, organize the plots, and summarize the result. That is already valuable. It changes the speed at which one person can explore an idea.
+
+But research is not only execution. Research is also deciding which confusion is worth resolving. It is noticing that the metric is wrong. It is recognizing that an experiment is failing because of a bug rather than because the hypothesis is false. It is seeing that two promising local improvements probably will not stack. It is knowing when to stop optimizing a dead track.
+
+Eric’s point about first principles is important here. Current models can often answer the question you ask, but they are weaker at asking whether the question is the right one. They can operate inside a frame better than they can replace the frame.
+
+That is why automated research needs outer loops. A model optimizing a proxy metric can reward hack, overfit, or tunnel into irrelevant details. A good outer loop forces contact with reality. In Go, the outer loop can be win rate against a strong bot. In code, it can be a hidden test suite or production benchmark. In biology, it may be much slower and more expensive. In AI training, it might be downstream task performance, robustness, data efficiency, or scaling law prediction.
+
+The harder the outer loop is to verify, the more research taste matters. If the feedback is immediate and clean, automation can go far. If the feedback is delayed, noisy, or philosophically unclear, models need stronger judgment about what intermediate signals are trustworthy.
+
+This is where I think Go remains useful as a research training ground. It is not because Go is the same as AI research. It is because Go has enough structure to support real experiments and enough complexity to punish shallow heuristics. An automated scientist trained in such an environment might learn transferable skills: designing ablations, debugging infrastructure, estimating scaling, identifying bottlenecks, and knowing when search is giving a real signal versus an artifact.
+
+## Local improvements do not always stack
 
 Another important point is that local improvements may not compose.
 
@@ -407,7 +635,15 @@ So research taste is partly about knowing which heuristics are worth using now, 
 
 That is also why automated research is not just parallel search over ideas. Parallel agents can try many things, but someone or something still needs a top down model of what should stack, what should be isolated, and what should be abandoned.
 
-## 15. My main takeaways
+I like the phrase compute multiplier, but it can be misleading if we imagine multipliers always multiply independently. Many algorithmic tricks exploit the same weakness. If one trick fixes the bottleneck, another trick that fixes the same bottleneck may add very little. Sometimes two tricks interact badly because they push the system in incompatible directions.
+
+This is where the bitter lesson has a practical interpretation. Over long enough timelines, general methods that scale with compute tend to win. But in the present, we still live with constraints. We use heuristics, curricula, architectures, data filters, replay buffers, search procedures, and reward shaping because we do not have infinite compute or perfect initialization.
+
+The taste is knowing which heuristic is a temporary scaffold and which is pointing at a deeper principle. MCTS in AlphaGo is not just a hack. It is a powerful way to create improved labels from search. Some KataGo tricks may be more contingent on hardware, data, and engineering constraints. Automated research systems need to learn that distinction.
+
+This is also why I do not think the future of research is simply thousands of agents trying random changes. That will help, but it is not sufficient. The bottleneck becomes hypothesis selection, experiment interpretation, and synthesis. The interesting automated researcher is not only the one that runs the most experiments. It is the one that knows when an experiment changes the map.
+
+## My main takeaways
 
 The first takeaway is that AlphaGo is an argument for better labels.
 
@@ -437,7 +673,19 @@ The seventh takeaway is that test time scaling and distillation form a powerful 
 
 Search spends compute to improve behavior. Training distills that behavior into the network. Then future search starts from a stronger place. That loop is one of the cleanest pictures of how reasoning and learning can compound.
 
-## 16. The open question
+The eighth takeaway is that Tree of Thoughts is best understood as a search framework, not just a prompting trick.
+
+Its key move is to make generation, evaluation, and search separate pieces. That separation matters because each part can improve independently. A better thought generator gives better candidates. A better evaluator gives better pruning. A better search algorithm spends compute more intelligently.
+
+The ninth takeaway is that LLM reasoning needs grounded evaluators.
+
+Self evaluation is useful, but it is not the same as a grounded value function. The strongest future systems will probably combine language search with external checks: tests, simulators, tools, proof verifiers, environment feedback, or learned critics trained on real outcomes.
+
+The tenth takeaway is that the unit of reasoning is a research problem.
+
+In Go, the unit is a legal move. In Tree of Thoughts, the unit is a thought. In coding agents, the unit may be a patch, a function, a failing test, or a tool trace. In automated research, the unit may be an experiment. Choosing this unit badly can make search useless. Choosing it well can make reasoning tractable.
+
+## The open question
 
 The question I keep coming back to is this:
 
@@ -466,3 +714,11 @@ AlphaGo remains important because it gives a working example of the full loop:
 That is the part I find most interesting. Not AlphaGo as a historical Go bot, but AlphaGo as a template for turning expensive deliberation into cheap intuition.
 
 That template is still not fully solved for LLMs. But it feels like one of the roads we keep circling back to.
+
+The post could be summarized in one sentence: the future is not only bigger policies trained on sparse rewards, but systems that can turn deliberation into better labels.
+
+That is what AlphaGo did cleanly. That is what Tree of Thoughts gestures toward for language. That is what robotics tries to do with replay, relabeling, and value learning. That is what automated research agents will need to do with experiments.
+
+The hard part is grounding. Search without grounding becomes expensive sampling. RL without grounding becomes sparse reward noise. Automated research without grounding becomes metric chasing. But when the loop is grounded, the system can improve itself in a way that feels qualitatively different from passive imitation.
+
+That is the part of the episode I keep thinking about. AlphaGo was not only a Go machine. It was an existence proof for a pattern of learning where a system uses computation to create better supervision for itself. If we can find the right version of that pattern for language agents and research agents, the next jump may not come from a single new model architecture. It may come from a better loop.
