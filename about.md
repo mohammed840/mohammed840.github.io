@@ -20,13 +20,9 @@ Hey, I'm Mohammed. I'm an AI/ML Research Engineer based in London. I graduated f
 
 I'm drawn to spaces where there are **major gaps** between what exists and what's needed. Whether it's speech technology, LLM tooling, or domain specific AI, I like finding the problems that haven't been solved well yet and building real solutions for them.
 
-## What I'm Building Now
-
-I'm the Founding Lead Researcher & Engineer at [redec.io](https://www.redec.io), where we're building a voice enabled patient education agent powered by **medical foundation models**. We take 7B to 30B parameter models and optimize them for high scalability production deployment, handling lab analysis, post clinical guidance, and patient follow ups across speech and text. We're piloting with 2 clinics, handling 150+ patient interactions weekly. I've been applying RL algorithms (PPO, GRPO) to fine tune the conversational policy and building evaluation frameworks for RLHF, RLVR, and preference tuning.
-
 ## Things I've Worked On
 
-I spent time designing **TTS adaptation pipelines** using RL based Differentiable Reward Optimization (DiffRO) for expressiveness and accent tuning. I also built continuous post training loops with automated eval gates and embedding based clustering to surface failure modes. On the LLM side, I've fine tuned models on domain specific datasets using instruction tuning and preference tuning, pushing task accuracy on internal benchmarks.
+I spent time designing **TTS adaptation pipelines** using RL based Differentiable Reward Optimization (DiffRO) for expressiveness and accent tuning. I also worked on medical LLMs for medical QA, RLVR evaluation, and RL tuned conversational behavior. I built continuous post training loops with automated eval gates and embedding based clustering to surface failure modes. On the LLM side, I've fine tuned models on domain specific datasets using instruction tuning and preference tuning, pushing task accuracy on internal benchmarks.
 
 I co-founded **[Taqriry.ai](https://taqriry.ai)**, leading ML and product engineering for an AI notetaker. We turned open source models into production grade transcription, summarization, and automation. I built an ASR + reasoning system with applied RAG, optimizing LLM inference (caching, chunking, streaming) for on prem deployment, cutting end to end latency by 40%. I was also on the sales side, closing deals including with governmental (B2G) entities.
 
@@ -35,5 +31,4 @@ At **IBM**, I worked on the **Watsonx** team as a Multimodal AI Engineer, buildi
 ## What I Care About
 
 I'm really interested in pushing the boundaries of AI, especially around extending what's possible beyond fixed context windows and using post-training to make models outperform closed-source systems. I focus on taking foundation models to production, building scalable systems, and using strong evaluation loops to actually improve them. A lot of my work sits around RL for language (RLHF, RLVR, PPO, GRPO) and reasoning, where training shapes real problem-solving ability. Lately, I've also been going deeper into the physics side, exploring how this translates into humanoid robotics and autonomous systems.
-
 
