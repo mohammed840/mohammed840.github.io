@@ -22,13 +22,12 @@ I'm drawn to spaces where there are **major gaps** between what exists and what'
 
 ## Things I've Worked On
 
-I spent time designing **TTS adaptation pipelines** using RL based Differentiable Reward Optimization (DiffRO) for expressiveness and accent tuning. I also worked on medical LLMs for medical QA, RLVR evaluation, and RL tuned conversational behavior. I built continuous post training loops with automated eval gates and embedding based clustering to surface failure modes. On the LLM side, I've fine tuned models on domain specific datasets using instruction tuning and preference tuning, pushing task accuracy on internal benchmarks.
+I worked on **TTS adaptation**, medical LLMs, medical QA, RLVR evaluation, and RL tuned conversational behavior. I also built post training loops with automated evals and fine tuned domain specific models.
 
-I co-founded **[Taqriry.ai](https://taqriry.ai)**, leading ML and product engineering for an AI notetaker. We turned open source models into production grade transcription, summarization, and automation. I built an ASR + reasoning system with applied RAG, optimizing LLM inference (caching, chunking, streaming) for on prem deployment, cutting end to end latency by 40%. I was also on the sales side, closing deals including with governmental (B2G) entities.
+I co-founded **[Taqriry.ai](https://taqriry.ai)**, where I led ML and product engineering for an AI notetaker. I built ASR, RAG, summarization, and inference systems for production and on prem deployment.
 
-At **IBM**, I worked on the **Watsonx** team as a Multimodal AI Engineer, building systems that combine ASR with LLM prompt engineering. I also designed and built an **agent to agent pipeline for an HR platform**, connecting multiple AI agents to handle end to end HR workflows. Earlier at IBM, I engineered a legal chatbot using LLMs that cut query handling time by 30%.
+At **IBM**, I worked on **Watsonx** multimodal AI systems, combining ASR and LLM workflows. I also built agent pipelines for HR automation and an LLM legal chatbot.
 
 ## What I Care About
 
 I'm really interested in pushing the boundaries of AI, especially around extending what's possible beyond fixed context windows and using post-training to make models outperform closed-source systems. I focus on taking foundation models to production, building scalable systems, and using strong evaluation loops to actually improve them. A lot of my work sits around RL for language (RLHF, RLVR, PPO, GRPO) and reasoning, where training shapes real problem-solving ability. Lately, I've also been going deeper into the physics side, exploring how this translates into humanoid robotics and autonomous systems.
-
