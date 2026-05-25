@@ -40,9 +40,11 @@ abstract: "This project studies Recursive Language Model style investigation for
   overflow-x: auto;
 }
 .post-content blockquote {
-  border-left: 3px solid #111;
-  background: #fafafa;
-  color: #333;
+  border-left: 0;
+  background: transparent;
+  color: inherit;
+  padding-left: 0;
+  margin-left: 0;
 }
 </style>
 <script type="module">
