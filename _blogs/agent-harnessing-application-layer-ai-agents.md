@@ -61,14 +61,15 @@ description: "A technical guide to agent harnessing: how the application layer g
   background: #fafafa;
 }
 .agent-harness-post figure {
-  width: min(980px, calc(100vw - 64px));
-  margin: 2.15rem 0 2.15rem 50%;
+  width: min(1180px, calc(100vw - 88px)) !important;
+  max-width: min(1180px, calc(100vw - 88px)) !important;
+  margin: 2.55rem 0 2.55rem 50%;
   transform: translateX(-50%);
 }
 .agent-harness-post figure img {
-  width: 100%;
-  max-width: none;
-  height: auto;
+  width: 100% !important;
+  max-width: none !important;
+  height: auto !important;
   display: block;
   border: 1px solid #e7e7e7;
   border-radius: 6px;
