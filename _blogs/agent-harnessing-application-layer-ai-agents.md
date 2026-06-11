@@ -29,12 +29,16 @@ description: "A technical guide to agent harnessing: how the application layer g
   line-height: 1.25;
   margin: 2.8rem 0 0.85rem;
   letter-spacing: 0;
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 .agent-harness-post h3 {
   font-size: 1.18rem;
   line-height: 1.32;
   margin: 1.7rem 0 0.55rem;
   letter-spacing: 0;
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 .agent-harness-post p {
   margin: 0 0 1rem;
@@ -57,10 +61,13 @@ description: "A technical guide to agent harnessing: how the application layer g
   background: #fafafa;
 }
 .agent-harness-post figure {
-  margin: 1.9rem 0;
+  width: min(980px, calc(100vw - 64px));
+  margin: 2.15rem 0 2.15rem 50%;
+  transform: translateX(-50%);
 }
 .agent-harness-post figure img {
   width: 100%;
+  max-width: none;
   height: auto;
   display: block;
   border: 1px solid #e7e7e7;
@@ -72,6 +79,7 @@ description: "A technical guide to agent harnessing: how the application layer g
   font-size: 0.92rem;
   line-height: 1.55;
   margin-top: 0.6rem;
+  text-align: center;
 }
 .agent-harness-post .callout {
   border: 1px solid #e7e7e7;
