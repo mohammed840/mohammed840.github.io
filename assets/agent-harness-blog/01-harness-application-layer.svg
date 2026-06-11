@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="660" viewBox="0 0 1100 660" role="img" aria-labelledby="title desc">
+  <title id="title">Agent harness as an application layer</title>
+  <desc id="desc">A layered diagram showing users, product intent, the harness application layer, the agent runtime, and external systems.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#222"/>
+    </marker>
+    <style>
+      .bg { fill: #ffffff; }
+      .band { fill: #f7f7f7; stroke: #d8d8d8; stroke-width: 1.5; }
+      .harness { fill: #eef5ff; stroke: #2463ad; stroke-width: 2; }
+      .runtime { fill: #fff8e8; stroke: #a46a00; stroke-width: 2; }
+      .box { fill: #ffffff; stroke: #222; stroke-width: 1.4; }
+      .label { font-family: Georgia, serif; font-size: 25px; font-weight: 700; fill: #111; }
+      .small { font-family: Georgia, serif; font-size: 17px; fill: #222; }
+      .tiny { font-family: Georgia, serif; font-size: 14px; fill: #555; }
+      .arrow { stroke: #222; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect class="bg" width="1100" height="660"/>
+  <text x="55" y="55" class="label">Agent Harness as the Application Layer</text>
+  <text x="55" y="86" class="small">The model is only one component. The harness defines state, tools, constraints, validation, and handoff.</text>
+
+  <rect x="55" y="125" width="990" height="95" rx="10" class="band"/>
+  <text x="80" y="165" class="label" font-size="22">Product intent and user request</text>
+  <text x="80" y="194" class="small">Goal, task boundary, user constraints, business rules, and success criteria.</text>
+
+  <rect x="55" y="275" width="990" height="210" rx="14" class="harness"/>
+  <text x="80" y="315" class="label" font-size="23">Harness application layer</text>
+  <text x="80" y="345" class="small">This layer turns a raw model into a useful agentic system.</text>
+
+  <rect x="85" y="375" width="150" height="70" rx="8" class="box"/>
+  <text x="110" y="405" class="small">Context</text>
+  <text x="110" y="428" class="tiny">docs, memory, state</text>
+
+  <rect x="260" y="375" width="150" height="70" rx="8" class="box"/>
+  <text x="287" y="405" class="small">Tool gateway</text>
+  <text x="287" y="428" class="tiny">schemas, policy</text>
+
+  <rect x="435" y="375" width="150" height="70" rx="8" class="box"/>
+  <text x="466" y="405" class="small">Planner</text>
+  <text x="466" y="428" class="tiny">steps, routing</text>
+
+  <rect x="610" y="375" width="150" height="70" rx="8" class="box"/>
+  <text x="636" y="405" class="small">Verifier</text>
+  <text x="636" y="428" class="tiny">tests, checks</text>
+
+  <rect x="785" y="375" width="220" height="70" rx="8" class="box"/>
+  <text x="814" y="405" class="small">Observability</text>
+  <text x="814" y="428" class="tiny">logs, traces, outcomes</text>
+
+  <rect x="160" y="525" width="780" height="80" rx="12" class="runtime"/>
+  <text x="205" y="558" class="label" font-size="22">Agent runtime and model calls</text>
+  <text x="205" y="586" class="small">The model reasons inside a controlled loop rather than acting directly on the world.</text>
+
+  <line x1="550" y1="220" x2="550" y2="275" class="arrow"/>
+  <line x1="550" y1="485" x2="550" y2="525" class="arrow"/>
+
+  <rect x="55" y="615" width="990" height="1" fill="#ddd"/>
+  <text x="70" y="640" class="tiny">Design principle: build the environment that makes useful behavior observable, testable, recoverable, and constrained.</text>
+</svg>

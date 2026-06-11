@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="660" viewBox="0 0 1100 660" role="img" aria-labelledby="title desc">
+  <title id="title">Agent harness control loop</title>
+  <desc id="desc">A circular workflow showing observe, plan, act, validate, persist, and improve.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#222"/>
+    </marker>
+    <style>
+      .bg { fill: #fff; }
+      .node { fill: #fff; stroke: #222; stroke-width: 1.6; }
+      .center { fill: #f2f8f3; stroke: #287a3e; stroke-width: 2; }
+      .label { font-family: Georgia, serif; font-size: 25px; font-weight: 700; fill: #111; }
+      .small { font-family: Georgia, serif; font-size: 17px; fill: #222; }
+      .tiny { font-family: Georgia, serif; font-size: 14px; fill: #555; }
+      .arrow { stroke: #222; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect class="bg" width="1100" height="660"/>
+  <text x="55" y="55" class="label">The Harness Control Loop</text>
+  <text x="55" y="86" class="small">A good harness keeps the agent inside a repeatable observe, act, check, and learn cycle.</text>
+
+  <circle cx="550" cy="350" r="105" class="center"/>
+  <text x="483" y="334" class="label" font-size="22">Agent</text>
+  <text x="450" y="363" class="small">model plus policy</text>
+  <text x="466" y="389" class="tiny">does not touch the world directly</text>
+
+  <rect x="450" y="125" width="200" height="84" rx="10" class="node"/>
+  <text x="505" y="157" class="small">Observe</text>
+  <text x="480" y="183" class="tiny">state, docs, logs, user intent</text>
+
+  <rect x="760" y="235" width="220" height="84" rx="10" class="node"/>
+  <text x="823" y="267" class="small">Plan</text>
+  <text x="792" y="293" class="tiny">choose next step and needed tools</text>
+
+  <rect x="760" y="430" width="220" height="84" rx="10" class="node"/>
+  <text x="826" y="462" class="small">Act</text>
+  <text x="790" y="488" class="tiny">call typed tools through gateway</text>
+
+  <rect x="450" y="545" width="200" height="84" rx="10" class="node"/>
+  <text x="504" y="577" class="small">Validate</text>
+  <text x="480" y="603" class="tiny">tests, checks, user simulation</text>
+
+  <rect x="120" y="430" width="220" height="84" rx="10" class="node"/>
+  <text x="185" y="462" class="small">Persist</text>
+  <text x="154" y="488" class="tiny">progress, memory, artifacts</text>
+
+  <rect x="120" y="235" width="220" height="84" rx="10" class="node"/>
+  <text x="180" y="267" class="small">Improve</text>
+  <text x="151" y="293" class="tiny">turn failures into harness changes</text>
+
+  <path d="M 650 167 C 735 175 780 205 820 235" class="arrow"/>
+  <path d="M 930 319 C 960 355 960 395 930 430" class="arrow"/>
+  <path d="M 820 514 C 770 555 720 580 650 587" class="arrow"/>
+  <path d="M 450 587 C 365 580 310 555 280 514" class="arrow"/>
+  <path d="M 170 430 C 140 395 140 355 170 319" class="arrow"/>
+  <path d="M 280 235 C 330 195 380 170 450 167" class="arrow"/>
+
+  <text x="80" y="635" class="tiny">Key point: reliability comes from the loop, not from a single prompt. Every action should leave evidence for validation and future work.</text>
+</svg>

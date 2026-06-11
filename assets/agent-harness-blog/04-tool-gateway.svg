@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="660" viewBox="0 0 1100 660" role="img" aria-labelledby="title desc">
+  <title id="title">Tool gateway architecture</title>
+  <desc id="desc">A diagram showing how agent tool calls pass through schemas, permission checks, execution, and logs.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#222"/>
+    </marker>
+    <style>
+      .bg { fill: #fff; }
+      .agent { fill: #fff8e8; stroke: #a46a00; stroke-width: 2; }
+      .gate { fill: #eef5ff; stroke: #2463ad; stroke-width: 2; }
+      .world { fill: #f2f8f3; stroke: #287a3e; stroke-width: 2; }
+      .box { fill: #fff; stroke: #222; stroke-width: 1.4; }
+      .label { font-family: Georgia, serif; font-size: 25px; font-weight: 700; fill: #111; }
+      .small { font-family: Georgia, serif; font-size: 17px; fill: #222; }
+      .tiny { font-family: Georgia, serif; font-size: 14px; fill: #555; }
+      .arrow { stroke: #222; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect class="bg" width="1100" height="660"/>
+  <text x="55" y="55" class="label">Tool Use Needs a Gateway</text>
+  <text x="55" y="86" class="small">Agents should not call production capabilities directly. The harness mediates every action.</text>
+
+  <rect x="60" y="180" width="210" height="260" rx="14" class="agent"/>
+  <text x="105" y="220" class="label" font-size="22">Agent</text>
+  <text x="88" y="255" class="small">proposes tool call</text>
+  <text x="88" y="284" class="tiny">name, arguments, reason</text>
+  <text x="88" y="312" class="tiny">expected result</text>
+
+  <rect x="335" y="115" width="430" height="420" rx="16" class="gate"/>
+  <text x="400" y="155" class="label" font-size="22">Tool gateway</text>
+
+  <rect x="375" y="195" width="165" height="65" rx="8" class="box"/>
+  <text x="405" y="223" class="small">Schema check</text>
+  <text x="405" y="245" class="tiny">typed input, defaults</text>
+
+  <rect x="560" y="195" width="165" height="65" rx="8" class="box"/>
+  <text x="588" y="223" class="small">Policy check</text>
+  <text x="588" y="245" class="tiny">permissions, risk tier</text>
+
+  <rect x="375" y="300" width="165" height="65" rx="8" class="box"/>
+  <text x="408" y="328" class="small">Executor</text>
+  <text x="408" y="350" class="tiny">sandbox or live call</text>
+
+  <rect x="560" y="300" width="165" height="65" rx="8" class="box"/>
+  <text x="589" y="328" class="small">Normalizer</text>
+  <text x="589" y="350" class="tiny">stable result shape</text>
+
+  <rect x="468" y="405" width="165" height="65" rx="8" class="box"/>
+  <text x="504" y="433" class="small">Audit log</text>
+  <text x="504" y="455" class="tiny">who, what, result</text>
+
+  <rect x="830" y="180" width="210" height="260" rx="14" class="world"/>
+  <text x="872" y="220" class="label" font-size="22">World</text>
+  <text x="860" y="255" class="small">application APIs</text>
+  <text x="860" y="284" class="tiny">database</text>
+  <text x="860" y="312" class="tiny">browser</text>
+  <text x="860" y="340" class="tiny">filesystem</text>
+  <text x="860" y="368" class="tiny">external services</text>
+
+  <line x1="270" y1="310" x2="335" y2="310" class="arrow"/>
+  <line x1="765" y1="310" x2="830" y2="310" class="arrow"/>
+  <path d="M 830 390 C 700 590 380 590 270 390" class="arrow"/>
+  <text x="390" y="590" class="tiny">Observation returns as structured evidence, not as untyped text.</text>
+</svg>

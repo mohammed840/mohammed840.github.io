@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="660" viewBox="0 0 1100 660" role="img" aria-labelledby="title desc">
+  <title id="title">Reference architecture for an agent harness</title>
+  <desc id="desc">A reference architecture for a general application-layer agent harness.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#222"/>
+    </marker>
+    <style>
+      .bg { fill: #fff; }
+      .box { fill: #fff; stroke: #222; stroke-width: 1.4; }
+      .blue { fill: #eef5ff; stroke: #2463ad; stroke-width: 1.7; }
+      .green { fill: #f2f8f3; stroke: #287a3e; stroke-width: 1.7; }
+      .yellow { fill: #fff8e8; stroke: #a46a00; stroke-width: 1.7; }
+      .gray { fill: #f7f7f7; stroke: #d8d8d8; stroke-width: 1.4; }
+      .label { font-family: Georgia, serif; font-size: 25px; font-weight: 700; fill: #111; }
+      .small { font-family: Georgia, serif; font-size: 16px; fill: #222; }
+      .tiny { font-family: Georgia, serif; font-size: 13px; fill: #555; }
+      .arrow { stroke: #222; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect class="bg" width="1100" height="660"/>
+  <text x="55" y="55" class="label">Reference Architecture for a Good Agent Harness</text>
+  <text x="55" y="86" class="small">This is platform neutral: any model can sit behind the controller if the application layer is well designed.</text>
+
+  <rect x="55" y="135" width="185" height="90" rx="10" class="gray"/>
+  <text x="88" y="170" class="small">User or event</text>
+  <text x="88" y="195" class="tiny">request, ticket, document, alert</text>
+
+  <rect x="295" y="120" width="220" height="120" rx="12" class="blue"/>
+  <text x="340" y="155" class="small">Task router</text>
+  <text x="325" y="183" class="tiny">classifies goal, risk, workflow</text>
+  <text x="325" y="208" class="tiny">selects harness policy</text>
+
+  <rect x="585" y="120" width="220" height="120" rx="12" class="blue"/>
+  <text x="625" y="155" class="small">Context builder</text>
+  <text x="615" y="183" class="tiny">retrieves docs, memory, state</text>
+  <text x="615" y="208" class="tiny">formats bounded context</text>
+
+  <rect x="860" y="135" width="185" height="90" rx="10" class="yellow"/>
+  <text x="900" y="170" class="small">Agent runtime</text>
+  <text x="895" y="195" class="tiny">model call, plan, next action</text>
+
+  <rect x="295" y="315" width="220" height="120" rx="12" class="green"/>
+  <text x="340" y="350" class="small">Tool gateway</text>
+  <text x="325" y="378" class="tiny">schemas, auth, dry run</text>
+  <text x="325" y="403" class="tiny">execution and result shape</text>
+
+  <rect x="585" y="315" width="220" height="120" rx="12" class="green"/>
+  <text x="633" y="350" class="small">Verifier</text>
+  <text x="615" y="378" class="tiny">tests, rubric, policies</text>
+  <text x="615" y="403" class="tiny">accept, retry, escalate</text>
+
+  <rect x="55" y="510" width="300" height="85" rx="10" class="box"/>
+  <text x="85" y="542" class="small">Memory and artifacts</text>
+  <text x="85" y="568" class="tiny">progress, decisions, traces, plans, eval cases</text>
+
+  <rect x="400" y="510" width="300" height="85" rx="10" class="box"/>
+  <text x="430" y="542" class="small">Observability</text>
+  <text x="430" y="568" class="tiny">logs, screenshots, metrics, tool traces</text>
+
+  <rect x="745" y="510" width="300" height="85" rx="10" class="box"/>
+  <text x="775" y="542" class="small">Application systems</text>
+  <text x="775" y="568" class="tiny">database, APIs, browser, files, external services</text>
+
+  <line x1="240" y1="180" x2="295" y2="180" class="arrow"/>
+  <line x1="515" y1="180" x2="585" y2="180" class="arrow"/>
+  <line x1="805" y1="180" x2="860" y2="180" class="arrow"/>
+  <path d="M 952 225 C 950 290 850 355 805 365" class="arrow"/>
+  <line x1="585" y1="375" x2="515" y2="375" class="arrow"/>
+  <path d="M 405 435 C 360 485 270 505 205 510" class="arrow"/>
+  <path d="M 695 435 C 670 485 610 505 550 510" class="arrow"/>
+  <path d="M 515 375 C 625 470 760 510 895 510" class="arrow"/>
+  <path d="M 585 552 C 420 635 205 615 205 595" class="arrow"/>
+
+  <text x="82" y="635" class="tiny">Design principle: the model can be swapped. The hard work is the harness layer that routes, grounds, acts, checks, and records.</text>
+</svg>
