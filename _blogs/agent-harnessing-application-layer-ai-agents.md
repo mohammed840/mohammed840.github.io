@@ -242,7 +242,7 @@ description: "A technical guide to agent harnessing: how the application layer g
             For a short one-turn task, a prompt may be enough. But once an agent has to work across files, documents, browser state, API calls, user preferences, logs, tests, memory, or multiple sessions, the prompt becomes only one part of the system. The agent needs an environment that preserves facts outside the context window and gives the model feedback about whether its actions worked.
           </p>
           <p>
-            The Anthropic engineering note on long-running agents frames this as a continuity problem: agents need durable artifacts such as progress logs, feature lists, setup scripts, and clean handoff state. The OpenAI harness engineering post frames it as a broader application engineering problem: make the repository and application legible to the agent, give it tools to inspect runtime behavior, and encode repeated lessons as mechanical checks instead of relying on memory or vibes.
+            I frame this as two connected problems. First, agents need continuity: durable artifacts such as progress logs, feature lists, setup scripts, and clean handoff state. Second, agents need a legible application environment: they need tools to inspect runtime behavior, structured state they can trust, and repeated lessons encoded as mechanical checks instead of relying on memory or vibes.
           </p>
           <p>
             The shared lesson is simple: if the agent cannot inspect the state, it will infer. If it cannot validate the result, it will guess. If it cannot persist progress, the next run starts from fog. The harness exists to remove as much of that fog as possible.
@@ -418,7 +418,7 @@ description: "A technical guide to agent harnessing: how the application layer g
             The key pattern from the long-running-agent view is that each session should leave the next session in a better state. A future agent should not need to reconstruct the entire project from a transcript. It should be able to read the current feature list, progress notes, git history, failing tests, and setup instructions, then choose one next unit of work.
           </p>
           <p>
-            This is where the Anthropic pattern is especially useful: separate initialization from continuation. The first run should create the scaffolding that future runs depend on. It should not only start the app. It should write the setup script, define the feature list, create the progress file, and make the first clean checkpoint. After that, continuation runs should behave more like disciplined workers: read the state, choose one unfinished feature, test it, commit or persist the outcome, and update the handoff artifacts.
+            This is where the initialization-versus-continuation pattern is especially useful. The first run should create the scaffolding that future runs depend on. It should not only start the app. It should write the setup script, define the feature list, create the progress file, and make the first clean checkpoint. After that, continuation runs should behave more like disciplined workers: read the state, choose one unfinished feature, test it, commit or persist the outcome, and update the handoff artifacts.
           </p>
 
           <figure>
