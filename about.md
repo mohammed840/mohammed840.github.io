@@ -16,18 +16,18 @@ permalink: /about/
 </div>
 </div>
 
-Hey, I'm Mohammed. I'm an AI/ML Research Engineer based in London. I graduated from University College Dublin with a BSc in Computer Science with Mathematics.
+Hey, I'm Mohammed. I'm an AI/ML Research Engineer based in London, with a BSc in Computer Science with Mathematics from University College Dublin.
 
-I'm drawn to spaces where there are **major gaps** between what exists and what's needed. Whether it's speech technology, LLM tooling, or domain specific AI, I like finding the problems that haven't been solved well yet and building real solutions for them.
+The work that pulls me in is where there are **major gaps** between what exists and what's needed: RL environments, agent observability, multimodal AI, and domain specific systems. I like finding problems that have not been solved well yet and building real solutions for them.
 
-## Things I've Worked On
+## Experience
 
-I worked on **TTS adaptation**, medical LLMs, medical QA, RLVR evaluation, and RL tuned conversational behavior. I also built post training loops with automated evals and fine tuned domain specific models.
+My work has covered **RL environments**, agent observability, RLVR evaluation, and RL tuned conversational behavior. That includes post training loops with automated evals, multimodal workflows, and fine tuned domain specific models.
 
-I co-founded **[Taqriry.ai](https://taqriry.ai)**, where I led ML and product engineering for an AI notetaker. I built ASR, RAG, summarization, and inference systems for production and on prem deployment.
+I co-founded **[Taqriry.ai](https://taqriry.ai)**, where I led ML and product engineering for an AI notetaker. The work included RAG, summarization, multimodal workflow, and inference systems for production and on prem deployment.
 
-At **IBM**, I worked on **Watsonx** multimodal AI systems, combining ASR and LLM workflows. I also built agent pipelines for HR automation and an LLM legal chatbot.
+At **IBM**, I worked on **Watsonx** multimodal AI systems and agent pipelines for enterprise workflows, including HR automation and an LLM legal chatbot.
 
-## What I Care About
+## Research Focus
 
-I'm really interested in pushing the boundaries of AI, especially around extending what's possible beyond fixed context windows and using post-training to make models outperform closed-source systems. I focus on taking foundation models to production, building scalable systems, and using strong evaluation loops to actually improve them. A lot of my work sits around RL for language (RLHF, RLVR, PPO, GRPO) and reasoning, where training shapes real problem-solving ability. Lately, I've also been going deeper into the physics side, exploring how this translates into humanoid robotics and autonomous systems.
+I'm interested in pushing AI beyond fixed context windows, designing RL environments for agents, and using post-training to make models outperform closed-source systems. The focus is taking foundation models to production, building scalable systems, and using strong evaluation and observability loops to improve them. A lot of my work sits around RL for language and reasoning (RLHF, RLVR, PPO, GRPO), multimodal systems, and agent infrastructure where training shapes real problem-solving ability. More recently, this has expanded toward the physics side: humanoid robotics and autonomous systems.
