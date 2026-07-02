@@ -28,16 +28,16 @@ description: "A project writeup on evidence-grounded claim verification, retriev
 
 | Section | Focus |
 |---|---|
-| Introduction | Can RL improve evidence-grounded claim verification? |
-| DataGen and Premise | Synthetic company/legal/privacy/HR/contract dataset |
-| Reward Shaping and Failure Modes | Quote grounding, false support, verdict calibration problems |
-| Design Space | Static verifier, SFT, offline RL, online RL, Prime runs |
-| Protecting the Deliverable | Reward gates: valid evidence, real quotes, unsupported spans |
-| Separability Diagnostic | Compare rule baselines, SFT, RL, hard/OOD/multihop |
-| One Last Shot at RL | Qwen 9B SFT warmup and verdict-gated RL runs |
-| Why RL Was/Was Not Best | SFT best overall, RL useful only for multihop/grounding |
-| What the Model Learned | Examples of correct and failed verifier traces |
-| Closing | Final lesson: SFT is the main model, RL is a targeted pressure tool |
+| [Introduction](#introduction) | Can RL improve evidence-grounded claim verification? |
+| [DataGen and Premise](#datagen-and-premise) | Synthetic company/legal/privacy/HR/contract dataset |
+| [Reward Shaping and Failure Modes](#reward-shaping-and-failure-modes) | Quote grounding, false support, verdict calibration problems |
+| [Design Space](#design-space) | Static verifier, SFT, offline RL, online RL, Prime runs |
+| [Protecting the Deliverable](#protecting-the-deliverable) | Reward gates: valid evidence, real quotes, unsupported spans |
+| [Separability Diagnostic](#separability-diagnostic) | Compare rule baselines, SFT, RL, hard/OOD/multihop |
+| [One Last Shot at RL](#one-last-shot-at-rl) | Qwen 9B SFT warmup and verdict-gated RL runs |
+| [Why RL Was/Was Not Best](#why-rl-waswas-not-best) | SFT best overall, RL useful only for multihop/grounding |
+| [What the Model Learned](#what-the-model-learned) | Examples of correct and failed verifier traces |
+| [Closing](#closing) | Final lesson: SFT is the main model, RL is a targeted pressure tool |
 
 ## Introduction
 
@@ -81,17 +81,7 @@ But I did not want a toy dataset where `supported` just means high word overlap 
 
 So the dataset was built around controlled corruptions. Each example starts from a clean source document, then the generator deliberately injects one evidence failure. That gives us both the label and the reason for the label.
 
-```mermaid
-flowchart LR
-    A["Source document"] --> B["Question"]
-    A --> C["Gold supported answer"]
-    C --> D["Controlled corruption"]
-    D --> E["Candidate answer"]
-    A --> F["Evidence snippets"]
-    E --> G["Gold verdict"]
-    F --> G
-    G --> H["SFT / RL / Eval example"]
-```
+![Controlled corruption data generation pipeline](assets/datagen_controlled_corruptions_v2.svg)
 
 The first full dataset covered five document domains: company policies, legal clauses, privacy/security docs, HR rules, and contracts. I picked these because they punish loose retrieval. These documents are full of conditions, exceptions, deadlines, party-specific obligations, and version-sensitive wording. In that setting, being semantically close is not enough. The verifier has to preserve the exact claim.
 

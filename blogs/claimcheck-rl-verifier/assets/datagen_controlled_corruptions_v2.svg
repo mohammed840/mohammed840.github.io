@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="760" viewBox="0 0 1800 760" role="img" aria-labelledby="title desc">
+  <title id="title">Controlled Corruption Data Generation Pipeline</title>
+  <desc id="desc">A source document produces a question, gold supported answer, and evidence snippets. The gold answer is deliberately corrupted into a candidate answer. Candidate answer and evidence snippets produce a gold verdict, which becomes an SFT, RL, or evaluation example.</desc>
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f4f7fb"/>
+    </linearGradient>
+    <linearGradient id="corrupt" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff7e8"/>
+      <stop offset="1" stop-color="#ffe1aa"/>
+    </linearGradient>
+    <linearGradient id="verdict" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ecfdf5"/>
+      <stop offset="1" stop-color="#b8f0d2"/>
+    </linearGradient>
+    <linearGradient id="final" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef2ff"/>
+      <stop offset="1" stop-color="#cdd8ff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-25%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#111827" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" markerWidth="16" markerHeight="16" refX="13" refY="8" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L14,8 L2,14 Z" fill="#334155"/>
+    </marker>
+  </defs>
+
+  <rect width="1800" height="760" fill="#fbfcfe"/>
+  <rect x="48" y="48" width="1704" height="664" rx="28" fill="#ffffff" stroke="#e5e7eb"/>
+
+  <text x="90" y="108" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#111827">Controlled corruption turns clean evidence into verifier training examples</text>
+  <text x="90" y="148" font-family="Inter, Arial, sans-serif" font-size="18" fill="#64748b">The generator starts with a clean document, injects one evidence failure, then records both the label and the reason.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="90" y="292" width="260" height="150" rx="18" fill="url(#paper)" stroke="#cbd5e1"/>
+    <text x="220" y="342" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="800" fill="#0f172a">Source document</text>
+    <text x="220" y="378" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#475569">policy, contract, HR,</text>
+    <text x="220" y="402" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#475569">privacy, or legal clause</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="460" y="190" width="260" height="116" rx="18" fill="#ffffff" stroke="#cbd5e1"/>
+    <text x="590" y="240" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#0f172a">Question</text>
+    <text x="590" y="272" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="15" fill="#64748b">what must be verified?</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="460" y="340" width="260" height="124" rx="18" fill="#ffffff" stroke="#cbd5e1"/>
+    <text x="590" y="390" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#0f172a">Gold supported</text>
+    <text x="590" y="420" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#0f172a">answer</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="460" y="500" width="260" height="124" rx="18" fill="#ffffff" stroke="#cbd5e1"/>
+    <text x="590" y="550" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#0f172a">Evidence</text>
+    <text x="590" y="580" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#0f172a">snippets</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="830" y="330" width="270" height="146" rx="18" fill="url(#corrupt)" stroke="#f59e0b"/>
+    <text x="965" y="382" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="900" fill="#78350f">Controlled</text>
+    <text x="965" y="414" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="900" fill="#78350f">corruption</text>
+    <text x="965" y="448" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="15" fill="#92400e">number, party, scope,</text>
+    <text x="965" y="470" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="15" fill="#92400e">condition, or deadline</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1210" y="228" width="260" height="132" rx="18" fill="#ffffff" stroke="#cbd5e1"/>
+    <text x="1340" y="282" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="800" fill="#0f172a">Candidate</text>
+    <text x="1340" y="314" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="800" fill="#0f172a">answer</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1210" y="438" width="260" height="132" rx="18" fill="url(#verdict)" stroke="#22c55e"/>
+    <text x="1340" y="492" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="900" fill="#064e3b">Gold verdict</text>
+    <text x="1340" y="526" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="15" fill="#047857">label + reason</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1540" y="330" width="190" height="146" rx="18" fill="url(#final)" stroke="#818cf8"/>
+    <text x="1635" y="382" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="900" fill="#312e81">SFT / RL /</text>
+    <text x="1635" y="414" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="900" fill="#312e81">Eval</text>
+    <text x="1635" y="448" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#4338ca">example</text>
+  </g>
+
+  <path d="M350 350 C392 300 410 250 454 248" fill="none" stroke="#334155" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M350 374 C394 382 412 396 454 400" fill="none" stroke="#334155" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M350 414 C394 488 410 552 454 560" fill="none" stroke="#334155" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M720 402 L824 402" fill="none" stroke="#334155" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M1100 392 C1162 352 1168 300 1204 294" fill="none" stroke="#334155" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M1470 294 C1514 314 1514 362 1534 382" fill="none" stroke="#334155" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M720 562 C926 640 1126 610 1204 520" fill="none" stroke="#334155" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M1470 504 C1516 488 1518 442 1534 424" fill="none" stroke="#334155" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="88" y="654" width="1628" height="38" rx="19" fill="#f8fafc" stroke="#e2e8f0"/>
+    <text x="902" y="679" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#475569">Clean supported answer → one controlled evidence failure → candidate answer + evidence → auditable gold verdict</text>
+  </g>
+</svg>
