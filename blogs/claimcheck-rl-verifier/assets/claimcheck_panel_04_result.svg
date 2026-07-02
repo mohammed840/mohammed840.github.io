@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="760" viewBox="0 0 1500 760" role="img" aria-labelledby="title desc">
+  <title id="title">The Final Shape</title>
+  <desc id="desc">Diagram showing SFT as the default verifier and RL as targeted pressure for multihop grounding.</desc>
+  <rect width="1500" height="760" fill="#f7f8f4"/>
+  <text x="64" y="82" font-family="Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="3" fill="#183d3a">④ THE FINAL SHAPE</text>
+  <text x="64" y="126" font-family="Arial, sans-serif" font-size="25" fill="#425f5a">The best system is SFT-first, with RL used surgically for evidence behavior.</text>
+
+  <rect x="95" y="210" width="420" height="360" rx="28" fill="#ffffff" stroke="#cfd8d3" stroke-width="2"/>
+  <text x="145" y="272" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#183d3a">Default verifier</text>
+  <text x="145" y="325" font-family="Arial, sans-serif" font-size="24" fill="#2d7785">SFT-only Qwen 9B</text>
+  <text x="145" y="385" font-family="Arial, sans-serif" font-size="22" fill="#425f5a">best mixed / hard / OOD</text>
+  <text x="145" y="424" font-family="Arial, sans-serif" font-size="22" fill="#425f5a">stable JSON behavior</text>
+  <text x="145" y="463" font-family="Arial, sans-serif" font-size="22" fill="#425f5a">strong general calibration</text>
+  <rect x="145" y="505" width="220" height="44" rx="13" fill="#2d7785"/>
+  <text x="175" y="534" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#fff">ship this path</text>
+
+  <rect x="985" y="210" width="420" height="360" rx="28" fill="#fff7ef" stroke="#e3b4a3" stroke-width="2"/>
+  <text x="1035" y="272" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#7d3d2f">Targeted pressure</text>
+  <text x="1035" y="325" font-family="Arial, sans-serif" font-size="24" fill="#bf6f5a">Verdict-gated RL</text>
+  <text x="1035" y="385" font-family="Arial, sans-serif" font-size="22" fill="#7d3d2f">multihop: 0.622 → 0.720</text>
+  <text x="1035" y="424" font-family="Arial, sans-serif" font-size="22" fill="#7d3d2f">quote validity improves</text>
+  <text x="1035" y="463" font-family="Arial, sans-serif" font-size="22" fill="#7d3d2f">hard/OOD calibration drops</text>
+  <rect x="1035" y="505" width="245" height="44" rx="13" fill="#bf6f5a"/>
+  <text x="1064" y="534" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#fff">use as experiment</text>
+
+  <path d="M548 388 C655 320, 840 320, 952 388" fill="none" stroke="#425f5a" stroke-width="4" stroke-dasharray="10 10"/>
+  <text x="620" y="300" font-family="Arial, sans-serif" font-size="24" fill="#425f5a">future work:</text>
+  <text x="620" y="334" font-family="Arial, sans-serif" font-size="24" fill="#425f5a">merge gains without calibration loss</text>
+  <text x="455" y="670" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#183d3a">RL helped us learn where the verifier is brittle. SFT remained the model.</text>
+</svg>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="820" viewBox="0 0 1500 820" role="img" aria-labelledby="title desc">
+  <title id="title">RL Improved The Hardest Track While Hurting General Calibration</title>
+  <desc id="desc">Line chart comparing multihop reward against hard and OOD average reward across SFT-only, SFT plus RL polish, and verdict-gated RL.</desc>
+  <rect width="1500" height="820" fill="#f7f8f4"/>
+  <text x="64" y="82" font-family="Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="3" fill="#183d3a">⑤ RL MOVED THE BEHAVIOR, BUT NOT CLEANLY</text>
+  <text x="64" y="126" font-family="Arial, sans-serif" font-size="25" fill="#425f5a">The targeted reward helped multihop, but the same pressure bent hard/OOD calibration downward.</text>
+
+  <rect x="200" y="190" width="1080" height="440" fill="#ffffff" stroke="#d5ded8" stroke-width="2"/>
+  <g stroke="#d5ded8" stroke-width="1.3" stroke-dasharray="7 7">
+    <line x1="200" y1="570" x2="1280" y2="570"/>
+    <line x1="200" y1="494" x2="1280" y2="494"/>
+    <line x1="200" y1="418" x2="1280" y2="418"/>
+    <line x1="200" y1="342" x2="1280" y2="342"/>
+    <line x1="200" y1="266" x2="1280" y2="266"/>
+  </g>
+  <line x1="200" y1="630" x2="1280" y2="630" stroke="#183d3a" stroke-width="3"/>
+  <line x1="200" y1="190" x2="200" y2="630" stroke="#183d3a" stroke-width="3"/>
+  <g font-family="Arial, sans-serif" font-size="18" fill="#425f5a">
+    <text x="150" y="636">0.55</text>
+    <text x="150" y="574">0.65</text>
+    <text x="150" y="498">0.75</text>
+    <text x="150" y="422">0.85</text>
+    <text x="150" y="270">0.95</text>
+  </g>
+
+  <g font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#183d3a">
+    <text x="310" y="680">SFT-only</text>
+    <text x="650" y="680">SFT + RL polish</text>
+    <text x="1010" y="680">Verdict-gated RL</text>
+  </g>
+
+  <!-- hard/OOD avg: 0.916, 0.902, 0.883 mapped manually -->
+  <polyline points="365,292 740,313 1115,343" fill="none" stroke="#bf6f5a" stroke-width="6"/>
+  <circle cx="365" cy="292" r="11" fill="#bf6f5a"/>
+  <circle cx="740" cy="313" r="11" fill="#bf6f5a"/>
+  <circle cx="1115" cy="343" r="11" fill="#bf6f5a"/>
+  <text x="245" y="285" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#9c4e3e">hard/OOD avg 0.916</text>
+  <text x="760" y="305" font-family="Arial, sans-serif" font-size="20" fill="#9c4e3e">0.902</text>
+  <text x="1135" y="336" font-family="Arial, sans-serif" font-size="20" fill="#9c4e3e">0.883</text>
+
+  <!-- multihop: 0.622, 0.619, 0.720 mapped manually -->
+  <polyline points="365,592 740,595 1115,514" fill="none" stroke="#2d7785" stroke-width="6"/>
+  <circle cx="365" cy="592" r="11" fill="#2d7785"/>
+  <circle cx="740" cy="595" r="11" fill="#2d7785"/>
+  <circle cx="1115" cy="514" r="11" fill="#2d7785"/>
+  <text x="230" y="615" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#1d6370">multihop 0.622</text>
+  <text x="760" y="618" font-family="Arial, sans-serif" font-size="20" fill="#1d6370">0.619</text>
+  <text x="1135" y="507" font-family="Arial, sans-serif" font-size="20" fill="#1d6370">0.720</text>
+
+  <g font-family="Arial, sans-serif" font-size="22">
+    <rect x="1010" y="205" width="24" height="24" fill="#bf6f5a"/>
+    <text x="1045" y="225" fill="#425f5a">Hard/OOD calibration</text>
+    <rect x="1010" y="245" width="24" height="24" fill="#2d7785"/>
+    <text x="1045" y="265" fill="#425f5a">Multihop grounding</text>
+  </g>
+  <text x="356" y="756" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#183d3a">The last RL run solved the hard part locally, but traded away general reliability.</text>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="820" viewBox="0 0 1500 820" role="img" aria-labelledby="title desc">
+  <title id="title">Why RL Was Useful But Not Best</title>
+  <desc id="desc">Diagnostic diagram showing RL as useful for process pressure and SFT as better for dense verifier supervision and calibration.</desc>
+  <rect width="1500" height="820" fill="#f7f8f4"/>
+  <text x="64" y="82" font-family="Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="3" fill="#183d3a">⑥ WHY RL WAS USEFUL, BUT NOT BEST</text>
+  <text x="64" y="126" font-family="Arial, sans-serif" font-size="25" fill="#425f5a">The reward could pressure evidence behavior; supervised traces still taught the full verifier more directly.</text>
+
+  <rect x="90" y="205" width="610" height="420" rx="28" fill="#ffffff" stroke="#cfd8d3" stroke-width="2"/>
+  <text x="140" y="268" font-family="Arial, sans-serif" font-size="31" font-weight="700" fill="#2d7785">RL was good for</text>
+  <g font-family="Arial, sans-serif" font-size="24" fill="#425f5a">
+    <text x="150" y="340">✓ quote validity pressure</text>
+    <text x="150" y="392">✓ false-support penalties</text>
+    <text x="150" y="444">✓ evidence ID discipline</text>
+    <text x="150" y="496">✓ multihop grounding</text>
+  </g>
+  <rect x="150" y="540" width="420" height="54" rx="16" fill="#e8f3f1"/>
+  <text x="183" y="575" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#2d7785">process pressure after SFT</text>
+
+  <rect x="800" y="205" width="610" height="420" rx="28" fill="#fff7ef" stroke="#e3b4a3" stroke-width="2"/>
+  <text x="850" y="268" font-family="Arial, sans-serif" font-size="31" font-weight="700" fill="#bf6f5a">RL was weak for</text>
+  <g font-family="Arial, sans-serif" font-size="24" fill="#7d3d2f">
+    <text x="860" y="340">× learning JSON from scratch</text>
+    <text x="860" y="392">× dense claim decomposition</text>
+    <text x="860" y="444">× stable final-verdict boundary</text>
+    <text x="860" y="496">× hard/OOD calibration</text>
+  </g>
+  <rect x="860" y="540" width="420" height="54" rx="16" fill="#fae8df"/>
+  <text x="893" y="575" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#bf6f5a">coarse scalar after output</text>
+
+  <path d="M700 415 C745 385, 755 385, 800 415" fill="none" stroke="#425f5a" stroke-width="4" stroke-dasharray="8 8"/>
+  <text x="622" y="695" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#183d3a">So the system became SFT-first, RL-second.</text>
+  <text x="425" y="742" font-family="Arial, sans-serif" font-size="24" font-style="italic" fill="#425f5a">Use RL where the reward is precise; use SFT where the trace already tells us the answer.</text>
+</svg>

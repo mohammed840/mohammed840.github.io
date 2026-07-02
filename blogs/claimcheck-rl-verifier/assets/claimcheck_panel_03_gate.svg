@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="760" viewBox="0 0 1500 760" role="img" aria-labelledby="title desc">
+  <title id="title">The Evidence Gate</title>
+  <desc id="desc">Logic diagram showing final verdict reward gated by evidence ID validity, quote validity, unsupported span, and false-supported guard.</desc>
+  <rect width="1500" height="760" fill="#f7f8f4"/>
+  <text x="64" y="82" font-family="Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="3" fill="#183d3a">③ THE EVIDENCE GATE</text>
+  <text x="64" y="126" font-family="Arial, sans-serif" font-size="25" fill="#425f5a">A correct verdict should not get full credit unless the evidence behavior is valid.</text>
+
+  <rect x="110" y="260" width="260" height="100" rx="18" fill="#ffffff" stroke="#cfd8d3" stroke-width="2"/>
+  <text x="150" y="304" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#183d3a">final verdict</text>
+  <text x="150" y="336" font-family="Arial, sans-serif" font-size="20" fill="#425f5a">correct or wrong</text>
+
+  <rect x="470" y="185" width="260" height="70" rx="16" fill="#eef5f4" stroke="#9ec4c1" stroke-width="2"/>
+  <text x="512" y="229" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#183d3a">evidence ID exists</text>
+  <rect x="470" y="275" width="260" height="70" rx="16" fill="#eef5f4" stroke="#9ec4c1" stroke-width="2"/>
+  <text x="532" y="319" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#183d3a">quote matches</text>
+  <rect x="470" y="365" width="260" height="70" rx="16" fill="#eef5f4" stroke="#9ec4c1" stroke-width="2"/>
+  <text x="520" y="409" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#183d3a">span localized</text>
+  <rect x="470" y="455" width="260" height="70" rx="16" fill="#eef5f4" stroke="#9ec4c1" stroke-width="2"/>
+  <text x="503" y="499" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#183d3a">false support guard</text>
+
+  <path d="M370 310 H430" stroke="#425f5a" stroke-width="4"/>
+  <path d="M730 220 H845 M730 310 H845 M730 400 H845 M730 490 H845" stroke="#425f5a" stroke-width="4"/>
+  <rect x="850" y="292" width="130" height="125" rx="18" fill="#2d7785"/>
+  <text x="891" y="365" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#fff">gate</text>
+
+  <path d="M980 355 H1110" stroke="#425f5a" stroke-width="4"/>
+  <rect x="1120" y="290" width="290" height="130" rx="20" fill="#fff7ef" stroke="#e3b4a3" stroke-width="2"/>
+  <text x="1160" y="342" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#7d3d2f">label_credit</text>
+  <text x="1160" y="382" font-family="Arial, sans-serif" font-size="22" fill="#7d3d2f">verdict × evidence</text>
+
+  <text x="430" y="620" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#183d3a">The gate improved multihop grounding, but pushed too hard it hurt calibration.</text>
+  <text x="520" y="664" font-family="Arial, sans-serif" font-size="23" font-style="italic" fill="#425f5a">The lesson was not “more RL”; it was “balance the reward.”</text>
+</svg>

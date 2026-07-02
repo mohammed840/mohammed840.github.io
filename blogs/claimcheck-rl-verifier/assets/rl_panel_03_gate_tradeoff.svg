@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="760" viewBox="0 0 1500 760" role="img" aria-labelledby="title desc">
+  <title id="title">The Evidence Gate Tradeoff</title>
+  <desc id="desc">A conceptual chart showing evidence grounding rising while verdict calibration falls when the reward gate is too strict.</desc>
+  <rect width="1500" height="760" fill="#fbf7d8"/>
+  <text x="48" y="94" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="6" fill="#17392f">③ THE EVIDENCE GATE TRADEOFF</text>
+  <text x="48" y="140" font-family="Arial, sans-serif" font-size="25" fill="#405f55">Gating verdict credit by evidence quality improves grounding, but too much pressure bends calibration.</text>
+  <rect x="270" y="245" width="970" height="380" fill="#e9edd2" opacity="0.55"/>
+  <line x1="270" y1="625" x2="1240" y2="625" stroke="#405f55" stroke-width="3"/>
+  <line x1="270" y1="230" x2="270" y2="625" stroke="#405f55" stroke-width="3"/>
+  <text x="655" y="690" font-family="Arial, sans-serif" font-size="25" fill="#17392f">evidence gate strength →</text>
+  <text x="150" y="448" font-family="Arial, sans-serif" font-size="23" fill="#17392f" transform="rotate(-90 150 448)">score</text>
+  <path d="M280 560 C450 520, 640 455, 790 365 C940 276, 1095 250, 1230 260" fill="none" stroke="#0b5a6d" stroke-width="6"/>
+  <path d="M280 330 C450 342, 640 380, 790 455 C940 532, 1080 580, 1230 602" fill="none" stroke="#d5968d" stroke-width="6"/>
+  <circle cx="1000" cy="296" r="12" fill="#0b5a6d"/>
+  <circle cx="1000" cy="552" r="12" fill="#d5968d"/>
+  <line x1="1000" y1="250" x2="1000" y2="625" stroke="#405f55" stroke-width="2" stroke-dasharray="9 9"/>
+  <text x="845" y="292" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#0b5a6d">multihop grounding climbs</text>
+  <text x="745" y="548" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#b77d75">hard/OOD calibration drops</text>
+  <text x="1018" y="424" font-family="Arial, sans-serif" font-size="23" fill="#17392f">verdict-gated run</text>
+  <g font-family="Arial, sans-serif" font-size="22" fill="#405f55">
+    <text x="340" y="315">SFT-only</text>
+    <text x="340" y="347">best default</text>
+    <text x="1040" y="330">multihop</text>
+    <text x="1040" y="362">0.622 → 0.720</text>
+    <text x="1040" y="585">hard</text>
+    <text x="1040" y="617">0.916 → 0.884</text>
+  </g>
+  <text x="410" y="710" font-family="Arial, sans-serif" font-size="24" font-style="italic" fill="#405f55">The gate helped the part we aimed at, but it also moved the decision boundary.</text>
+</svg>

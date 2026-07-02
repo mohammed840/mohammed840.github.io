@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="760" viewBox="0 0 1500 760" role="img" aria-labelledby="title desc">
+  <title id="title">One Token Does Not Teach The Whole Verifier</title>
+  <desc id="desc">A long verifier rollout where most tokens receive no direct task reward and the reward arrives only after the final JSON verdict.</desc>
+  <rect width="1500" height="760" fill="#fbf7d8"/>
+  <g opacity="0.24" fill="#d99b8f">
+    <ellipse cx="580" cy="92" rx="7" ry="16" transform="rotate(24 580 92)"/>
+    <ellipse cx="1110" cy="220" rx="7" ry="15" transform="rotate(-28 1110 220)"/>
+    <ellipse cx="930" cy="610" rx="7" ry="16" transform="rotate(20 930 610)"/>
+  </g>
+  <g opacity="0.28" fill="#9aac7b">
+    <circle cx="1040" cy="60" r="4"/>
+    <circle cx="470" cy="660" r="4"/>
+    <circle cx="720" cy="210" r="5"/>
+    <circle cx="1120" cy="690" r="5"/>
+  </g>
+  <text x="48" y="102" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="6" fill="#17392f">① ONE VERDICT CARRIES THE WHOLE RL REWARD</text>
+  <text x="48" y="148" font-family="Arial, sans-serif" font-size="25" fill="#405f55">A verifier rollout is a long JSON trajectory, but the task reward is scored only after the final verdict.</text>
+  <text x="130" y="286" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#405f55">one rollout · claim JSON + evidence fields</text>
+  <path d="M140 302 H1290" stroke="#82977d" stroke-width="2"/>
+  <path d="M140 302 v12 M1290 302 v12" stroke="#82977d" stroke-width="2"/>
+  <rect x="130" y="330" width="1180" height="88" rx="16" fill="#e6ecd2" stroke="#a8b79c" stroke-width="2"/>
+  <g stroke="#9aac9a" stroke-width="1.4">
+    <path d="M154 330 v88"/><path d="M176 330 v88"/><path d="M198 330 v88"/><path d="M220 330 v88"/><path d="M242 330 v88"/><path d="M264 330 v88"/><path d="M286 330 v88"/><path d="M308 330 v88"/><path d="M330 330 v88"/><path d="M352 330 v88"/><path d="M374 330 v88"/><path d="M396 330 v88"/><path d="M418 330 v88"/><path d="M440 330 v88"/><path d="M462 330 v88"/><path d="M484 330 v88"/><path d="M506 330 v88"/><path d="M528 330 v88"/><path d="M550 330 v88"/><path d="M572 330 v88"/><path d="M594 330 v88"/><path d="M616 330 v88"/><path d="M638 330 v88"/><path d="M660 330 v88"/><path d="M682 330 v88"/><path d="M704 330 v88"/><path d="M726 330 v88"/><path d="M748 330 v88"/><path d="M770 330 v88"/><path d="M792 330 v88"/><path d="M814 330 v88"/><path d="M836 330 v88"/><path d="M858 330 v88"/><path d="M880 330 v88"/><path d="M902 330 v88"/><path d="M924 330 v88"/><path d="M946 330 v88"/><path d="M968 330 v88"/><path d="M990 330 v88"/><path d="M1012 330 v88"/><path d="M1034 330 v88"/><path d="M1056 330 v88"/><path d="M1078 330 v88"/><path d="M1100 330 v88"/><path d="M1122 330 v88"/><path d="M1144 330 v88"/><path d="M1166 330 v88"/><path d="M1188 330 v88"/><path d="M1210 330 v88"/><path d="M1232 330 v88"/><path d="M1254 330 v88"/><path d="M1276 330 v88"/>
+  </g>
+  <rect x="1320" y="330" width="58" height="88" rx="13" fill="#d99b8f"/>
+  <text x="1338" y="384" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#fff">V</text>
+  <path d="M1349 434 l-13 24 h26 z" fill="#d99b8f"/>
+  <text x="1254" y="512" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#c9877d">reward here</text>
+  <text x="1300" y="548" font-family="Arial, sans-serif" font-size="22" fill="#405f55">after JSON</text>
+  <text x="522" y="486" font-family="Arial, sans-serif" font-size="25" fill="#405f55">format, quote, evidence ID, span, reason — weak direct RL signal</text>
+  <text x="370" y="650" font-family="Arial, sans-serif" font-size="24" font-style="italic" fill="#405f55">The gradient for “was the verifier right?” has to flow back through an entire structured answer.</text>
+</svg>

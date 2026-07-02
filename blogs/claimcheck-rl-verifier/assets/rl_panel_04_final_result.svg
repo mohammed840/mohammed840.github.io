@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="760" viewBox="0 0 1500 760" role="img" aria-labelledby="title desc">
+  <title id="title">Final RL Result</title>
+  <desc id="desc">A compact comparison showing SFT-only wins mixed, hard, and OOD, while verdict-gated RL wins multihop.</desc>
+  <rect width="1500" height="760" fill="#fbf7d8"/>
+  <text x="48" y="94" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="6" fill="#17392f">④ FINAL RESULT: RL HELPS, BUT NOT AS DEFAULT</text>
+  <text x="48" y="140" font-family="Arial, sans-serif" font-size="25" fill="#405f55">The last RL run bought multihop grounding, but SFT stayed stronger on the general verifier.</text>
+  <g font-family="Arial, sans-serif">
+    <text x="175" y="250" font-size="24" font-weight="700" fill="#17392f">Mixed</text>
+    <rect x="150" y="280" width="260" height="42" rx="12" fill="#2f6fb0"/><text x="425" y="309" font-size="22" fill="#17392f">SFT 0.844</text>
+    <rect x="150" y="340" width="259" height="42" rx="12" fill="#299895"/><text x="425" y="369" font-size="22" fill="#17392f">RL 0.841</text>
+
+    <text x="175" y="465" font-size="24" font-weight="700" fill="#17392f">Hard</text>
+    <rect x="150" y="495" width="282" height="42" rx="12" fill="#2f6fb0"/><text x="447" y="524" font-size="22" fill="#17392f">SFT 0.916</text>
+    <rect x="150" y="555" width="272" height="42" rx="12" fill="#299895"/><text x="437" y="584" font-size="22" fill="#17392f">RL 0.884</text>
+
+    <text x="770" y="250" font-size="24" font-weight="700" fill="#17392f">OOD</text>
+    <rect x="745" y="280" width="282" height="42" rx="12" fill="#2f6fb0"/><text x="1042" y="309" font-size="22" fill="#17392f">SFT 0.917</text>
+    <rect x="745" y="340" width="271" height="42" rx="12" fill="#299895"/><text x="1031" y="369" font-size="22" fill="#17392f">RL 0.882</text>
+
+    <text x="770" y="465" font-size="24" font-weight="700" fill="#17392f">Multihop</text>
+    <rect x="745" y="495" width="191" height="42" rx="12" fill="#2f6fb0"/><text x="951" y="524" font-size="22" fill="#17392f">SFT 0.622</text>
+    <rect x="745" y="555" width="221" height="42" rx="12" fill="#299895"/><text x="981" y="584" font-size="22" fill="#17392f">RL 0.720</text>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="22">
+    <rect x="1165" y="292" width="22" height="22" fill="#2f6fb0"/><text x="1198" y="311" fill="#405f55">SFT-only</text>
+    <rect x="1165" y="332" width="22" height="22" fill="#299895"/><text x="1198" y="351" fill="#405f55">Verdict-gated RL</text>
+  </g>
+  <text x="430" y="680" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#06382e">SFT wins overall; RL becomes targeted pressure.</text>
+</svg>
