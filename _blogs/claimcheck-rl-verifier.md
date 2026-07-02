@@ -18,6 +18,11 @@ description: "A project writeup on evidence-grounded claim verification, retriev
   border-left: 0;
   border-right: 0;
 }
+
+.math-block {
+  overflow-x: auto;
+  margin: 1.25rem 0;
+}
 </style>
 
 <script>
@@ -150,6 +155,8 @@ So the reward had to become a bundle of smaller checks:
 
 The first reward looked roughly like this:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 \begin{aligned}
 \text{reward} &=
@@ -161,6 +168,8 @@ The first reward looked roughly like this:
 + \text{false\_supported\_guard}
 \end{aligned}
 \]
+</div>
+{:/}
 
 This made the training signal much less binary. A bad answer could still get partial credit for being valid JSON or citing a real evidence ID. A nearly good answer could lose credit for a fake quote or a missing unsupported span. That mattered because pure correct/incorrect reward was too sparse for the model to learn all of the behavior at once.
 
@@ -195,6 +204,8 @@ The second failure mode was the RL version of the same problem. The staged RL po
 
 The next reward changed the verdict term to depend on evidence quality. A correct label should not receive full credit unless the evidence behavior is also good. That reward looked more like this:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 \begin{aligned}
 \text{reward} &=
@@ -206,6 +217,8 @@ The next reward changed the verdict term to depend on evidence quality. A correc
 + \text{false\_supported\_guard}
 \end{aligned}
 \]
+</div>
+{:/}
 
 This was the right idea, but not yet the final answer. The verdict-gated run improved multihop substantially, which means the reward really did push the model toward better evidence behavior. But it also hurt hard and OOD performance. The model became stricter, but sometimes too strict: safer partial judgments increased while final-verdict calibration got worse on the general sets.
 
@@ -236,38 +249,56 @@ The retrieval branch became its own design axis. The first retrieval layer was i
 
 The algorithmic shape of the verifier was more important than the training label. Each example can be written as:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 \begin{aligned}
 x &= (\text{question}, \text{answer}, \text{evidence}) \\
 y &= \text{verifier JSON}
 \end{aligned}
 \]
+</div>
+{:/}
 
 The verifier is trying to learn a policy:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 \pi_{\theta}(y \mid x)
 \]
+</div>
+{:/}
 
 where `y` is not just a class label. It is a structured object containing claim statuses, evidence IDs, quotes, unsupported spans, and a final verdict.
 
 For SFT, the objective is straightforward maximum likelihood on the gold JSON:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 L_{\mathrm{SFT}}(\theta) =
 - \sum_t \log \pi_{\theta}\left(y_t^* \mid x, y_{<t}^*\right)
 \]
+</div>
+{:/}
 
 This gives the model dense token-level supervision. If the gold output contains the right quote, the right evidence ID, and the right final verdict, the model gets direct gradient signal for all of those pieces. That is why SFT was such a strong baseline here.
 
 For RL, the model first samples or generates a verifier output:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 \hat{y} \sim \pi_{\theta}(\cdot \mid x)
 \]
+</div>
+{:/}
 
 Then the environment scores it:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 \begin{aligned}
 R(\hat{y}, y^*) &=
@@ -279,9 +310,13 @@ w_{\mathrm{json}} \cdot \text{valid\_json}
 + w_f \cdot \text{false\_supported\_guard}
 \end{aligned}
 \]
+</div>
+{:/}
 
 The verdict-gated reward changed the verdict term so the label reward depended on evidence quality:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 \begin{aligned}
 R_{17}(\hat{y}, y^*) &=
@@ -293,9 +328,13 @@ w_{\mathrm{json}} \cdot \text{valid\_json}
 + w_f \cdot \text{false\_supported\_guard}
 \end{aligned}
 \]
+</div>
+{:/}
 
 The local RL trainer used a simple reward-weighted update. Intuitively, completions above the reward baseline were reinforced and completions below it were discouraged:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 \begin{aligned}
 \text{advantage} &= R(\hat{y}, y^*) - b \\
@@ -304,6 +343,8 @@ L_{\mathrm{RL}}(\theta) &=
 \sum_t \log \pi_{\theta}\left(\hat{y}_t \mid x, \hat{y}_{<t}\right)
 \end{aligned}
 \]
+</div>
+{:/}
 
 That is a much weaker teacher than SFT when the gold JSON is already available. SFT says, token by token, "write this exact structured verifier trace." RL says, after the whole completion, "this sampled trace scored 0.84." The RL signal is useful, but it is coarser and easier to miscalibrate.
 
@@ -366,6 +407,8 @@ The naive fix would have been an additive format reward: give some points for JS
 
 So the protection had to be more structural. The verifier should not get full credit for the verdict unless the evidence behavior is also good. In other words, the label reward needs a gate:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 \text{label\_credit}
 =
@@ -373,11 +416,15 @@ So the protection had to be more structural. The verifier should not get full cr
 \cdot
 \text{evidence\_validity\_weight}
 \]
+</div>
+{:/}
 
 where `evidence_validity_weight` is not a style score. It comes from concrete checks: cited evidence IDs must exist, quoted text must appear inside the cited evidence, unsupported spans must be present when needed, and the model must avoid false support.
 
 The protected reward then becomes:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 \begin{aligned}
 \text{reward} &=
@@ -389,6 +436,8 @@ The protected reward then becomes:
 + \text{false\_supported\_guard}
 \end{aligned}
 \]
+</div>
+{:/}
 
 This is the verifier version of a reasoning gate. The protected artifact is not free-form reasoning; it is evidence-grounded JSON. A correct answer with no evidence should not receive the same reward as a correct answer with a real citation and quote.
 
@@ -452,6 +501,8 @@ There was still one possible objection. The RL polish had trained on a general b
 
 In math terms, the important change was:
 
+{::nomarkdown}
+<div class="math-block">
 \[
 \text{label\_credit}
 =
@@ -459,6 +510,8 @@ In math terms, the important change was:
 \cdot
 \text{evidence\_validity\_weight}
 \]
+</div>
+{:/}
 
 This gate was the important idea behind the last RL run.
 
