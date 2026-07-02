@@ -58,14 +58,14 @@ author: Mohammed Alshehri
   <h2>Table Of Contents</h2>
   <ul>
     <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#datagen-and-premise">DataGen and Premise</a></li>
-    <li><a href="#reward-shaping-and-failure-modes">Reward Shaping and Failure Modes</a></li>
-    <li><a href="#design-space">Design Space</a></li>
-    <li><a href="#protecting-the-deliverable">Protecting the Deliverable</a></li>
-    <li><a href="#separability-diagnostic">Separability Diagnostic</a></li>
-    <li><a href="#one-last-shot-at-rl">One Last Shot at RL</a></li>
-    <li><a href="#why-rl-waswas-not-best">Why RL Was/Was Not Best</a></li>
-    <li><a href="#what-the-model-learned">What the Model Learned</a></li>
+    <li><a href="#building-the-benchmark">Building the Benchmark</a></li>
+    <li><a href="#when-rewards-lie">When Rewards Lie</a></li>
+    <li><a href="#training-paths-i-tried">Training Paths I Tried</a></li>
+    <li><a href="#keeping-the-verifier-honest">Keeping the Verifier Honest</a></li>
+    <li><a href="#separating-signal-from-noise">Separating Signal from Noise</a></li>
+    <li><a href="#the-final-rl-run">The Final RL Run</a></li>
+    <li><a href="#where-rl-helped-and-broke">Where RL Helped and Broke</a></li>
+    <li><a href="#reading-the-traces">Reading the Traces</a></li>
     <li><a href="#closing">Closing</a></li>
   </ul>
 </aside>
@@ -104,7 +104,7 @@ TL;DR:
 
 We tried to use RL to improve evidence-grounded claim verification. The project was motivated by modern information retrieval work: ColBERT-style late interaction, ColBERTv2/PLAID efficiency, Baleen-style multihop retrieval, and Mixedbread's push toward practical late-interaction search. SFT gave the best overall verifier. RL was still valuable, but mainly as a targeted pressure tool for quote grounding, evidence discipline, and multihop behavior. The central lesson is that a correct verdict is not enough: the model must also cite real evidence, quote text that actually appears, and know when the claim is only partially supported or unsupported. The rest of this writeup is the autopsy: what we built, where retrieval mattered, where RL helped, where it regressed, and why the current best system is SFT-first with carefully gated RL experiments.
 
-## DataGen And Premise
+## Building The Benchmark
 
 The first version of the problem looked deceptively simple: generate a policy-like document, write a question, write an answer, attach evidence, and ask the verifier whether the answer is supported. Because the evidence is synthetic, the ground truth is known. That makes the task attractive for RL: the model can produce an answer, and the environment can score it automatically.
 
@@ -153,7 +153,7 @@ The multihop split changed the character of the benchmark. The earlier examples 
 
 The premise of the dataset was therefore simple but strict: make the ground truth automatic, make the evidence failures controlled, make the labels balanced, make the output auditable, and make retrieval matter. That gave us a clean place to test the bigger question: does RL actually improve evidence-grounded verification, or is the supervised signal already the stronger teacher?
 
-## Reward Shaping And Failure Modes
+## When Rewards Lie
 
 Once the dataset existed, the next temptation was obvious: just reward the model for the correct final verdict.
 
@@ -250,7 +250,7 @@ So the reward had to defend against two opposite failures:
 
 The final takeaway for this section is not that reward shaping failed. It is that reward shaping exposed the real problem. The verifier was no longer struggling with JSON. It was struggling with calibrated judgment under evidence constraints.
 
-## Design Space
+## Training Paths I Tried
 
 At this point the project had a dataset, a structured target, and a reward that cared about grounding. The next question was not "can I train something?" It was "which kind of training signal actually matches the problem?"
 
@@ -387,7 +387,7 @@ The Prime runs made the design space less abstract. The early 0.8B RL smoke run 
 
 So the design-space conclusion was not "choose RL" or "choose SFT." It was more specific than that. SFT is the strongest default training method when we have clean gold verifier traces. RL is useful when we want to push a particular behavior that supervised learning has not fully captured, especially grounding and multihop evidence use. But RL needs guardrails, because it can improve one part of the verifier while damaging another.
 
-## Protecting The Deliverable
+## Keeping The Verifier Honest
 
 The deliverable was never just a model that predicts the right verdict. The thing I wanted to protect was a grounded verifier: a model that can say what is supported, cite the exact evidence, quote the relevant text, mark the unsupported span, and give a short reason that does not invent anything.
 
@@ -492,9 +492,9 @@ do not promote a checkpoint unless it holds up on mixed, hard, OOD, and multihop
 
 The deliverable was protected only when all of those checks moved together. A model that is accurate but ungrounded is not enough. A model that is grounded but miscalibrated is also not enough. The verifier has to keep both promises at once.
 
-## Separability Diagnostic
+## Separating Signal From Noise
 
-## One Last Shot At RL
+## The Final RL Run
 
 At this point, the project had a very annoying result: RL clearly helped some process metrics, but the best general verifier was still the supervised model. That left one question worth answering before calling it: was RL failing because the idea was wrong, or because we were asking it to learn too much from scratch?
 
@@ -554,7 +554,7 @@ RL as default = not yet
 
 The next RL run should not simply be longer or larger. It should be better balanced: keep the multihop gains, preserve hard/OOD calibration, and include explicit anti-collapse checks for `supported`, `overclaim`, `contradicted`, and `partially_supported`.
 
-## Why RL Was/Was Not Best
+## Where RL Helped And Broke
 
 The most tempting interpretation is that RL failed. I do not think that is quite right. RL did something real: it made the verifier care more about quotes, evidence IDs, false support, and multihop grounding. The mistake would be treating that as the same thing as building the best overall verifier.
 
@@ -588,7 +588,7 @@ Evaluation decides whether the stress helped or bent the model.
 
 That framing also explains why the final RL adapter was not promoted. It was better at one important thing, multihop grounding, but worse as the default verifier. The best checkpoint was the one that held up across mixed, hard, and OOD cases, not the one that won the most interesting subproblem.
 
-## What The Model Learned
+## Reading The Traces
 
 The models did not all learn the same thing.
 
