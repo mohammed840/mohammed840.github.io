@@ -160,12 +160,12 @@ The first reward looked roughly like this:
 \[
 \begin{aligned}
 \mathrm{reward} &=
-\mathrm{valid\_json}
-+ \mathrm{final\_verdict}
-+ \mathrm{evidence\_id} \\
-&\quad + \mathrm{quote\_validity}
-+ \mathrm{unsupported\_span}
-+ \mathrm{false\_supported\_guard}
+\mathrm{validJson}
++ \mathrm{finalVerdict}
++ \mathrm{evidenceId} \\
+&\quad + \mathrm{quoteValidity}
++ \mathrm{unsupportedSpan}
++ \mathrm{falseSupportedGuard}
 \end{aligned}
 \]
 </div>
@@ -209,12 +209,12 @@ The next reward changed the verdict term to depend on evidence quality. A correc
 \[
 \begin{aligned}
 \mathrm{reward} &=
-\mathrm{valid\_json}
-+ \mathrm{final\_verdict} \cdot \mathrm{evidence\_validity\_weight}
-+ \mathrm{evidence\_id} \\
-&\quad + \mathrm{quote\_validity}
-+ \mathrm{unsupported\_span}
-+ \mathrm{false\_supported\_guard}
+\mathrm{validJson}
++ \mathrm{finalVerdict} \cdot \mathrm{evidenceValidityWeight}
++ \mathrm{evidenceId} \\
+&\quad + \mathrm{quoteValidity}
++ \mathrm{unsupportedSpan}
++ \mathrm{falseSupportedGuard}
 \end{aligned}
 \]
 </div>
@@ -302,12 +302,12 @@ Then the environment scores it:
 \[
 \begin{aligned}
 R(\hat{y}, y^*) &=
-w_{\mathrm{json}} \cdot \mathrm{valid\_json}
-+ w_v \cdot \mathrm{final\_verdict}
-+ w_e \cdot \mathrm{evidence\_id} \\
-&\quad + w_q \cdot \mathrm{quote\_validity}
-+ w_s \cdot \mathrm{unsupported\_span}
-+ w_f \cdot \mathrm{false\_supported\_guard}
+w_{\mathrm{json}} \cdot \mathrm{validJson}
++ w_v \cdot \mathrm{finalVerdict}
++ w_e \cdot \mathrm{evidenceId} \\
+&\quad + w_q \cdot \mathrm{quoteValidity}
++ w_s \cdot \mathrm{unsupportedSpan}
++ w_f \cdot \mathrm{falseSupportedGuard}
 \end{aligned}
 \]
 </div>
@@ -320,12 +320,12 @@ The verdict-gated reward changed the verdict term so the label reward depended o
 \[
 \begin{aligned}
 R_{17}(\hat{y}, y^*) &=
-w_{\mathrm{json}} \cdot \mathrm{valid\_json}
-+ w_v \cdot \mathrm{final\_verdict} \cdot \mathrm{evidence\_validity\_weight}
-+ w_e \cdot \mathrm{evidence\_id} \\
-&\quad + w_q \cdot \mathrm{quote\_validity}
-+ w_s \cdot \mathrm{unsupported\_span}
-+ w_f \cdot \mathrm{false\_supported\_guard}
+w_{\mathrm{json}} \cdot \mathrm{validJson}
++ w_v \cdot \mathrm{finalVerdict} \cdot \mathrm{evidenceValidityWeight}
++ w_e \cdot \mathrm{evidenceId} \\
+&\quad + w_q \cdot \mathrm{quoteValidity}
++ w_s \cdot \mathrm{unsupportedSpan}
++ w_f \cdot \mathrm{falseSupportedGuard}
 \end{aligned}
 \]
 </div>
@@ -410,11 +410,11 @@ So the protection had to be more structural. The verifier should not get full cr
 {::nomarkdown}
 <div class="math-block">
 \[
-\mathrm{label\_credit}
+\mathrm{labelCredit}
 =
-\mathrm{final\_verdict\_correct}
+\mathrm{finalVerdictCorrect}
 \cdot
-\mathrm{evidence\_validity\_weight}
+\mathrm{evidenceValidityWeight}
 \]
 </div>
 {:/}
@@ -428,12 +428,12 @@ The protected reward then becomes:
 \[
 \begin{aligned}
 \mathrm{reward} &=
-\mathrm{valid\_json}
-+ \mathrm{label\_credit}
-+ \mathrm{evidence\_id} \\
-&\quad + \mathrm{quote\_validity}
-+ \mathrm{unsupported\_span}
-+ \mathrm{false\_supported\_guard}
+\mathrm{validJson}
++ \mathrm{labelCredit}
++ \mathrm{evidenceId} \\
+&\quad + \mathrm{quoteValidity}
++ \mathrm{unsupportedSpan}
++ \mathrm{falseSupportedGuard}
 \end{aligned}
 \]
 </div>
@@ -504,11 +504,11 @@ In math terms, the important change was:
 {::nomarkdown}
 <div class="math-block">
 \[
-\mathrm{label\_credit}
+\mathrm{labelCredit}
 =
-\mathrm{final\_verdict\_correct}
+\mathrm{finalVerdictCorrect}
 \cdot
-\mathrm{evidence\_validity\_weight}
+\mathrm{evidenceValidityWeight}
 \]
 </div>
 {:/}
