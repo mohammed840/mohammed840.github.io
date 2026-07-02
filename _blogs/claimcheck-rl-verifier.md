@@ -29,6 +29,11 @@ author: Mohammed Alshehri
   margin-top: 0.45rem;
 }
 
+.blog-post-content h2 {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
 @media (max-width: 760px) {
   .claimcheck-toc {
     float: none;
