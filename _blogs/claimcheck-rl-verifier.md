@@ -6,21 +6,19 @@ author: Mohammed Alshehri
 description: "A project writeup on evidence-grounded claim verification, retrieval, SFT, reward shaping, and where RL helped or hurt."
 ---
 
-<script type="module">
-  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+<style>
+.blog-post-content table:first-of-type,
+.blog-post-content table:first-of-type th,
+.blog-post-content table:first-of-type td {
+  background: transparent;
+}
 
-  mermaid.initialize({ startOnLoad: false, theme: "neutral" });
-
-  window.addEventListener("DOMContentLoaded", async () => {
-    document.querySelectorAll("pre > code.language-mermaid").forEach((block) => {
-      const wrapper = document.createElement("div");
-      wrapper.className = "mermaid";
-      wrapper.textContent = block.textContent;
-      block.closest("pre").replaceWith(wrapper);
-    });
-    await mermaid.run();
-  });
-</script>
+.blog-post-content table:first-of-type th,
+.blog-post-content table:first-of-type td {
+  border-left: 0;
+  border-right: 0;
+}
+</style>
 
 # Final Blog Outline
 
@@ -176,22 +174,7 @@ That JSON is useful because every part of it can be checked. `E1` either exists 
 
 The reward loop looked like this:
 
-```mermaid
-flowchart TD
-    A["Question + Answer + Evidence"] --> B["Verifier generates JSON"]
-    B --> C{"Valid JSON?"}
-    C -- "no" --> Z["Low reward"]
-    C -- "yes" --> D["Score final verdict"]
-    D --> E["Check evidence IDs"]
-    E --> F["Check quote appears in cited evidence"]
-    F --> G["Check unsupported spans"]
-    G --> H{"Predicted supported for non-supported gold?"}
-    H -- "yes" --> I["False-supported penalty"]
-    H -- "no" --> J["Grounding reward kept"]
-    I --> K["Total reward"]
-    J --> K
-    K --> L["Policy update"]
-```
+![Grounding-aware reward loop](assets/reward_loop_grounding_v2.svg)
 
 The first major failure mode was exactly what this diagram is trying to catch: a correct-looking verdict with weak evidence. Before the quote-grounded evaluator, a model could get the high-level label right while citing a vague or invalid quote. The quote-grounding tests showed why this mattered: the strongest deterministic verifier by label accuracy was still weaker on quote exact match. That was the warning sign that label accuracy and evidence grounding are not the same metric.
 
