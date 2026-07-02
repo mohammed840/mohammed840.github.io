@@ -3,20 +3,38 @@ title: "A Correct Verdict Is Not Enough: RL for Evidence-Grounded Claim Verifica
 date: 2026-07-02
 layout: blog
 author: Mohammed Alshehri
-description: "A project writeup on evidence-grounded claim verification, retrieval, SFT, reward shaping, and where RL helped or hurt."
 ---
 
 <style>
-.blog-post-content table:first-of-type,
-.blog-post-content table:first-of-type th,
-.blog-post-content table:first-of-type td {
+.claimcheck-toc {
+  float: right;
+  width: min(18rem, 40%);
+  margin: 0 0 1.5rem 2rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
   background: transparent;
 }
 
-.blog-post-content table:first-of-type th,
-.blog-post-content table:first-of-type td {
-  border-left: 0;
-  border-right: 0;
+.claimcheck-toc h2 {
+  margin-top: 0;
+}
+
+.claimcheck-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.claimcheck-toc li + li {
+  margin-top: 0.45rem;
+}
+
+@media (max-width: 760px) {
+  .claimcheck-toc {
+    float: none;
+    width: auto;
+    margin: 0 0 1.5rem;
+  }
 }
 
 .math-block {
@@ -36,22 +54,21 @@ description: "A project writeup on evidence-grounded claim verification, retriev
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
-# Final Blog Outline
-
-## Table Of Contents
-
-| Section | Focus |
-|---|---|
-| [Introduction](#introduction) | Can RL improve evidence-grounded claim verification? |
-| [DataGen and Premise](#datagen-and-premise) | Synthetic company/legal/privacy/HR/contract dataset |
-| [Reward Shaping and Failure Modes](#reward-shaping-and-failure-modes) | Quote grounding, false support, verdict calibration problems |
-| [Design Space](#design-space) | Static verifier, SFT, offline RL, online RL, Prime runs |
-| [Protecting the Deliverable](#protecting-the-deliverable) | Reward gates: valid evidence, real quotes, unsupported spans |
-| [Separability Diagnostic](#separability-diagnostic) | Compare rule baselines, SFT, RL, hard/OOD/multihop |
-| [One Last Shot at RL](#one-last-shot-at-rl) | Qwen 9B SFT warmup and verdict-gated RL runs |
-| [Why RL Was/Was Not Best](#why-rl-waswas-not-best) | SFT best overall, RL useful only for multihop/grounding |
-| [What the Model Learned](#what-the-model-learned) | Examples of correct and failed verifier traces |
-| [Closing](#closing) | Final lesson: SFT is the main model, RL is a targeted pressure tool |
+<aside class="claimcheck-toc" aria-label="Table of contents">
+  <h2>Table Of Contents</h2>
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#datagen-and-premise">DataGen and Premise</a></li>
+    <li><a href="#reward-shaping-and-failure-modes">Reward Shaping and Failure Modes</a></li>
+    <li><a href="#design-space">Design Space</a></li>
+    <li><a href="#protecting-the-deliverable">Protecting the Deliverable</a></li>
+    <li><a href="#separability-diagnostic">Separability Diagnostic</a></li>
+    <li><a href="#one-last-shot-at-rl">One Last Shot at RL</a></li>
+    <li><a href="#why-rl-waswas-not-best">Why RL Was/Was Not Best</a></li>
+    <li><a href="#what-the-model-learned">What the Model Learned</a></li>
+    <li><a href="#closing">Closing</a></li>
+  </ul>
+</aside>
 
 ## Introduction
 
