@@ -159,13 +159,13 @@ The first reward looked roughly like this:
 <div class="math-block">
 \[
 \begin{aligned}
-\text{reward} &=
-\text{valid\_json}
-+ \text{final\_verdict}
-+ \text{evidence\_id} \\
-&\quad + \text{quote\_validity}
-+ \text{unsupported\_span}
-+ \text{false\_supported\_guard}
+\mathrm{reward} &=
+\mathrm{valid\_json}
++ \mathrm{final\_verdict}
++ \mathrm{evidence\_id} \\
+&\quad + \mathrm{quote\_validity}
++ \mathrm{unsupported\_span}
++ \mathrm{false\_supported\_guard}
 \end{aligned}
 \]
 </div>
@@ -208,13 +208,13 @@ The next reward changed the verdict term to depend on evidence quality. A correc
 <div class="math-block">
 \[
 \begin{aligned}
-\text{reward} &=
-\text{valid\_json}
-+ \text{final\_verdict} \cdot \text{evidence\_validity\_weight}
-+ \text{evidence\_id} \\
-&\quad + \text{quote\_validity}
-+ \text{unsupported\_span}
-+ \text{false\_supported\_guard}
+\mathrm{reward} &=
+\mathrm{valid\_json}
++ \mathrm{final\_verdict} \cdot \mathrm{evidence\_validity\_weight}
++ \mathrm{evidence\_id} \\
+&\quad + \mathrm{quote\_validity}
++ \mathrm{unsupported\_span}
++ \mathrm{false\_supported\_guard}
 \end{aligned}
 \]
 </div>
@@ -253,8 +253,8 @@ The algorithmic shape of the verifier was more important than the training label
 <div class="math-block">
 \[
 \begin{aligned}
-x &= (\text{question}, \text{answer}, \text{evidence}) \\
-y &= \text{verifier JSON}
+x &= (\mathrm{question}, \mathrm{answer}, \mathrm{evidence}) \\
+y &= \mathrm{verifier\ JSON}
 \end{aligned}
 \]
 </div>
@@ -278,7 +278,7 @@ For SFT, the objective is straightforward maximum likelihood on the gold JSON:
 <div class="math-block">
 \[
 L_{\mathrm{SFT}}(\theta) =
-- \sum_t \log \pi_{\theta}\left(y_t^* \mid x, y_{<t}^*\right)
+- \sum_t \log \pi_{\theta}\left(y_t^* \mid x, y_{\lt t}^*\right)
 \]
 </div>
 {:/}
@@ -302,12 +302,12 @@ Then the environment scores it:
 \[
 \begin{aligned}
 R(\hat{y}, y^*) &=
-w_{\mathrm{json}} \cdot \text{valid\_json}
-+ w_v \cdot \text{final\_verdict}
-+ w_e \cdot \text{evidence\_id} \\
-&\quad + w_q \cdot \text{quote\_validity}
-+ w_s \cdot \text{unsupported\_span}
-+ w_f \cdot \text{false\_supported\_guard}
+w_{\mathrm{json}} \cdot \mathrm{valid\_json}
++ w_v \cdot \mathrm{final\_verdict}
++ w_e \cdot \mathrm{evidence\_id} \\
+&\quad + w_q \cdot \mathrm{quote\_validity}
++ w_s \cdot \mathrm{unsupported\_span}
++ w_f \cdot \mathrm{false\_supported\_guard}
 \end{aligned}
 \]
 </div>
@@ -320,12 +320,12 @@ The verdict-gated reward changed the verdict term so the label reward depended o
 \[
 \begin{aligned}
 R_{17}(\hat{y}, y^*) &=
-w_{\mathrm{json}} \cdot \text{valid\_json}
-+ w_v \cdot \text{final\_verdict} \cdot \text{evidence\_validity\_weight}
-+ w_e \cdot \text{evidence\_id} \\
-&\quad + w_q \cdot \text{quote\_validity}
-+ w_s \cdot \text{unsupported\_span}
-+ w_f \cdot \text{false\_supported\_guard}
+w_{\mathrm{json}} \cdot \mathrm{valid\_json}
++ w_v \cdot \mathrm{final\_verdict} \cdot \mathrm{evidence\_validity\_weight}
++ w_e \cdot \mathrm{evidence\_id} \\
+&\quad + w_q \cdot \mathrm{quote\_validity}
++ w_s \cdot \mathrm{unsupported\_span}
++ w_f \cdot \mathrm{false\_supported\_guard}
 \end{aligned}
 \]
 </div>
@@ -337,10 +337,10 @@ The local RL trainer used a simple reward-weighted update. Intuitively, completi
 <div class="math-block">
 \[
 \begin{aligned}
-\text{advantage} &= R(\hat{y}, y^*) - b \\
+\mathrm{advantage} &= R(\hat{y}, y^*) - b \\
 L_{\mathrm{RL}}(\theta) &=
--\text{advantage} \cdot
-\sum_t \log \pi_{\theta}\left(\hat{y}_t \mid x, \hat{y}_{<t}\right)
+-\mathrm{advantage} \cdot
+\sum_t \log \pi_{\theta}\left(\hat{y}_t \mid x, \hat{y}_{\lt t}\right)
 \end{aligned}
 \]
 </div>
@@ -410,11 +410,11 @@ So the protection had to be more structural. The verifier should not get full cr
 {::nomarkdown}
 <div class="math-block">
 \[
-\text{label\_credit}
+\mathrm{label\_credit}
 =
-\text{final\_verdict\_correct}
+\mathrm{final\_verdict\_correct}
 \cdot
-\text{evidence\_validity\_weight}
+\mathrm{evidence\_validity\_weight}
 \]
 </div>
 {:/}
@@ -427,13 +427,13 @@ The protected reward then becomes:
 <div class="math-block">
 \[
 \begin{aligned}
-\text{reward} &=
-\text{valid\_json}
-+ \text{label\_credit}
-+ \text{evidence\_id} \\
-&\quad + \text{quote\_validity}
-+ \text{unsupported\_span}
-+ \text{false\_supported\_guard}
+\mathrm{reward} &=
+\mathrm{valid\_json}
++ \mathrm{label\_credit}
++ \mathrm{evidence\_id} \\
+&\quad + \mathrm{quote\_validity}
++ \mathrm{unsupported\_span}
++ \mathrm{false\_supported\_guard}
 \end{aligned}
 \]
 </div>
@@ -504,11 +504,11 @@ In math terms, the important change was:
 {::nomarkdown}
 <div class="math-block">
 \[
-\text{label\_credit}
+\mathrm{label\_credit}
 =
-\text{final\_verdict\_correct}
+\mathrm{final\_verdict\_correct}
 \cdot
-\text{evidence\_validity\_weight}
+\mathrm{evidence\_validity\_weight}
 \]
 </div>
 {:/}
