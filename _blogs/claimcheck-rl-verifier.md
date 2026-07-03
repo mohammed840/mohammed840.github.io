@@ -99,19 +99,19 @@ A verifier that says "supported" for the right reason is very different from a v
 
 The project ended up being more interesting than that.
 
-We built a full synthetic verification environment across five document domains: company policies, legal clauses, privacy/security docs, HR rules, and contracts. We added static baselines, quote-grounding metrics, hard and out-of-distribution tests, offline RL scaffolding, an online evidence-search environment, multihop retrieval, Prime training runs, a Qwen 9B SFT warmup, and multiple RL attempts.
+We built a full synthetic verification environment across five document domains: company policies, legal clauses, privacy/security docs, HR rules, and contracts. We added static baselines, quote-grounding metrics, hard and out-of-distribution tests, offline RL scaffolding, an online evidence-search environment, multihop retrieval, hosted GRPO training runs, a Qwen 9B SFT warmup, and multiple RL attempts.
 
 The result was not a clean "RL wins" story.
 
 The supervised fine-tuned Qwen 9B adapter was the first model that made the verifier feel like a real product: valid JSON, exact quotes, evidence IDs, and strong hard/OOD behavior. Early RL after SFT did help in a narrower way, especially on multihop evidence behavior, but it also bent hard and OOD verdict calibration. That was the uncomfortable middle result: RL had clearly learned something useful, but it was not yet safe to promote as the default model.
 
-The later Prime GRPO v2 run changed the ending. The first Prime GRPO run proved that the setup was real, but it also exposed a bad failure mode: the reward got too easy, mixed/hard/OOD saturated, and quote validity degraded in the later checkpoint. GRPO v2 was built specifically to fix that. It used a validity-gated reward: the model only got meaningful verdict credit when the evidence IDs, exact quotes, and quote coverage were also good.
+The later GRPO v2 run changed the ending. The first hosted GRPO run proved that the setup was real, but it also exposed a bad failure mode: the reward got too easy, mixed/hard/OOD saturated, and quote validity degraded in the later checkpoint. GRPO v2 was built specifically to fix that. It used a validity-gated reward: the model only got meaningful verdict credit when the evidence IDs, exact quotes, and quote coverage were also good.
 
-That v2 run did what I wanted a targeted RL run to do. A 20-step Prime GRPO run on `Qwen/Qwen3.5-9B` moved v2 validation and v2 multihop reward from `0.760` to `0.970`, while keeping quote validity at `1.000`. The deployed final adapter also held up on the older evals: legacy mixed `0.960`, hard `0.980`, OOD `0.971`, and legacy multihop `0.910`. Some larger hosted evals failed during sample upload, so those scores are log-derived rather than dashboard-finalized, but the reward summaries were produced before upload failed.
+That v2 run did what I wanted a targeted RL run to do. A 20-step GRPO run on `Qwen/Qwen3.5-9B` moved v2 validation and v2 multihop reward from `0.760` to `0.970`, while keeping quote validity at `1.000`. The deployed final adapter also held up on the older evals: legacy mixed `0.960`, hard `0.980`, OOD `0.971`, and legacy multihop `0.910`. Some larger hosted evals failed during sample upload, so those scores are log-derived rather than dashboard-finalized, but the reward summaries were produced before upload failed.
 
 TL;DR:
 
-We tried to use RL to improve evidence-grounded claim verification. The project was motivated by modern information retrieval work: ColBERT-style late interaction, ColBERTv2/PLAID efficiency, Baleen-style multihop retrieval, and Mixedbread's push toward practical late-interaction search. SFT gave the model the verifier language. Early RL exposed the danger of reward pressure. Prime GRPO v2 then showed that a better-gated RL reward can fix a specific grounding failure: quote validity stayed perfect while multihop reward improved. The central lesson is that a correct verdict is not enough: the model must also cite real evidence, quote text that actually appears, and know when the claim is only partially supported or unsupported. The rest of this writeup is the autopsy: what we built, where retrieval mattered, where RL helped, where it regressed, and why the current best system is SFT-first with carefully gated RL experiments.
+We tried to use RL to improve evidence-grounded claim verification. The project was motivated by modern information retrieval work: ColBERT-style late interaction, ColBERTv2/PLAID efficiency, Baleen-style multihop retrieval, and Mixedbread's push toward practical late-interaction search. SFT gave the model the verifier language. Early RL exposed the danger of reward pressure. GRPO v2 then showed that a better-gated RL reward can fix a specific grounding failure: quote validity stayed perfect while multihop reward improved. The central lesson is that a correct verdict is not enough: the model must also cite real evidence, quote text that actually appears, and know when the claim is only partially supported or unsupported. The rest of this writeup is the autopsy: what we built, where retrieval mattered, where RL helped, where it regressed, and why the current best system is SFT-first with carefully gated RL experiments.
 
 ## Building The Benchmark
 
@@ -252,7 +252,7 @@ Here `W_E` is the evidence-validity weight applied to the verdict term.
 
 This was the right idea, but not yet the final answer. The first verdict-gated run improved multihop substantially, which means the reward really did push the model toward better evidence behavior. But it also hurt hard and OOD performance. The model became stricter, but sometimes too strict: safer partial judgments increased while final-verdict calibration got worse on the general sets.
 
-The later Prime GRPO v2 reward tightened the gate. It did not merely ask whether the model had a correct final verdict and a plausible citation. It made the final verdict credit depend on exact quote behavior and quote coverage:
+The later GRPO v2 reward tightened the gate. It did not merely ask whether the model had a correct final verdict and a plausible citation. It made the final verdict credit depend on exact quote behavior and quote coverage:
 
 {::nomarkdown}
 <div class="math-block">
@@ -435,13 +435,13 @@ for each example:
 
 Training changed how much of that algorithm was taught directly. Static baselines skipped most of it and guessed from surface features. SFT taught the whole output procedure directly. Offline RL started from generated completions and pushed them toward higher reward. Online RL made the model operate the evidence tools before producing the final JSON.
 
-The Prime runs made the design space less abstract. The early 0.8B RL run improved held-out reward over the base model, especially quote validity and false-supported guard, but the final-verdict score stayed weak. The Qwen 9B SFT warmup solved much more of the task. When RL was applied after SFT, it did not become the best model; it slightly damaged the general held-out scores. The later local verdict-gated reward was more evidence-aware and improved multihop substantially, but again hurt hard and OOD.
+The hosted GRPO runs made the design space less abstract. The early 0.8B RL run improved held-out reward over the base model, especially quote validity and false-supported guard, but the final-verdict score stayed weak. The Qwen 9B SFT warmup solved much more of the task. When RL was applied after SFT, it did not become the best model; it slightly damaged the general held-out scores. The later local verdict-gated reward was more evidence-aware and improved multihop substantially, but again hurt hard and OOD.
 
-The actual Prime GRPO runs added the missing piece. The first Qwen 9B Prime GRPO run proved the project had crossed from "RL-style local experiment" into real hosted GRPO training, but it also showed why the reward needed to be harder. The step-20 and step-40 checkpoints saturated mixed, hard, and OOD evals, while multihop stayed informative. Worse, the step-40 checkpoint improved aggregate multihop while quote validity dropped. That was the warning sign: the reward was rewarding the right-looking outcome without protecting the evidence surface tightly enough.
+The hosted GRPO runs added the missing piece. The first Qwen 9B GRPO run proved the project had crossed from "RL-style local experiment" into real hosted GRPO training, but it also showed why the reward needed to be harder. The step-20 and step-40 checkpoints saturated mixed, hard, and OOD evals, while multihop stayed informative. Worse, the step-40 checkpoint improved aggregate multihop while quote validity dropped. That was the warning sign: the reward was rewarding the right-looking outcome without protecting the evidence surface tightly enough.
 
-GRPO v2 was the narrower answer. It used the same Qwen 9B family and a Prime RL environment, but changed the task distribution and reward so exact quote coverage became central. The final v2 run was deliberately short: 20 steps designed to answer one question: can GRPO improve multihop verification without losing quote grounding? On that question, the answer was yes.
+GRPO v2 was the narrower answer. It used the same Qwen 9B family and an RL environment, but changed the task distribution and reward so exact quote coverage became central. The final v2 run was deliberately short: 20 steps designed to answer one question: can GRPO improve multihop verification without losing quote grounding? On that question, the answer was yes.
 
-So the design-space conclusion was not "choose RL" or "choose SFT." It was more specific than that. SFT is the strongest way to teach the verifier trace when we have clean gold JSON. RL is useful when we want to pressure a particular behavior that can be scored automatically: exact quotes, evidence IDs, false support, multihop coverage. Prime GRPO v2 showed that this pressure can work, but only after the reward is narrow enough that the model cannot win by weakening the evidence.
+So the design-space conclusion was not "choose RL" or "choose SFT." It was more specific than that. SFT is the strongest way to teach the verifier trace when we have clean gold JSON. RL is useful when we want to pressure a particular behavior that can be scored automatically: exact quotes, evidence IDs, false support, multihop coverage. GRPO v2 showed that this pressure can work, but only after the reward is narrow enough that the model cannot win by weakening the evidence.
 
 ## Evidence Guardrails
 
@@ -533,7 +533,7 @@ But this is also where the uncomfortable part showed up. The same verdict-gated 
 
 So the gate protected the deliverable from one failure mode while exposing another. Without the gate, the model can be accurate but ungrounded. With too much pressure from the gate, the model can be grounded but miscalibrated.
 
-Prime GRPO v2 was the attempt to protect both sides at once. Instead of only making the model cautious, it made exact evidence a condition for verdict credit. The 20-step run moved v2 validation and v2 multihop from `0.760` to `0.970`, while final adapter eval logs showed:
+GRPO v2 was the attempt to protect both sides at once. Instead of only making the model cautious, it made exact evidence a condition for verdict credit. The 20-step run moved v2 validation and v2 multihop from `0.760` to `0.970`, while final adapter eval logs showed:
 
 | Eval | Reward | Quote Validity | Evidence ID | False-Supported Guard |
 |---|---:|---:|---:|---:|
@@ -544,7 +544,7 @@ Prime GRPO v2 was the attempt to protect both sides at once. Instead of only mak
 | legacy OOD | 0.971 | 1.000 | 1.000 | 1.000 |
 | legacy multihop | 0.910 | 1.000 | 1.000 | 1.000 |
 
-The caveat is that four larger hosted evals failed while uploading sample batches to Prime, so their scores come from the logs rather than finalized dashboard rows. Still, the important product signal was visible before upload failed: the adapter kept exact quote validity at `1.000`.
+The caveat is that four larger hosted evals failed while uploading sample batches, so their scores come from the logs rather than finalized dashboard rows. Still, the important product signal was visible before upload failed: the adapter kept exact quote validity at `1.000`.
 
 That became the rule for the rest of the project:
 
@@ -573,7 +573,7 @@ calibration   -> final verdict and per-label recall
 safety        -> false-supported rate and unsupported-span behavior
 ```
 
-This mattered because the first Prime GRPO run looked good if I only looked at mixed/hard/OOD reward. Those splits saturated at `1.000`, which sounds like success. But multihop remained informative, and the later checkpoint had worse quote validity. That means the reward was too easy. It had stopped separating "knows the answer" from "can ground the answer."
+This mattered because the first hosted GRPO run looked good if I only looked at mixed/hard/OOD reward. Those splits saturated at `1.000`, which sounds like success. But multihop remained informative, and the later checkpoint had worse quote validity. That means the reward was too easy. It had stopped separating "knows the answer" from "can ground the answer."
 
 The separability check forced the question into a table like this:
 
@@ -582,12 +582,12 @@ The separability check forced the question into a table like this:
 | SFT-only Qwen 9B | general hard/OOD behavior, structured JSON | multihop remained weak | best default teacher, but not enough pressure on multihop |
 | SFT + local RL polish | guard behavior and grounding style | no clear held-out win | reward pressure too broad |
 | local verdict-gated RL | multihop reward and quote behavior | hard/OOD verdict calibration | useful but too cautious |
-| Prime GRPO v1 | mixed/hard/OOD aggregate reward | quote validity at later checkpoint | reward saturated and allowed evidence drift |
-| Prime GRPO v2 | v2 multihop, quote validity, false-support guard | unsupported-span still imperfect | best targeted RL result |
+| GRPO v1 | mixed/hard/OOD aggregate reward | quote validity at later checkpoint | reward saturated and allowed evidence drift |
+| GRPO v2 | v2 multihop, quote validity, false-support guard | unsupported-span still imperfect | best targeted RL result |
 
 The most useful diagnostic was quote validity versus final-verdict behavior. If quote validity is low, the verifier is not grounded. If final verdict is low, the verifier is not calibrated. A model needs both. The early GRPO result showed why: a checkpoint can have good-looking aggregate reward while quote validity quietly gets worse. The v2 run was designed so that could not be hidden.
 
-The second diagnostic was multihop versus hard/OOD. Hard and OOD examples test subtle corruptions and domain shift. Multihop tests whether the verifier can combine evidence. These are not the same skill. The local verdict-gated run improved multihop and hurt hard/OOD, which meant it was not a clean upgrade. Prime GRPO v2 was better on this axis: it kept legacy hard at `0.980`, legacy OOD at `0.971`, and legacy multihop at `0.910`, while v2 validation and v2 multihop both held at `0.970`.
+The second diagnostic was multihop versus hard/OOD. Hard and OOD examples test subtle corruptions and domain shift. Multihop tests whether the verifier can combine evidence. These are not the same skill. The local verdict-gated run improved multihop and hurt hard/OOD, which meant it was not a clean upgrade. GRPO v2 was better on this axis: it kept legacy hard at `0.980`, legacy OOD at `0.971`, and legacy multihop at `0.910`, while v2 validation and v2 multihop both held at `0.970`.
 
 The third diagnostic was unsupported-span behavior. This stayed the messiest. In the v2 eval logs, unsupported-span reward was `0.400` on v2 validation and v2 multihop, even while quote validity, evidence IDs, and false-supported guard were all `1.000`. That is the remaining sharp edge: the model can know that the evidence is real and still be weak at isolating the exact unsupported phrase.
 
@@ -652,11 +652,11 @@ But the same adapter hurt hard and OOD. On hard examples, final-verdict score dr
 
 For a while, that looked like the end of the RL story. Not because RL failed completely, but because the result was too specific to promote. The SFT-only adapter remained the best default verifier. The verdict-gated RL adapter became evidence that targeted RL can improve multihop grounding, but also evidence that reward pressure can distort the label boundary.
 
-Then the Prime GRPO runs exposed a different failure. The first real Qwen 9B GRPO run moved reward quickly, but the reward became too easy. Mixed, hard, and OOD saturated; multihop remained useful; and the later checkpoint showed the dangerous part: quote validity dropped. The model could improve aggregate reward while weakening the evidence surface.
+Then the hosted GRPO runs exposed a different failure. The first real Qwen 9B GRPO run moved reward quickly, but the reward became too easy. Mixed, hard, and OOD saturated; multihop remained useful; and the later checkpoint showed the dangerous part: quote validity dropped. The model could improve aggregate reward while weakening the evidence surface.
 
 So the final shot was not "more steps." It was a narrower reward.
 
-GRPO v2 made exact quote grounding part of the gate. The model did not get full verdict credit unless evidence IDs, quote validity, and quote coverage were also right. It trained for only 20 Prime GRPO steps, with 8 rollouts per example, on Qwen 9B. The run was deliberately short because the question was not "can we spend our way to a bigger number?" It was "can we fix the specific failure mode?"
+GRPO v2 made exact quote grounding part of the gate. The model did not get full verdict credit unless evidence IDs, quote validity, and quote coverage were also right. It trained for only 20 GRPO steps, with 8 rollouts per example, on Qwen 9B. The run was deliberately short because the question was not "can we spend our way to a bigger number?" It was "can we fix the specific failure mode?"
 
 The answer was yes.
 
@@ -700,7 +700,7 @@ The reason is that this task has two different kinds of difficulty. One difficul
 
 The line chart is the first half of the story. The local verdict-gated reward finally moved multihop upward, which is exactly where retrieval and evidence composition matter. But the hard/OOD average moved downward at the same time. RL was not useless; it was directional. It pushed the model toward the behavior the reward emphasized.
 
-Prime GRPO v2 is the second half. Once the reward explicitly gated verdict credit on quote validity and quote coverage, RL stopped looking like a blunt instrument and started looking like a targeted pressure tool. The v2 adapter did not just produce nicer-looking JSON. It kept quote validity at `1.000` while scoring `0.970` on both v2 validation and v2 multihop.
+GRPO v2 is the second half. Once the reward explicitly gated verdict credit on quote validity and quote coverage, RL stopped looking like a blunt instrument and started looking like a targeted pressure tool. The v2 adapter did not just produce nicer-looking JSON. It kept quote validity at `1.000` while scoring `0.970` on both v2 validation and v2 multihop.
 
 That is why aggregate reward was not enough. If I only averaged every split together, the multihop gain could hide the hard/OOD regression. If I only looked at quote validity, the run would look excellent. If I only looked at final verdict on hard/OOD, the run would look worse than it really was. The right diagnosis had to separate process behavior from verdict calibration.
 
@@ -724,7 +724,7 @@ RL stresses the verifier.
 Evaluation decides whether the stress helped or bent the model.
 ```
 
-That framing also explains why the answer is not a simple leaderboard claim. The earlier RL adapter was better at one important thing, multihop grounding, but worse as the default verifier. The v2 Prime GRPO adapter fixed the quote-grounding failure and held up much better on legacy hard/OOD, but the larger eval rows still came from logs because Prime's sample upload timed out. That makes it a strong targeted RL result, not a reason to stop evaluating.
+That framing also explains why the answer is not a simple leaderboard claim. The earlier RL adapter was better at one important thing, multihop grounding, but worse as the default verifier. The v2 GRPO adapter fixed the quote-grounding failure and held up much better on legacy hard/OOD, but the larger eval rows still came from logs because sample upload timed out. That makes it a strong targeted RL result, not a reason to stop evaluating.
 
 ## What The Model Learned
 
@@ -736,7 +736,7 @@ The supervised verifier learned that interface very well. It learned to produce 
 
 The verdict-gated RL verifier learned a different habit. It became more conservative and more evidence-strict. That helped on multihop cases, where the model had to connect evidence across multiple snippets. But it also made the model overuse safer labels like `partially_supported`, especially when the answer was actually `supported`, `overclaim`, or `contradicted`.
 
-The Prime GRPO v2 verifier learned the cleanest RL lesson: quotes are not optional. It kept valid JSON, evidence IDs, quote validity, quote coverage, and false-supported guard at `1.000` in the v2 eval logs. The remaining weakness was unsupported-span localization. On v2 validation and v2 multihop, unsupported-span reward was only `0.400`, even though the quote and evidence metrics were perfect.
+The GRPO v2 verifier learned the cleanest RL lesson: quotes are not optional. It kept valid JSON, evidence IDs, quote validity, quote coverage, and false-supported guard at `1.000` in the v2 eval logs. The remaining weakness was unsupported-span localization. On v2 validation and v2 multihop, unsupported-span reward was only `0.400`, even though the quote and evidence metrics were perfect.
 
 The component metrics make this visible.
 
@@ -751,7 +751,7 @@ The component metrics make this visible.
 
 This table is the project in miniature. The supervised model is better on general verdict calibration. The RL model is better at multihop evidence discipline. The RL model did not become broadly smarter; it became more sensitive to the reward pressure.
 
-The Prime GRPO v2 adapter changed the evidence side of the table:
+The GRPO v2 adapter changed the evidence side of the table:
 
 | Eval | Reward | Evidence ID | Quote Validity | Quote Coverage | Unsupported Span | False-Supported Guard |
 |---|---:|---:|---:|---:|---:|---:|
@@ -866,7 +866,7 @@ So what did the model learn?
 | False-support avoidance | verdict-gated RL reached `1.000` false-supported guard on all reported splits | over-caution can hurt supported/contradicted labels |
 | Multihop evidence use | multihop reward improved from `0.621933` to `0.720400` | unsupported-span localization fell from `0.440` to `0.280` |
 | Verdict calibration | SFT remained best on hard/OOD final verdict | RL shifted too many examples toward partial support |
-| Exact quote discipline | Prime GRPO v2 held quote validity at `1.000` across eval logs | quote validity can saturate before unsupported spans are solved |
+| Exact quote discipline | GRPO v2 held quote validity at `1.000` across eval logs | quote validity can saturate before unsupported spans are solved |
 
 The model learned the verifier language. It learned that quotes matter. It learned that evidence IDs are not decoration. It learned to be suspicious of unsupported claims.
 
@@ -878,7 +878,7 @@ That is the project.
 
 I started with a simple question: can reinforcement learning make an evidence verifier better? The answer turned out to be more useful than a clean yes or no.
 
-RL did help. It made the model care more about quotes, evidence IDs, false support, and multihop grounding. The verdict-gated run was not fake progress; it found a real lever. The Prime GRPO v2 run made that lever cleaner: it directly attacked the quote-grounding failure and kept quote validity at `1.000` while moving v2 validation and v2 multihop to `0.970`.
+RL did help. It made the model care more about quotes, evidence IDs, false support, and multihop grounding. The verdict-gated run was not fake progress; it found a real lever. The GRPO v2 run made that lever cleaner: it directly attacked the quote-grounding failure and kept quote validity at `1.000` while moving v2 validation and v2 multihop to `0.970`.
 
 But RL was not the best default tool. The supervised verifier stayed stronger on the general problem because the target trace already contained the thing we wanted the model to learn. Every gold JSON example showed the claim, the quote, the evidence ID, the unsupported span, the reason, and the final verdict. When the supervision is that dense and that aligned with the product, SFT is hard to beat.
 
@@ -899,7 +899,7 @@ So the final system shape is SFT-first, retrieval-aware, and RL-second. SFT give
 
 That is a less flashy conclusion than "RL solved evidence verification." It is also a more honest one.
 
-The next version should keep the v2 quote discipline, add harder unsupported-span and multihop examples, and keep the hard/OOD calibration checks that caught the earlier regressions. SFT is still the best way to teach the verifier language. Prime GRPO v2 is the strongest evidence that RL can enforce a narrow product requirement: exact quote-grounded evidence.
+The next version should keep the v2 quote discipline, add harder unsupported-span and multihop examples, and keep the hard/OOD calibration checks that caught the earlier regressions. SFT is still the best way to teach the verifier language. GRPO v2 is the strongest evidence that RL can enforce a narrow product requirement: exact quote-grounded evidence.
 
 If there is one sentence I would keep from the whole project, it is this:
 
