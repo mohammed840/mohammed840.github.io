@@ -757,7 +757,7 @@ The Prime GRPO v2 adapter changed the evidence side of the table:
 
 This table says something different from the earlier local RL result. It says the model can be pushed toward exact evidence behavior without immediately destroying the older hard/OOD reward. But it also says the v2 dataset became too easy on quote copying. The next hard problem is not "can it quote?" It is "can it identify exactly which part of the answer is not proven?"
 
-The per-label behavior shows the same thing.
+For the earlier local verdict-gated run, the per-label behavior shows the same thing.
 
 | Label | SFT Recall On OOD | Verdict-Gated RL Recall On OOD | What Changed |
 |---|---:|---:|---|
@@ -769,7 +769,7 @@ The per-label behavior shows the same thing.
 
 This was the clearest lesson: the model learned *a style of caution*. Sometimes that caution was exactly what we wanted. Sometimes it erased a more precise distinction.
 
-Here is a real multihop example where the verdict-gated model improved the final judgment. The question asked what conditions apply before vendors may begin onboarding. The gold verdict was `partially_supported`: part of the answer was supported, but the answer also added "Approval is automatic and cannot be delayed." The evidence said vendors may begin onboarding after the security questionnaire is approved, and that procurement confirmation creates a two-day deadline. It did not say approval is automatic or cannot be delayed.
+The qualitative examples below come from that local verdict-gated run. Here is a real multihop example where the model improved the final judgment. The question asked what conditions apply before vendors may begin onboarding. The gold verdict was `partially_supported`: part of the answer was supported, but the answer also added "Approval is automatic and cannot be delayed." The evidence said vendors may begin onboarding after the security questionnaire is approved, and that procurement confirmation creates a two-day deadline. It did not say approval is automatic or cannot be delayed.
 
 The supervised verifier missed that extra unsupported sentence:
 
@@ -893,7 +893,7 @@ So the final system shape is SFT-first, retrieval-aware, and RL-second. SFT give
 
 That is a less flashy conclusion than "RL solved evidence verification." It is also a more honest one.
 
-For now, the honest system shape is not one model and one victory lap. SFT is still the best way to teach the verifier language. Prime GRPO v2 is the strongest evidence that RL can enforce a narrow product requirement: exact quote-grounded evidence. The next version should keep the v2 quote discipline, add harder unsupported-span and multihop examples, and keep the hard/OOD calibration checks that caught the earlier regressions.
+The next version should keep the v2 quote discipline, add harder unsupported-span and multihop examples, and keep the hard/OOD calibration checks that caught the earlier regressions. SFT is still the best way to teach the verifier language. Prime GRPO v2 is the strongest evidence that RL can enforce a narrow product requirement: exact quote-grounded evidence.
 
 If there is one sentence I would keep from the whole project, it is this:
 
