@@ -185,17 +185,19 @@ The first reward looked roughly like this:
 <div class="math-block">
 \[
 \begin{aligned}
-\mathrm{reward} &=
-\mathrm{validJson}
-+ \mathrm{finalVerdict}
-+ \mathrm{evidenceId} \\
-&\quad + \mathrm{quoteValidity}
-+ \mathrm{unsupportedSpan}
-+ \mathrm{falseSupportedGuard}
+R_0 &=
+J
++ V
++ E \\
+&\quad + Q
++ S
++ F
 \end{aligned}
 \]
 </div>
 {:/}
+
+Here `J` means valid JSON, `V` means verdict correctness, `E` means evidence-ID quality, `Q` means quote validity, `S` means unsupported-span quality, and `F` means the false-supported guard.
 
 This made the training signal much less binary. A bad answer could still get partial credit for being valid JSON or citing a real evidence ID. A nearly good answer could lose credit for a fake quote or a missing unsupported span. That mattered because pure correct/incorrect reward was too sparse for the model to learn all of the behavior at once.
 
@@ -234,17 +236,19 @@ The next reward changed the verdict term to depend on evidence quality. A correc
 <div class="math-block">
 \[
 \begin{aligned}
-\mathrm{reward} &=
-\mathrm{validJson}
-+ \mathrm{finalVerdict} \cdot \mathrm{evidenceValidityWeight}
-+ \mathrm{evidenceId} \\
-&\quad + \mathrm{quoteValidity}
-+ \mathrm{unsupportedSpan}
-+ \mathrm{falseSupportedGuard}
+R &=
+J
++ V \cdot W_E
++ E \\
+&\quad + Q
++ S
++ F
 \end{aligned}
 \]
 </div>
 {:/}
+
+Here `W_E` is the evidence-validity weight applied to the verdict term.
 
 This was the right idea, but not yet the final answer. The first verdict-gated run improved multihop substantially, which means the reward really did push the model toward better evidence behavior. But it also hurt hard and OOD performance. The model became stricter, but sometimes too strict: safer partial judgments increased while final-verdict calibration got worse on the general sets.
 
@@ -254,15 +258,17 @@ The later Prime GRPO v2 reward tightened the gate. It did not merely ask whether
 <div class="math-block">
 \[
 \begin{aligned}
-\mathrm{gatedVerdictCredit} &=
-\mathrm{finalVerdictCorrect}
-\cdot \mathrm{evidenceIdQuality}
-\cdot \mathrm{quoteValidity}
-\cdot \mathrm{quoteCoverage}
+G_V &=
+V
+\cdot E
+\cdot Q
+\cdot C
 \end{aligned}
 \]
 </div>
 {:/}
+
+Here `G_V` is gated verdict credit, and `C` is quote coverage.
 
 That changed the optimization target. A model could no longer get away with "right label, weak evidence" or "right evidence ID, fake quote." The v2 reward had this shape:
 
@@ -270,14 +276,14 @@ That changed the optimization target. A model could no longer get away with "rig
 <div class="math-block">
 \[
 \begin{aligned}
-\mathrm{reward} &=
-0.05 \cdot \mathrm{validJson}
-+ 0.30 \cdot \mathrm{gatedFinalVerdict} \\
-&\quad + 0.20 \cdot \mathrm{evidenceId}
-+ 0.20 \cdot \mathrm{quoteValidity}
-+ 0.15 \cdot \mathrm{quoteCoverage} \\
-&\quad + 0.05 \cdot \mathrm{unsupportedSpan}
-+ 0.05 \cdot \mathrm{falseSupportedGuard}
+R_{\mathrm{v2}} &=
+0.05J
++ 0.30G_V
++ 0.20E \\
+&\quad + 0.20Q
++ 0.15C
++ 0.05S
++ 0.05F
 \end{aligned}
 \]
 </div>
