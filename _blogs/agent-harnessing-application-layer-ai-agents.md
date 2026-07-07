@@ -366,6 +366,61 @@ description: "A technical guide to agent harnessing: how the application layer g
           </p>
         </section>
 
+        <section id="workflow-design">
+          <h2>Workflow Design</h2>
+          <p>
+            In harness engineering, the structure of the workflow can either be manually designed by domain experts or discovered through automated search. Auto-research systems are a useful example because they show how different researchers turn the research process itself into an agentic pipeline.
+          </p>
+          <p>
+            One line of work focuses on building end-to-end research agents. For example, <strong>AI Scientist</strong> by Lu et al. frames scientific discovery as a full pipeline: the system generates research ideas, implements code, runs experiments, interprets the results, writes a paper, and then reviews the output. The important idea is not just that the model writes code or text, but that the whole research loop is decomposed into reusable stages that can be evaluated and improved.
+          </p>
+
+          <figure>
+            <img src="/assets/agent-harness-blog/07-auto-research-harness-loop.png" alt="Auto-research harness loop diagram">
+            <figcaption>
+              Figure 3. A generic auto-research harness where ideas, experiments, evidence checks, writing, and review form a closed feedback loop.
+            </figcaption>
+          </figure>
+
+          <p>
+            A related direction is <strong>ScientistOne</strong> by Meng et al. (2026), which puts verification at the center of the workflow. Instead of allowing the system to freely produce claims, every citation, number, method, and conclusion must be connected back to evidence. This makes the harness more auditable because the system is not only judged by whether the final answer sounds good, but by whether its reasoning chain can be traced to reliable sources.
+          </p>
+          <p>
+            Another example is <strong>Autodata</strong> by Kulikov et al. (2026), which treats the agent as a data scientist for generating training and evaluation data. The workflow is organized around several roles: a challenger that creates problems, a weak solver, a strong solver, and a verifier or judge. The goal is to synthesize tasks that are neither too easy nor impossible. Ideally, the strong solver should pass while the weak solver fails, which creates data at the right difficulty level.
+          </p>
+          <p>
+            The Autodata loop also updates the challenger prompt based on feedback from the solvers and verifier. However, one limitation is that the generated tasks are mainly used to improve weaker models rather than the strongest model in the loop. Because of this, the process looks less like full recursive self-improvement and more like a form of indirect distillation over a generated task distribution.
+          </p>
+
+          <figure>
+            <img src="/assets/agent-harness-blog/08-difficulty-calibrated-data-generation.png" alt="Difficulty-calibrated data generation diagram">
+            <figcaption>
+              Figure 4. A difficulty-calibration loop for synthetic data generation, where useful tasks are those that separate weak and strong solvers.
+            </figcaption>
+          </figure>
+
+          <p>
+            The broader design space for agentic workflows is extremely large. This makes workflow design itself a search problem: rather than relying only on humans to handcraft workflows, we can use optimization algorithms to discover stronger designs.
+          </p>
+          <p>
+            This is the motivation behind <strong>Automated Design of Agentic Systems</strong> by Hu et al. (2025). ADAS treats the design of agents as a meta-level optimization problem. It starts with a small archive of simple workflows, such as chain-of-thought or self-refinement agents. A meta-agent then proposes new workflow designs, writes them in code, critiques and revises them, evaluates their performance, and stores successful designs back into the archive. Over time, the archive becomes a growing library of agentic strategies discovered through search.
+          </p>
+          <p>
+            A similar idea appears in <strong>AFlow</strong> by Zhang et al. (2025), but with a graph-based representation. In AFlow, an agentic workflow is represented as a graph: nodes are LLM actions, while edges define the logical control flow between them. The optimization process uses Monte Carlo Tree Search. Starting from an initial workflow template, the system selects promising candidates, asks an LLM to modify them based on evaluation feedback, tests the new version, and keeps it if it improves performance. The search continues until the score plateaus or the compute budget is reached.
+          </p>
+
+          <figure>
+            <img src="/assets/agent-harness-blog/09-workflow-search-optimization.png" alt="Workflow search as optimization diagram">
+            <figcaption>
+              Figure 5. Workflow design as a search process, where a meta-agent proposes, implements, evaluates, and archives improved agent designs.
+            </figcaption>
+          </figure>
+
+          <p>
+            The key lesson from these systems is that workflow design is becoming a first-class research object. Early systems relied heavily on handcrafted pipelines, but newer approaches increasingly treat the workflow itself as something that can be searched, evaluated, mutated, and improved. This is especially important for auto-research, where the quality of the system depends not only on the base model, but also on the structure of the loop around it: how ideas are generated, how experiments are run, how evidence is checked, and how failures are fed back into the next iteration.
+          </p>
+        </section>
+
         <section id="key-principles">
           <h2>Key Principles of a Good Agent Harness</h2>
           <p>
@@ -424,7 +479,7 @@ description: "A technical guide to agent harnessing: how the application layer g
           <figure>
             <img src="/assets/agent-harness-blog/03-continuity-artifacts.svg" alt="Continuity artifacts for long running agents diagram">
             <figcaption>
-              Figure 3. Continuity should be externalized. A progress log, feature list, git history, and setup script let future agent runs start from evidence instead of guessing.
+              Figure 6. Continuity should be externalized. A progress log, feature list, git history, and setup script let future agent runs start from evidence instead of guessing.
             </figcaption>
           </figure>
 
@@ -476,7 +531,7 @@ description: "A technical guide to agent harnessing: how the application layer g
           <figure>
             <img src="/assets/agent-harness-blog/04-tool-gateway.svg" alt="Tool gateway architecture diagram">
             <figcaption>
-              Figure 4. The tool gateway is the boundary between model reasoning and real-world action. It handles schemas, permissions, execution, normalization, and audit logging.
+              Figure 7. The tool gateway is the boundary between model reasoning and real-world action. It handles schemas, permissions, execution, normalization, and audit logging.
             </figcaption>
           </figure>
 
@@ -600,7 +655,7 @@ description: "A technical guide to agent harnessing: how the application layer g
           <figure>
             <img src="/assets/agent-harness-blog/06-reference-architecture.svg" alt="Reference architecture for an agent harness">
             <figcaption>
-              Figure 5. A platform-neutral reference architecture. The harness includes task routing, context building, tool mediation, verification, observability, memory, and application integrations.
+              Figure 8. A platform-neutral reference architecture. The harness includes task routing, context building, tool mediation, verification, observability, memory, and application integrations.
             </figcaption>
           </figure>
 
@@ -675,7 +730,7 @@ description: "A technical guide to agent harnessing: how the application layer g
           <figure>
             <img src="/assets/agent-harness-blog/05-evaluation-stack.svg" alt="Evaluation stack for agent harnesses">
             <figcaption>
-              Figure 6. Evaluation should be layered. The harness should turn failures into new checks, docs, constraints, or test cases.
+              Figure 9. Evaluation should be layered. The harness should turn failures into new checks, docs, constraints, or test cases.
             </figcaption>
           </figure>
 
@@ -1084,6 +1139,11 @@ description: "A technical guide to agent harnessing: how the application layer g
           <div class="reference-list">
             <p>Anthropic. 2025. "Effective harnesses for long-running agents." Anthropic Engineering, 26 November. Available at: <a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents</a>.</p>
             <p>OpenAI. 2026. "Harness engineering: leveraging Codex in an agent-first world." OpenAI, 11 February. Available at: <a href="https://openai.com/index/harness-engineering/">https://openai.com/index/harness-engineering/</a>.</p>
+            <p>Lu, C. et al. 2026. "Towards end-to-end automation of AI research." Nature. Available at: <a href="https://www.nature.com/articles/s41586-026-10265-5">https://www.nature.com/articles/s41586-026-10265-5</a>.</p>
+            <p>Meng, R. et al. 2026. "ScientistOne: Towards Human-Level Autonomous Research via Chain-of-Evidence." arXiv:2605.26340. Available at: <a href="https://arxiv.org/abs/2605.26340">https://arxiv.org/abs/2605.26340</a>.</p>
+            <p>Kulikov, I. et al. 2026. "Autodata: An agentic data scientist to create high quality synthetic data." arXiv:2606.25996. Available at: <a href="https://arxiv.org/abs/2606.25996">https://arxiv.org/abs/2606.25996</a>.</p>
+            <p>Hu, S., Lu, C. and Clune, J. 2025. "Automated Design of Agentic Systems." ICLR 2025. Available at: <a href="https://arxiv.org/abs/2408.08435">https://arxiv.org/abs/2408.08435</a>.</p>
+            <p>Zhang, J. et al. 2025. "AFlow: Automating Agentic Workflow Generation." ICLR 2025. Available at: <a href="https://arxiv.org/abs/2410.10762">https://arxiv.org/abs/2410.10762</a>.</p>
             <p>Xu, B., Zhang, H., Zhang, S., Han, S., Liu, M., Hu, J., Diao, S., Jin, Z., Zou, Y., Demoret, M., Kautz, J. and Dong, Y. 2026. "Polar: Agentic RL on Any Harness at Scale." arXiv:2605.24220v1. Available at: <a href="https://arxiv.org/abs/2605.24220">https://arxiv.org/abs/2605.24220</a>.</p>
           </div>
         </section>
@@ -1094,6 +1154,7 @@ description: "A technical guide to agent harnessing: how the application layer g
           <a href="#why-prompting-is-not-enough">Why Prompting Is Not Enough</a>
           <a href="#what-the-source-posts-add">What the Source Posts Add</a>
           <a href="#control-loop">The Control Loop</a>
+          <a href="#workflow-design">Workflow Design</a>
           <a href="#key-principles">Key Principles</a>
           <a href="#continuity">Continuity Artifacts</a>
           <a href="#tool-use">Tool Use</a>
