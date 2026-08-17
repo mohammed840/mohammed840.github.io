@@ -17,7 +17,7 @@ permalink: /about/
       <header class="profile-header">
         <h1>Mohammed Alshehri</h1>
         <p class="intro">
-          RL researcher in residence at <a href="https://www.primeintellect.ai/" target="_blank" rel="noreferrer">Prime Intellect</a>,
+          RL Resident Researcher at <a href="https://www.primeintellect.ai/" target="_blank" rel="noreferrer">Prime Intellect</a>,
           working on long-horizon reinforcement learning, agentic systems, and the infrastructure that makes capable models more reliable.
         </p>
       </header>
