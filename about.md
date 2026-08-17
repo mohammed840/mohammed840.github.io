@@ -15,10 +15,9 @@ permalink: /about/
   <body>
     <main class="profile-shell">
       <header class="profile-header">
-        <button class="theme-toggle" type="button" aria-label="Toggle theme" aria-pressed="false">☾</button>
         <h1>Mohammed Alshehri</h1>
         <p class="intro">
-          RL researcher at <a href="https://www.primeintellect.ai/" target="_blank" rel="noreferrer">Prime Intellect</a>,
+          RL researcher in residence at <a href="https://www.primeintellect.ai/" target="_blank" rel="noreferrer">Prime Intellect</a>,
           working on long-horizon reinforcement learning, agentic systems, and the infrastructure that makes capable models more reliable.
         </p>
       </header>
@@ -42,7 +41,16 @@ permalink: /about/
           <summary>Projects</summary>
           <div class="section-copy">
             <p>Research projects, experiments, and papers on reinforcement learning, agents, and evaluation.</p>
-            <p><a class="text-link" href="{{ '/projects/' | relative_url }}">Explore projects →</a></p>
+            <div class="item-list">
+              {% assign projects_sorted = site.projects | sort: "date" | reverse %}
+              {% for project in projects_sorted %}
+              <a class="item" href="{{ project.url | relative_url }}">
+                <span class="item-title">{{ project.title }}</span>
+                {% if project.description %}<span class="item-description">{{ project.description }}</span>{% endif %}
+                <span class="item-action">Read project →</span>
+              </a>
+              {% endfor %}
+            </div>
           </div>
         </details>
 
@@ -50,7 +58,16 @@ permalink: /about/
           <summary>Blogs</summary>
           <div class="section-copy">
             <p>Notes on RL, long-horizon reasoning, research infrastructure, and building AI systems.</p>
-            <p><a class="text-link" href="{{ '/blogs/' | relative_url }}">Read the blog →</a></p>
+            <div class="item-list">
+              {% assign blogs_sorted = site.blogs | sort: "date" | reverse %}
+              {% for blog in blogs_sorted %}
+              <a class="item" href="{{ blog.url | relative_url }}">
+                <span class="item-title">{{ blog.title }}</span>
+                {% if blog.description %}<span class="item-description">{{ blog.description }}</span>{% endif %}
+                <span class="item-action">Read blog →</span>
+              </a>
+              {% endfor %}
+            </div>
           </div>
         </details>
       </section>
@@ -64,6 +81,5 @@ permalink: /about/
         <a href="mailto:mohammed@redec.io">Email</a>
       </footer>
     </main>
-    <script src="{{ '/assets/js/profile.js' | relative_url }}"></script>
   </body>
 </html>

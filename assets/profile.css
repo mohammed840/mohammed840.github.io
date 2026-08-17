@@ -1,11 +1,4 @@
-:root {
-  color-scheme: dark;
-  --bg: #121212;
-  --text: #eeeae5;
-  --muted: #99938d;
-  --line: #292929;
-  --accent: #c8845d;
-}
+:root { --bg: #f7f6f4; --text: #171717; --muted: #706c67; --line: #dedbd7; --accent: #a45e37; }
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -31,12 +24,6 @@ body {
 .intro { max-width: 680px; margin: 0; color: var(--muted); }
 a { color: inherit; text-underline-offset: 3px; }
 a:hover { color: var(--accent); }
-.theme-toggle {
-  position: absolute; top: 0; right: 0; width: 45px; height: 45px;
-  border: 1px solid var(--line); border-radius: 3px; background: transparent;
-  color: var(--text); font: inherit; cursor: pointer;
-}
-.theme-toggle:hover, .theme-toggle:focus-visible { border-color: var(--accent); outline: none; }
 .accordion details { border-bottom: 1px solid var(--line); }
 .accordion summary {
   display: flex; align-items: center; gap: 12px; min-height: 49px;
@@ -51,14 +38,18 @@ a:hover { color: var(--accent); }
 .section-copy p { margin: 0 0 14px; }
 .section-copy p:last-child { margin-bottom: 0; }
 .text-link { color: var(--accent); }
+.item-list { display: grid; gap: 18px; margin-top: 20px; }
+.item { display: grid; gap: 3px; padding-bottom: 16px; border-bottom: 1px solid var(--line); text-decoration: none; }
+.item:last-child { padding-bottom: 0; border-bottom: 0; }
+.item-title { color: var(--text); font-family: Georgia, "Times New Roman", serif; font-size: 1.15rem; }
+.item-description { color: var(--muted); font-size: 13px; line-height: 1.55; }
+.item-action { color: var(--accent); font-size: 13px; margin-top: 4px; }
 .dash-rule { margin: 29px 0 26px; color: var(--muted); letter-spacing: .16em; overflow: hidden; white-space: nowrap; }
 .profile-footer { display: flex; flex-wrap: wrap; gap: 25px; color: var(--muted); }
 .profile-footer a { text-decoration: none; }
-body.light { color-scheme: light; --bg: #f6f5f3; --text: #171717; --muted: #6b6864; --line: #dedbd7; --accent: #a45e37; }
 @media (max-width: 560px) {
   .profile-shell { width: min(100% - 30px, 694px); padding-top: 38px; }
   .profile-header { padding-bottom: 46px; }
-  .profile-header h1 { max-width: calc(100% - 62px); }
   .intro { font-size: 14px; }
   .profile-footer { gap: 16px; font-size: 13px; }
 }
