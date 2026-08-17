@@ -17,7 +17,7 @@ permalink: /about/
         <h1>Mohammed Alshehri</h1>
         <p class="intro">
           RL Resident Researcher at <a href="https://www.primeintellect.ai/" target="_blank" rel="noreferrer">Prime Intellect</a>,
-          working on long-horizon reinforcement learning, agentic systems, and the infrastructure that makes capable models more reliable.
+          working on long-horizon reinforcement learning environments, agentic systems, and the infrastructure that makes capable models more reliable.
         </p>
       </header>
 
@@ -27,7 +27,7 @@ permalink: /about/
           <div class="section-copy">
             <p>
               I grew up between Dublin, Ireland, and London, UK. I’m currently an RL Resident Researcher at Prime Intellect,
-              where I work on long-horizon reinforcement learning: training agents to reason, act, and improve over extended tasks.
+              where I work on long-horizon reinforcement learning environments: training agents to reason, act, and improve over extended tasks.
             </p>
             <p>
               My work sits at the intersection of reinforcement learning, language models, agent evaluation, and research systems.
