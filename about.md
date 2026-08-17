@@ -26,7 +26,7 @@ permalink: /about/
           <summary>About</summary>
           <div class="section-copy">
             <p>
-              I grew up between Dublin, Ireland, and London, UK. I’m currently an RL researcher at Prime Intellect,
+              I grew up between Dublin, Ireland, and London, UK. I’m currently an RL Resident Researcher at Prime Intellect,
               where I work on long-horizon reinforcement learning: training agents to reason, act, and improve over extended tasks.
             </p>
             <p>
