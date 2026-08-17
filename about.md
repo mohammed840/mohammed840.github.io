@@ -8,7 +8,7 @@ permalink: /about/
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Mohammed Alshehri — RL researcher at Prime Intellect." />
+    <meta name="description" content="Mohammed Alshehri — RL Resident Researcher at Prime Intellect." />
     <title>Mohammed Alshehri</title>
     <link rel="stylesheet" href="{{ '/assets/profile.css' | relative_url }}" />
   </head>
