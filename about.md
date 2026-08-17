@@ -71,14 +71,21 @@ permalink: /about/
         </details>
       </section>
 
-      <div class="dash-rule" aria-hidden="true">– – – – – – – – –</div>
+      <div class="signal-rule" aria-label="Upward reward signal">
+        <svg viewBox="0 0 240 42" role="img" aria-labelledby="signal-title">
+          <title id="signal-title">An upward reward signal</title>
+          <path class="signal-baseline" d="M2 35H238" />
+          <path class="signal-path" d="M2 33 L22 31 L38 34 L55 27 L72 29 L89 22 L105 25 L122 17 L140 20 L157 12 L174 16 L193 7 L210 10 L238 2" />
+        </svg>
+      </div>
 
       <footer class="profile-footer">
         <a href="https://github.com/mohammed840" target="_blank" rel="noreferrer">GitHub</a>
         <a href="https://www.linkedin.com/in/mohammed-alshehri-0a8ab81b1/" target="_blank" rel="noreferrer">LinkedIn</a>
         <a href="https://x.com/M0EGPT" target="_blank" rel="noreferrer">X</a>
-        <a href="mailto:mohammed@redec.io">Email</a>
+        <a href="https://www.goodreads.com/user/show/196070681-mohammed-alshehri" target="_blank" rel="noreferrer">Goodreads</a>
       </footer>
     </main>
+    <script src="{{ '/assets/js/profile.js' | relative_url }}"></script>
   </body>
 </html>
