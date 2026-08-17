@@ -129,12 +129,18 @@ description: "A technical guide to agent harnessing: how the application layer g
   overflow-wrap: anywhere;
 }
 .agent-harness-post .toc {
-  position: sticky;
+  position: fixed;
   top: 92px;
+  left: calc(50% + 270px);
+  width: 235px;
+  max-height: calc(100vh - 116px);
+  overflow-y: auto;
   border-left: 1px solid #e7e7e7;
   padding-left: 1rem;
+  padding-right: 0.25rem;
   color: #5f6368;
   font-size: 0.9rem;
+  z-index: 10;
 }
 .agent-harness-post .toc strong {
   display: block;
@@ -163,6 +169,9 @@ description: "A technical guide to agent harnessing: how the application layer g
   }
   .agent-harness-post .toc {
     position: static;
+    width: auto;
+    max-height: none;
+    overflow: visible;
     border-left: 0;
     border-top: 1px solid #e7e7e7;
     padding: 1rem 0 0;
