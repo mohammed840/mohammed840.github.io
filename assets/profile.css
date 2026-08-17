@@ -47,6 +47,30 @@ a:hover { color: var(--accent); }
 .dash-rule { margin: 29px 0 26px; color: var(--muted); letter-spacing: .16em; overflow: hidden; white-space: nowrap; }
 .profile-footer { display: flex; flex-wrap: wrap; gap: 25px; color: var(--muted); }
 .profile-footer a { text-decoration: none; }
+.site-page > h1,
+.site-page .blog-post-title,
+.site-page .post-title {
+  margin: 0 0 12px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.25rem, 6vw, 3.2rem);
+  font-weight: 400;
+  letter-spacing: -.04em;
+  line-height: 1.05;
+}
+.collection-intro { max-width: 680px; margin: 0 0 36px; color: var(--muted); }
+.collection-entry { display: grid; gap: 3px; padding: 0 0 18px; margin: 0 0 18px; border-bottom: 1px solid var(--line); }
+.collection-title { color: var(--text); font-family: Georgia, "Times New Roman", serif; font-size: 1.18rem; text-decoration: none; }
+.collection-meta { color: var(--muted); font-size: 13px; }
+.collection-description { margin: 6px 0 0; color: var(--text); }
+.collection-action { color: var(--accent); font-size: 13px; text-decoration: none; margin-top: 5px; }
+.blog-post-header, .post-header { margin-bottom: 34px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.blog-post-meta, .blog-post-description { color: var(--muted); }
+.blog-post-content, .post-content { line-height: 1.72; }
+.blog-post-content h2, .post-content h2 { font-family: Georgia, "Times New Roman", serif; font-size: 1.5rem; font-weight: 400; margin-top: 2rem; }
+.blog-post-content h3, .post-content h3 { font-family: Georgia, "Times New Roman", serif; font-size: 1.2rem; font-weight: 400; margin-top: 1.5rem; }
+.blog-post-footer { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--line); }
+.blog-post-footer a { color: var(--accent); text-decoration: none; }
+@media (max-width: 560px) { .site-page > h1, .site-page .blog-post-title, .site-page .post-title { font-size: 2.25rem; } }
 @media (max-width: 560px) {
   .profile-shell { width: min(100% - 30px, 694px); padding-top: 38px; }
   .profile-header { padding-bottom: 46px; }

@@ -3,21 +3,16 @@ title: Blogs
 permalink: /blogs/
 ---
 
-# Blogs
+<h1>Blogs</h1>
+<p class="collection-intro">Notes on RL, long-horizon reasoning, research infrastructure, and building AI systems.</p>
 
 {% assign blogs_sorted = site.blogs | sort: "date" | reverse %}
 
 {% for b in blogs_sorted %}
-<article class="blog-entry" style="margin: 1.5rem 0; padding: 1rem 0; border-bottom: 1px solid #eee;">
-  <h2 style="margin: 0 0 0.3rem; font-size: 1.25rem;">
-    <a href="{{ b.url | relative_url }}" style="text-decoration: none; color: inherit;">{{ b.title }}</a>
-  </h2>
-  <p style="margin: 0 0 0.5rem; font-size: 0.85rem; color: #666;">
-    {{ b.date | date: "%B %d, %Y" }}{% if b.author %} · {{ b.author }}{% endif %}
-  </p>
-  {% if b.description %}
-  <p style="margin: 0 0 0.5rem; color: #444;">{{ b.description }}</p>
-  {% endif %}
-  <a href="{{ b.url | relative_url }}" style="font-size: 0.9rem;">Read full post →</a>
+<article class="collection-entry">
+  <a class="collection-title" href="{{ b.url | relative_url }}">{{ b.title }}</a>
+  <span class="collection-meta">{{ b.date | date: "%B %d, %Y" }}{% if b.author %} · {{ b.author }}{% endif %}</span>
+  {% if b.description %}<p class="collection-description">{{ b.description }}</p>{% endif %}
+  <a class="collection-action" href="{{ b.url | relative_url }}">Read blog →</a>
 </article>
 {% endfor %}
