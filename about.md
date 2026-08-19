@@ -59,7 +59,23 @@ permalink: /about/
             <p>Notes on RL, long-horizon reasoning, research infrastructure, and building AI systems.</p>
             <div class="item-list">
               {% assign blogs_sorted = site.blogs | sort: "date" | reverse %}
+              {% assign pinned = "" | split: "" %}
+              {% assign regular = "" | split: "" %}
               {% for blog in blogs_sorted %}
+                {% if blog.pinned %}
+                  {% assign pinned = pinned | push: blog %}
+                {% else %}
+                  {% assign regular = regular | push: blog %}
+                {% endif %}
+              {% endfor %}
+              {% for blog in pinned %}
+              <a class="item" href="{{ blog.url | relative_url }}">
+                <span class="item-title">📌 {{ blog.title }}</span>
+                {% if blog.description %}<span class="item-description">{{ blog.description }}</span>{% endif %}
+                <span class="item-action">Read blog →</span>
+              </a>
+              {% endfor %}
+              {% for blog in regular %}
               <a class="item" href="{{ blog.url | relative_url }}">
                 <span class="item-title">{{ blog.title }}</span>
                 {% if blog.description %}<span class="item-description">{{ blog.description }}</span>{% endif %}
