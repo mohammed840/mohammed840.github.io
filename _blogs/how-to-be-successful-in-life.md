@@ -41,3 +41,15 @@ There are real tradeoffs to working extremely hard, and not everyone should want
 The important part is learning how to sustain that intensity without destroying yourself in the process. For me, that means working on problems I actually care about and surrounding myself with people I enjoy building alongside. Hard work becomes much easier to maintain when the work itself feels meaningful.
 
 I also think there is a huge advantage to putting in disproportionate effort early. Effort compounds much like capital does. The earlier you build skills, stamina, knowledge, and experience, the longer you have for those advantages to accumulate.
+
+
+## Keep Faith When You Have Nothing Else
+
+I think one of the most powerful things you can carry through life is faith in something greater than yourself. Whether you call upon **Hashem, Jesus, Allah, or simply believe in a higher power**, having something greater to turn to can become incredibly powerful when you reach your lowest point.
+
+There will be moments when everything seems closed off and you cannot see a path forward. I sometimes think about **Moses standing before the sea, with danger behind him and no obvious way ahead**. From a human perspective, it looked impossible. Yet faith meant continuing forward before the way was visible.
+
+That is what faith can do in your own life. Prayer, those quiet conversations with God, and trusting that there is meaning beyond what you currently understand can keep you moving when logic alone tells you to give up.
+
+And I think those moments make the comeback different. When you have been at your lowest, prayed when nobody was watching, and somehow found the strength to stand again, you return with a different kind of resilience. Sometimes your strongest version is built in the moments when you had no clear path forward and all you had left was faith.
+
