@@ -5,9 +5,8 @@ layout: blog
 author: Mohammed Alshehri
 description: "Reflections on focus, effort, risk-taking, and building advantages that compound — a practical guide to thinking about success."
 pinned: true
+hide_header: true
 ---
-
-# How to Be Successful in Life
 
 ## Choose What Deserves Your Focus
 
@@ -52,4 +51,3 @@ There will be moments when everything seems closed off and you cannot see a path
 That is what faith can do in your own life. Prayer, those quiet conversations with God, and trusting that there is meaning beyond what you currently understand can keep you moving when logic alone tells you to give up.
 
 And I think those moments make the comeback different. When you have been at your lowest, prayed when nobody was watching, and somehow found the strength to stand again, you return with a different kind of resilience. Sometimes your strongest version is built in the moments when you had no clear path forward and all you had left was faith.
-
