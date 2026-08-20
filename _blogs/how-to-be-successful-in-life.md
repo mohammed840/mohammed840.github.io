@@ -5,7 +5,7 @@ layout: blog
 author: Mohammed Alshehri
 description: "Reflections on focus, effort, risk-taking, and building advantages that compound — a practical guide to thinking about success."
 pinned: true
-hide_header: true
+hide_meta: true
 ---
 
 ## Choose What Deserves Your Focus
