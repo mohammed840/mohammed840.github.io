@@ -43,6 +43,9 @@
 
   function squareName(row, col) { return String.fromCharCode(97 + col) + (8 - row); }
 
+  function isGameOver() { return chess.isGameOver ? chess.isGameOver() : chess.game_over(); }
+  function isDraw() { return chess.isDraw ? chess.isDraw() : chess.in_draw(); }
+
   function render() {
     boardEl.innerHTML = '';
     for (let row = 0; row < 8; row += 1) {
@@ -65,11 +68,11 @@
         boardEl.appendChild(button);
       }
     }
-    statusEl.textContent = chess.isGameOver() ? (chess.isDraw() ? 'Draw' : 'Game over') : (chess.turn() === 'w' ? 'Your move' : 'Thinking…');
+    statusEl.textContent = isGameOver() ? (isDraw() ? 'Draw' : 'Game over') : (chess.turn() === 'w' ? 'Your move' : 'Thinking…');
   }
 
   function onSquareClick(event) {
-    if (!chess || chess.isGameOver() || chess.turn() !== 'w') return;
+    if (!chess || isGameOver() || chess.turn() !== 'w') return;
     const square = event.currentTarget.dataset.square;
     const piece = chess.get(square);
     if (!selected) {
@@ -80,11 +83,11 @@
     const move = chess.move({ from: selected, to: square, promotion: 'q' });
     if (!move) { statusEl.textContent = 'That move is not legal'; return; }
     lastMove = move; selected = null; render();
-    if (!chess.isGameOver()) window.setTimeout(makeComputerMove, 320);
+    if (!isGameOver()) window.setTimeout(makeComputerMove, 320);
   }
 
   function makeComputerMove() {
-    if (chess.isGameOver() || chess.turn() !== 'b') return;
+    if (isGameOver() || chess.turn() !== 'b') return;
     const moves = chess.moves({ verbose: true });
     moves.sort(function (a, b) { return (b.captured ? 10 : 0) - (a.captured ? 10 : 0) + Math.random() - 0.5; });
     const move = chess.move(moves[0]);
