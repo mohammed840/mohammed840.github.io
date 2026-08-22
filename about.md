@@ -107,7 +107,7 @@ permalink: /about/
     <section id="chess-widget" class="chess-widget" aria-label="Play chess" hidden>
       <div class="chess-widget-header">
         <div>
-          <strong>Chess</strong>
+          <strong>Chess · RL agent</strong>
           <span class="chess-status" aria-live="polite">Loading…</span>
         </div>
         <button class="chess-close" type="button" aria-label="Close chess game">×</button>
@@ -115,7 +115,7 @@ permalink: /about/
       <div class="chess-board" role="grid" aria-label="Chess board"></div>
       <div class="chess-controls">
         <button class="chess-new" type="button">New game</button>
-        <span>You play White</span>
+        <span>You play White · agent learns locally</span>
       </div>
     </section>
     <script src="{{ '/assets/js/profile.js' | relative_url }}"></script>
