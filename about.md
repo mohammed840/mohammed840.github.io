@@ -115,7 +115,6 @@ permalink: /about/
       <div class="chess-board" role="grid" aria-label="Chess board"></div>
       <div class="chess-controls">
         <button class="chess-new" type="button">New game</button>
-        <span>You play White · agent learns locally</span>
       </div>
     </section>
     <script src="{{ '/assets/js/profile.js' | relative_url }}"></script>
