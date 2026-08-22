@@ -102,6 +102,22 @@ permalink: /about/
         <a href="https://www.goodreads.com/user/show/196070681-mohammed-alshehri" target="_blank" rel="noreferrer">Goodreads</a>
       </footer>
     </main>
+
+    <button class="chess-launcher" type="button" aria-expanded="false" aria-controls="chess-widget">♞ Play chess</button>
+    <section id="chess-widget" class="chess-widget" aria-label="Play chess" hidden>
+      <div class="chess-widget-header">
+        <div>
+          <strong>Chess</strong>
+          <span class="chess-status" aria-live="polite">Loading…</span>
+        </div>
+        <button class="chess-close" type="button" aria-label="Close chess game">×</button>
+      </div>
+      <div class="chess-board" role="grid" aria-label="Chess board"></div>
+      <div class="chess-controls">
+        <button class="chess-new" type="button">New game</button>
+        <span>You play White</span>
+      </div>
+    </section>
     <script src="{{ '/assets/js/profile.js' | relative_url }}"></script>
   </body>
 </html>
