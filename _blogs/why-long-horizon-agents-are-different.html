@@ -15,7 +15,24 @@ description: ""
 
 <p>This article takes an environment-first view. We will cover state, time, events, actions, memory, rewards, tools, multi-agent settings, credit assignment, failure modes, training, evaluation, and the path from isolated tasks to persistent worlds.</p>
 
-<h2>From Tasks to Environments</h2>
+<aside class="article-toc" aria-label="Table of contents">
+  <h2>Table Of Contents</h2>
+  <ul>
+    <li><a href="#from-tasks-to-environments">From Tasks to Environments</a></li>
+    <li><a href="#core-architecture">The Core Architecture</a></li>
+    <li><a href="#state-architectures">State Architectures</a></li>
+    <li><a href="#memory-hours-days">Memory for Hours- and Days-Long Tasks</a></li>
+    <li><a href="#tool-action-architectures">Tool and Action Architectures</a></li>
+    <li><a href="#reward-credit-assignment">Reward and Credit Assignment</a></li>
+    <li><a href="#twelve-hour-environment">How to Build a 12-Hour Environment</a></li>
+    <li><a href="#training-long-horizon">Training on Long-Horizon Environments</a></li>
+    <li><a href="#evaluating-long-horizon">Evaluating Long-Horizon Agents</a></li>
+    <li><a href="#what-build-next">What Should We Build Next?</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ul>
+</aside>
+
+<h2 id="from-tasks-to-environments">From Tasks to Environments</h2>
 
 <figure class="blog-figure">
   <img src="{{ '/assets/images/from-tasks-to-environments.png' | relative_url }}" alt="Diagram comparing a static task with a persistent environment containing an agent, tools, memory, world state, external events, other actors, and time." />
@@ -68,7 +85,7 @@ description: ""
 
 <p>A task gives an agent something to solve. An environment gives it somewhere to operate. For long-horizon agents, that distinction is fundamental. Evaluation must therefore move beyond asking, “Can the model solve this task?” and ask, “Can the agent operate correctly inside a changing world over time?”</p>
 
-<h2>The Core Architecture of a Long-Horizon Environment</h2>
+<h2 id="core-architecture">The Core Architecture of a Long-Horizon Environment</h2>
 
 <p>A long-horizon environment is not just an LLM connected to a larger collection of tools. It is a system that persists, changes, and records consequences while the agent works inside it. The agent sees only an observation of that system, acts through an interface, and is eventually judged on a trajectory that may span hours or days. Most such environments can be understood through six primitives: state, time, events, actions, memory, and rewards.</p>
 
@@ -102,7 +119,7 @@ description: ""
 
 <p>These six components form the substrate of a long-horizon environment. State gives the world persistence, time lets it evolve, events introduce change, actions create consequences, memory gives the agent continuity, and rewards determine which trajectories are worth learning from.</p>
 
-<h2>State Architectures</h2>
+<h2 id="state-architectures">State Architectures</h2>
 
 <p>The important question is not only what state exists, but where it lives and who owns it. A short agent loop can treat the prompt as its working state. An agent that runs for days cannot. As the horizon grows, state moves outward—from the context window into checkpoints, databases, workflow histories, and external systems. The architecture determines whether the agent can resume after failure, coordinate with other actors, and distinguish an old observation from the current world.</p>
 
@@ -173,7 +190,7 @@ description: ""
 
 <p>That is the deeper shift: the architecture of long-horizon agents begins to resemble distributed systems more than chat applications. The model supplies reasoning and action selection, but the surrounding system supplies continuity, synchronization, access control, recovery, and a record of consequences.</p>
 
-<h2>Memory for Hours- and Days-Long Tasks</h2>
+<h2 id="memory-hours-days">Memory for Hours- and Days-Long Tasks</h2>
 
 <p>A long-horizon agent cannot keep every observation, tool result, intermediate plan, and artifact in active context. Over a twelve-hour or three-day trajectory, the history can grow far beyond what should be placed in one prompt. The memory problem is therefore not remembering everything. It is preserving what will matter later, retrieving it at the right moment, and revising information that has become stale.</p>
 
@@ -187,7 +204,7 @@ description: ""
 
 <p>Episodic memory records what happened: a request was sent, a customer replied, an experiment failed, or a task was escalated. A useful event can be represented as <code>e<sub>i</sub> = (time, action, observation, outcome)</code>. This lets an agent later ask why it made a decision, whether it already tried a strategy, or what happened after an earlier action.</p>
 
-<p>Semantic memory stores what the agent learned rather than the complete path that produced it. “At 14:05, the customer confirmed the vehicle was repaired in Jeddah” is episodic; “vehicle repair location = Jeddah” is semantic. Facts, policies, relationships, preferences, discovered constraints, and conclusions belong here. In systems such as <a href="https://mem0.ai/" target="_blank" rel="noreferrer">Mem0</a>, persistent memories are separated from the active context and retrieved when they become relevant. Benchmarks such as <a href="https://arxiv.org/abs/2410.10813" target="_blank" rel="noreferrer">LongMemEval</a> make this retrieval problem measurable across long, multi-session histories.</p>
+<p>Semantic memory stores what the agent learned rather than the complete path that produced it. “At 14:05, the customer confirmed the vehicle was repaired in London” is episodic; “vehicle repair location = London” is semantic. Facts, policies, relationships, preferences, discovered constraints, and conclusions belong here. In systems such as <a href="https://mem0.ai/" target="_blank" rel="noreferrer">Mem0</a>, persistent memories are separated from the active context and retrieved when they become relevant. Benchmarks such as <a href="https://arxiv.org/abs/2410.10813" target="_blank" rel="noreferrer">LongMemEval</a> make this retrieval problem measurable across long, multi-session histories.</p>
 
 <p>Artifact memory is different again. Long-running agents create code, reports, spreadsheets, patches, diagrams, experiment outputs, and research notes. These should not all be copied into the prompt. Instead, the agent can store a pointer and metadata such as <code>artifact_id</code>, <code>location</code>, <code>purpose</code>, and <code>status</code>. Long-horizon memory is partly about remembering information and partly about remembering where important information lives.</p>
 
@@ -201,7 +218,7 @@ description: ""
 
 <p>For long-horizon agents, forgetting is as important as remembering. A useful memory system must decide what survives, what becomes stale, what should be updated when evidence conflicts, and what belongs only in the archive. The goal is not perfect recall. It is maintaining the smallest reliable representation of the past needed to make good decisions about the future.</p>
 
-<h2>Tool and Action Architectures</h2>
+<h2 id="tool-action-architectures">Tool and Action Architectures</h2>
 
 <p>The tool interface determines what kind of agent is actually being trained. An API agent, a browser agent, and a desktop agent may be asked to solve the same business problem, but they operate in very different environments. The interface changes the difficulty, the kinds of errors that are possible, and what it means for an action to change the world.</p>
 
@@ -252,7 +269,7 @@ agent must: open CRM → find customer → navigate tabs
 
 <p>The key idea is that the action space itself is part of environment design. Long-horizon agents should not be trained only to call tools. They should learn to operate interfaces, choose between interfaces, understand which actions change persistent state, and recognize when an action cannot safely be undone. The environment is not just a collection of capabilities; it is a controlled world in which actions carry consequences.</p>
 
-<h2>Reward and Credit Assignment Across Long Horizons</h2>
+<h2 id="reward-credit-assignment">Reward and Credit Assignment Across Long Horizons</h2>
 
 <p>Long-horizon reinforcement learning creates a basic problem: the action that determines success may occur hours before the reward arrives. A trajectory can contain thousands of decisions, <code>τ = (s<sub>0</sub>, a<sub>0</sub>, s<sub>1</sub>, a<sub>1</sub>, …, s<sub>T</sub>)</code>, while the environment produces only one final signal. The agent must determine which earlier actions caused that outcome.</p>
 
@@ -297,7 +314,7 @@ correct final decision           +1.0</code></pre>
 
 <p>For long-horizon RL, the hardest problem may eventually be less about producing reward and more about ensuring that the reward still means what we think it means after an agent has had thousands of opportunities to optimize against it.</p>
 
-<h2>How to Build a 12-Hour Environment</h2>
+<h2 id="twelve-hour-environment">How to Build a 12-Hour Environment</h2>
 
 <p>A twelve-hour environment should not be implemented as one process that stays alive for twelve hours. Most of the time, the agent will be waiting: for a CI job, a user reply, an experiment, an approval, or an external event. A more robust architecture is a durable environment that can <strong>wake, act, checkpoint, sleep, and resume</strong>.</p>
 
@@ -347,7 +364,7 @@ continue safely</code></pre>
 
 <p>The complete design is less like <code>LLM runs for 12 hours</code> and more like <code>wake → observe → reason → act → persist → wait → event → wake → recover → continue</code>. The environment lasts twelve hours. The model does not have to.</p>
 
-<h2>Training on Long-Horizon Environments</h2>
+<h2 id="training-long-horizon">Training on Long-Horizon Environments</h2>
 
 <p>Building a twelve-hour environment is only half the problem. The harder question is how to train a model inside it. A short reasoning task may generate a few hundred tokens before receiving a reward; a long-horizon agent may generate thousands of tool calls, observations, plans, artifacts, retries, and decisions before the final outcome is known.</p>
 
@@ -466,7 +483,7 @@ for max_steps in curriculum:
 
 <p>For long-horizon agents, the scarce resource may eventually be less the gradient update itself and more the <strong>high-quality trajectory through a consequential world</strong>.</p>
 
-<h2>Evaluating Long-Horizon Agents</h2>
+<h2 id="evaluating-long-horizon">Evaluating Long-Horizon Agents</h2>
 
 <p>Training reward tells us whether a policy is improving. Evaluation asks a harder question: does the trained agent actually behave better across complete long-horizon trajectories it has not seen before?</p>
 
@@ -500,7 +517,7 @@ for max_steps in curriculum:
 
 <p>This makes the train → evaluate → inspect → retrain loop part of the same stack. For long-horizon agents, the final question should not simply be, “Did it finish?”</p>
 
-<h2>What Should We Build Next?</h2>
+<h2 id="what-build-next">What Should We Build Next?</h2>
 
 <p>The most interesting long-horizon environments are not short tasks artificially stretched to make them harder. They are domains where the real work already unfolds over hours, days, weeks, or months. These environments naturally contain waiting, external events, changing state, multiple actors, delayed consequences, and decisions that cannot always be reversed.</p>
 
@@ -562,7 +579,7 @@ for max_steps in curriculum:
 
 <p>The goal is not simply to make benchmarks longer. It is to make the <strong>environment horizon match the natural horizon of the work</strong>. That is when long-horizon agents become more than better chatbots: they become systems that can remain responsible for an evolving piece of the world.</p>
 
-<h2>Conclusion</h2>
+<h2 id="conclusion">Conclusion</h2>
 
 <p>The shift from short agent tasks to long-horizon work changes what matters. A capable model is no longer enough. An agent working for hours or days needs a world that persists around it: state that survives restarts, memory that keeps only what matters, events that arrive asynchronously, tools that change the world, checkpoints that enable recovery, and rewards that still mean what we intend after thousands of actions.</p>
 
