@@ -7,6 +7,8 @@ share_image: "/assets/images/long-horizon-agents-share.png"
 social_description: "How persistent state, memory, tools, events, training, and evaluation shape agents that operate over hours and days."
 ---
 
+<div class="article-intro-grid">
+<div class="article-intro-copy">
 <p>Reinforcement learning is built around a simple idea: an agent improves by acting in an environment and learning from feedback. Its foundations are described in <a href="https://mitpress.mit.edu/9780262039246/reinforcement-learning/" target="_blank" rel="noreferrer">Sutton and Barto’s <em>Reinforcement Learning: An Introduction</em></a>. Early systems usually worked in small environments with short episodes and clear rewards.</p>
 
 <p>Deep learning made these systems far more capable. <a href="https://www.nature.com/articles/nature16961" target="_blank" rel="noreferrer">AlphaGo</a> combined neural networks, self-play, and search, while <a href="https://www.nature.com/articles/nature24270" target="_blank" rel="noreferrer">AlphaGo Zero</a> learned from the rules and self-play alone. <a href="https://openai.com/index/openai-five/" target="_blank" rel="noreferrer">OpenAI Five</a> showed that RL could also handle real-time, multi-agent environments with delayed consequences.</p>
@@ -16,6 +18,7 @@ social_description: "How persistent state, memory, tools, events, training, and 
 <p>These advances reveal the difference between a convincing demo and reliable long-horizon behavior. Tasks lasting hours or days require persistent state, useful memory, external events, side-effectful tools, recovery, and delayed rewards. The environment determines what the agent can observe, change, and remember.</p>
 
 <p>This article takes an environment-first view. We will cover state, time, events, actions, memory, rewards, tools, multi-agent settings, credit assignment, failure modes, training, evaluation, and the path from isolated tasks to persistent worlds.</p>
+</div>
 
 <aside class="article-toc" aria-label="Table of contents">
   <h2>Table Of Contents</h2>
@@ -33,6 +36,7 @@ social_description: "How persistent state, memory, tools, events, training, and 
     <li><a href="#conclusion">Conclusion</a></li>
   </ul>
 </aside>
+</div>
 
 <h2 id="from-tasks-to-environments">From Tasks to Environments</h2>
 
