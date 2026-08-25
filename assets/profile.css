@@ -100,6 +100,42 @@ a:hover { color: var(--accent); }
 .blog-post-content, .post-content { line-height: 1.72; }
 .blog-post-content h2, .post-content h2 { font-family: Georgia, "Times New Roman", serif; font-size: 1.5rem; font-weight: 400; margin-top: 2rem; }
 .blog-post-content h3, .post-content h3 { font-family: Georgia, "Times New Roman", serif; font-size: 1.2rem; font-weight: 400; margin-top: 1.5rem; }
+.state-roadmap { margin: 42px 0 52px; padding: 24px 0 4px; border-top: 1px solid var(--line); }
+.state-roadmap-label { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; color: var(--muted); font: 700 12px/1.2 Georgia, "Times New Roman", serif; letter-spacing: .14em; }
+.state-roadmap-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.state-roadmap-track { position: relative; }
+.state-roadmap-track::before { content: ""; position: absolute; top: 8px; bottom: 26px; left: 95px; width: 1px; background: linear-gradient(#c9c5bc, var(--accent), #c9c5bc); }
+.state-roadmap-entry { position: relative; display: grid; grid-template-columns: 75px 40px 1fr; gap: 0; min-height: 104px; }
+.state-roadmap-year { padding-top: 2px; color: var(--muted); font: 700 14px/1.4 Georgia, "Times New Roman", serif; letter-spacing: .04em; text-align: left; }
+.state-roadmap-dot { position: relative; z-index: 1; width: 13px; height: 13px; margin-top: 2px; border: 3px solid var(--bg); border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.state-roadmap-copy { display: grid; gap: 7px; padding: 0 0 31px; color: var(--text); }
+.state-roadmap-copy em { font: italic 1.18rem/1.25 Georgia, "Times New Roman", serif; }
+.state-roadmap-copy span { max-width: 690px; line-height: 1.65; }
+.state-roadmap-copy a { text-decoration-style: dotted; text-underline-offset: 4px; transition: color .2s ease; }
+.state-roadmap-copy a:hover { color: var(--accent); }
+.blog-figure { margin: 28px 0 30px; }
+.blog-figure img { display: block; width: 100%; height: auto; border: 0; border-radius: 0; background: transparent; }
+.blog-figure figcaption { margin-top: 9px; color: var(--muted); font-size: 12px; text-align: center; }
+.blog-table { width: 100%; margin: 28px 0; border-collapse: collapse; font-size: 13px; line-height: 1.5; }
+.blog-table th, .blog-table td { padding: 11px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.blog-table th { color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+.blog-table td:first-child { font-weight: 600; }
+.blog-table a { text-underline-offset: 3px; }
+.blog-post-content pre, .post-content pre { margin: 24px 0; padding: 18px 20px; overflow-x: auto; border: 0; border-radius: 0; background: transparent; color: var(--text); font: 13px/1.7 "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+.blog-post-content pre code, .post-content pre code { font: inherit; }
+.blog-post-content pre.code-block { position: relative; padding-top: 46px; }
+.json-key { color: #8b4d2f; }
+.json-string { color: #2f6d51; }
+.json-number { color: #76529a; }
+.json-boolean { color: #9a4f76; }
+.py-keyword { color: #8b4d2f; }
+.py-string { color: #2f6d51; }
+.py-number { color: #76529a; }
+.py-comment { color: #8a8176; font-style: italic; }
+.json-block { position: relative; }
+.copy-json, .copy-code { position: absolute; top: 10px; right: 10px; z-index: 1; border: 1px solid var(--line); border-radius: 3px; background: transparent; color: var(--muted); font: 12px/1.2 "SFMono-Regular", Consolas, "Liberation Mono", monospace; padding: 7px 9px; cursor: pointer; }
+.copy-json:hover { border-color: var(--accent); color: var(--accent); }
+.copy-code:hover { border-color: var(--accent); color: var(--accent); }
 .blog-post-footer { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--line); }
 .blog-post-footer a { color: var(--accent); text-decoration: none; }
 @media (max-width: 560px) { .site-page > h1, .site-page .blog-post-title, .site-page .post-title { font-size: 2.25rem; } }
@@ -111,4 +147,9 @@ a:hover { color: var(--accent); }
   .signal-rule { width: 205px; }
   .chess-launcher { right: 15px; bottom: 15px; }
   .chess-widget { right: 15px; bottom: 66px; }
+  .state-roadmap-track::before { left: 65px; }
+  .state-roadmap-entry { grid-template-columns: 48px 34px 1fr; }
+  .state-roadmap-copy em { font-size: 1.05rem; }
+  .state-roadmap-copy span { font-size: 13px; }
+  .blog-table { display: block; overflow-x: auto; white-space: nowrap; }
 }
