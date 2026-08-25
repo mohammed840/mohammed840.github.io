@@ -20,8 +20,8 @@
   <meta name="twitter:description" content="{{ social_description | escape }}" />
   <meta name="twitter:image" content="{{ page.share_image | absolute_url }}" />
   {% endif %}
-  <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}" />
-  <link rel="stylesheet" href="{{ "/assets/profile.css" | relative_url }}" />
+  <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}?v={{ site.time | date: '%s' }}" />
+  <link rel="stylesheet" href="{{ "/assets/profile.css" | relative_url }}?v={{ site.time | date: '%s' }}" />
   {% include head-custom.html %}
 </head>
 
