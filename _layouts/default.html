@@ -5,6 +5,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+  {% assign social_title = page.title | default: site.title %}
+  {% assign social_description = page.social_description | default: page.description | default: site.description %}
+  {% if page.share_image %}
+  <meta name="description" content="{{ social_description | escape }}" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="{{ social_title | escape }}" />
+  <meta property="og:description" content="{{ social_description | escape }}" />
+  <meta property="og:url" content="{{ page.url | absolute_url }}" />
+  <meta property="og:image" content="{{ page.share_image | absolute_url }}" />
+  <meta property="og:image:alt" content="{{ social_title | escape }}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{ social_title | escape }}" />
+  <meta name="twitter:description" content="{{ social_description | escape }}" />
+  <meta name="twitter:image" content="{{ page.share_image | absolute_url }}" />
+  {% endif %}
   <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}" />
   <link rel="stylesheet" href="{{ "/assets/profile.css" | relative_url }}" />
   {% include head-custom.html %}
