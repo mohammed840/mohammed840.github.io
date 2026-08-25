@@ -3,6 +3,7 @@ title: "A Correct Verdict Is Not Enough: RL for Evidence-Grounded Claim Verifica
 date: 2026-07-02
 layout: blog
 author: Mohammed Alshehri
+description: "Building an evidence-grounded claim verifier with SFT and reinforcement learning, including reward design, failure analysis, and held-out evaluation."
 ---
 
 <style>
