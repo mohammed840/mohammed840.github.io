@@ -16,8 +16,47 @@ description: "Building an evidence-grounded claim verifier with SFT and reinforc
   background: transparent;
 }
 
-.claimcheck-toc h2 {
-  margin-top: 0;
+.claimcheck-toc summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+  color: #111;
+  font: 400 1.15rem/1.3 Georgia, "Times New Roman", serif;
+}
+
+.claimcheck-toc summary::-webkit-details-marker {
+  display: none;
+}
+
+.claimcheck-toc summary::marker {
+  content: "";
+}
+
+.claimcheck-toc .toc-toggle {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  color: #666;
+  font: 14px/1 "SFMono-Regular", Consolas, monospace;
+}
+
+.claimcheck-toc .toc-toggle::before {
+  content: "−";
+}
+
+.claimcheck-toc:not([open]) .toc-toggle::before {
+  content: "+";
+}
+
+.claimcheck-toc[open] summary {
+  margin-bottom: 1rem;
 }
 
 .claimcheck-toc ul {
@@ -60,8 +99,8 @@ description: "Building an evidence-grounded claim verifier with SFT and reinforc
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
-<aside class="claimcheck-toc" aria-label="Table of contents">
-  <h2>Table Of Contents</h2>
+<details class="claimcheck-toc" aria-label="Table of contents" open markdown="0">
+  <summary><span>Table Of Contents</span><span class="toc-toggle" aria-hidden="true"></span></summary>
   <ul>
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#building-the-benchmark">Building the Benchmark</a></li>
@@ -74,7 +113,7 @@ description: "Building an evidence-grounded claim verifier with SFT and reinforc
     <li><a href="#what-the-model-learned">What the Model Learned</a></li>
     <li><a href="#closing">Closing</a></li>
   </ul>
-</aside>
+</details>
 
 ## Introduction
 

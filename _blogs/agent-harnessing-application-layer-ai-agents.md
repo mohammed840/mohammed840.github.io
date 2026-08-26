@@ -13,16 +13,20 @@ description: "A technical guide to agent harnessing: how the application layer g
   line-height: 1.72;
 }
 .agent-harness-post .agent-harness-layout {
+  display: block;
+}
+.agent-harness-post .agent-harness-intro-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 235px;
   gap: 42px;
   align-items: start;
+  margin-bottom: 2.4rem;
 }
 .agent-harness-post .dek {
   color: #333;
   font-size: 1.08rem;
   line-height: 1.65;
-  margin: 0 0 1.8rem;
+  margin: 0;
 }
 .agent-harness-post h2 {
   font-size: 1.62rem;
@@ -61,10 +65,10 @@ description: "A technical guide to agent harnessing: how the application layer g
   background: #fafafa;
 }
 .agent-harness-post figure {
-  width: min(1180px, calc(100vw - 88px)) !important;
-  max-width: min(1180px, calc(100vw - 88px)) !important;
-  margin: 2.55rem 0 2.55rem 50%;
-  transform: translateX(-50%);
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 2.2rem 0;
+  transform: none;
 }
 .agent-harness-post figure img {
   width: 100% !important;
@@ -129,23 +133,48 @@ description: "A technical guide to agent harnessing: how the application layer g
   overflow-wrap: anywhere;
 }
 .agent-harness-post .toc {
-  position: fixed;
-  top: 92px;
-  left: calc(50% + 270px);
-  width: 235px;
-  max-height: calc(100vh - 116px);
-  overflow-y: auto;
-  border-left: 1px solid #e7e7e7;
-  padding-left: 1rem;
-  padding-right: 0.25rem;
+  width: auto;
+  margin: 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid #e7e7e7;
   color: #5f6368;
   font-size: 0.9rem;
-  z-index: 10;
 }
-.agent-harness-post .toc strong {
-  display: block;
+.agent-harness-post .toc summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
   color: #111;
-  margin-bottom: 0.6rem;
+  font: 400 1.05rem/1.3 Georgia, "Times New Roman", serif;
+}
+.agent-harness-post .toc summary::-webkit-details-marker {
+  display: none;
+}
+.agent-harness-post .toc summary::marker {
+  content: "";
+}
+.agent-harness-post .toc .toc-toggle {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  color: #666;
+  font: 14px/1 "SFMono-Regular", Consolas, monospace;
+}
+.agent-harness-post .toc .toc-toggle::before {
+  content: "−";
+}
+.agent-harness-post .toc:not([open]) .toc-toggle::before {
+  content: "+";
+}
+.agent-harness-post .toc[open] summary {
+  margin-bottom: 0.75rem;
 }
 .agent-harness-post .toc a {
   display: block;
@@ -164,18 +193,11 @@ description: "A technical guide to agent harnessing: how the application layer g
   overflow-wrap: anywhere;
 }
 @media (max-width: 980px) {
-  .agent-harness-post .agent-harness-layout {
+  .agent-harness-post .agent-harness-intro-layout {
     grid-template-columns: 1fr;
   }
   .agent-harness-post .toc {
-    position: static;
-    width: auto;
-    max-height: none;
-    overflow: visible;
-    border-left: 0;
-    border-top: 1px solid #e7e7e7;
-    padding: 1rem 0 0;
-    order: -1;
+    width: 100%;
   }
   .agent-harness-post .principle-grid {
     grid-template-columns: 1fr;
@@ -184,9 +206,30 @@ description: "A technical guide to agent harnessing: how the application layer g
 </style>
 
 <div class="agent-harness-post" markdown="0">
-<p class="dek">
+  <div class="agent-harness-intro-layout">
+  <p class="dek">
         A useful agent is not just a model with a long prompt. It is a model operating inside an application layer that gives it tools, state, memory, constraints, validation, observability, and a way to recover when work spans many steps. The harness is where an AI system stops being a demo and starts becoming software.
-      </p>
+  </p>
+  <details class="toc" aria-label="Table of contents" open>
+    <summary><span>Table Of Contents</span><span class="toc-toggle" aria-hidden="true"></span></summary>
+    <a href="#what-is-agent-harnessing">What Is Agent Harnessing?</a>
+    <a href="#why-prompting-is-not-enough">Why Prompting Is Not Enough</a>
+    <a href="#what-the-source-posts-add">What the Source Posts Add</a>
+    <a href="#control-loop">The Control Loop</a>
+    <a href="#workflow-design">Workflow Design</a>
+    <a href="#key-principles">Key Principles</a>
+    <a href="#continuity">Continuity Artifacts</a>
+    <a href="#tool-use">Tool Use</a>
+    <a href="#architecture">Reference Architecture</a>
+    <a href="#evaluation">Evaluation</a>
+    <a href="#harness-in-rl">Harness in RL</a>
+    <a href="#building">How to Build It</a>
+    <a href="#common-failures">Failure Modes</a>
+    <a href="#maturity-ladder">Maturity Ladder</a>
+    <a href="#application-layer">Application Layer</a>
+    <a href="#references">References</a>
+  </details>
+  </div>
   <div class="agent-harness-layout">
     <div class="agent-harness-main">
         <section id="what-is-agent-harnessing">
@@ -1157,24 +1200,5 @@ description: "A technical guide to agent harnessing: how the application layer g
           </div>
         </section>
     </div>
-        <aside class="toc" aria-label="Table of contents">
-          <strong>Contents</strong>
-          <a href="#what-is-agent-harnessing">What Is Agent Harnessing?</a>
-          <a href="#why-prompting-is-not-enough">Why Prompting Is Not Enough</a>
-          <a href="#what-the-source-posts-add">What the Source Posts Add</a>
-          <a href="#control-loop">The Control Loop</a>
-          <a href="#workflow-design">Workflow Design</a>
-          <a href="#key-principles">Key Principles</a>
-          <a href="#continuity">Continuity Artifacts</a>
-          <a href="#tool-use">Tool Use</a>
-          <a href="#architecture">Reference Architecture</a>
-          <a href="#evaluation">Evaluation</a>
-          <a href="#harness-in-rl">Harness in RL</a>
-          <a href="#building">How to Build It</a>
-          <a href="#common-failures">Failure Modes</a>
-          <a href="#maturity-ladder">Maturity Ladder</a>
-          <a href="#application-layer">Application Layer</a>
-          <a href="#references">References</a>
-        </aside>
   </div>
 </div>
