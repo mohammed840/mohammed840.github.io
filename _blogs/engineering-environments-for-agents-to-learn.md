@@ -32,6 +32,12 @@ permalink: /blogs/from-real-world-work-to-an-rl-environment/
 }
 .article-toc summary p { margin: 0; font: inherit; }
 .article-toc:not([open]) summary::after { content: "+"; }
+.article-intro-grid { display: grid !important; grid-template-columns: minmax(0, 1fr) 18rem !important; gap: 2rem; align-items: start; margin-bottom: 2.5rem; }
+.article-intro-grid > .article-toc { grid-column: 2; }
+@media (max-width: 760px) {
+  .article-intro-grid { grid-template-columns: 1fr !important; }
+  .article-intro-grid > .article-toc { grid-column: auto; }
+}
 .benchmark-diagram {
   display: block;
   width: 100%;
