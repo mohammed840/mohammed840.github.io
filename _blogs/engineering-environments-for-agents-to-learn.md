@@ -3,6 +3,7 @@ title: "Engineering Environments for Agents to Learn"
 date: 2026-09-13
 layout: blog
 author: Mohammed Alshehri
+description: "A practical guide to turning expert software engineering work into reproducible benchmarks and reinforcement-learning environments."
 permalink: /blogs/from-real-world-work-to-an-rl-environment/
 ---
 
@@ -29,6 +30,7 @@ permalink: /blogs/from-real-world-work-to-an-rl-environment/
   color: var(--muted);
   font: 14px/1 "SFMono-Regular", Consolas, monospace;
 }
+.article-toc summary p { margin: 0; font: inherit; }
 .article-toc:not([open]) summary::after { content: "+"; }
 .benchmark-diagram {
   display: block;
@@ -39,10 +41,21 @@ permalink: /blogs/from-real-world-work-to-an-rl-environment/
 }
 </style>
 
+<div class="article-intro-grid">
+<div class="article-intro-copy">
+
+Benchmarks usually begin where real work ends. They present a clean prompt, a bounded set of inputs, and a success condition that can be checked consistently. Professional work rarely arrives in that form. A request such as “fix this authentication bug,” “prepare the investment analysis,” or “resolve the customer issue” is only the visible surface of a much larger process. The person doing the work must determine what the request actually means, locate the relevant evidence, apply rules that may never have been written down, make judgment calls, and leave the surrounding system in a valid state.
+
+This gap is not incidental. It is the central problem in converting real work into a benchmark. [AlphaEval](https://arxiv.org/abs/2604.12162), a production-grounded evaluation of 94 tasks from seven companies, describes production work as structurally different from conventional benchmark tasks: requirements are loosely specified, constraints are often implicit, information is fragmented across heterogeneous documents, and success depends on domain-expert judgment. A benchmark designer must preserve these features while also producing something that can be run repeatedly and graded fairly.
+
+<img class="benchmark-diagram" src="/assets/images/real-work-to-benchmark-task.png?v=4" alt="Diagram contrasting interconnected, ambiguous real work with a reproducible benchmark task composed of a task prompt, environment, and verifiable success criteria.">
+
+</div>
+
 <details class="article-toc" aria-label="Table of contents" open>
   <summary>
 
-  Table Of Contents
+  <span>Table Of Contents</span><span class="toc-toggle" aria-hidden="true"></span>
 
   </summary>
   <ul>
@@ -58,12 +71,7 @@ permalink: /blogs/from-real-world-work-to-an-rl-environment/
     <li><a href="#conclusion">Conclusion</a></li>
   </ul>
 </details>
-
-Benchmarks usually begin where real work ends. They present a clean prompt, a bounded set of inputs, and a success condition that can be checked consistently. Professional work rarely arrives in that form. A request such as “fix this authentication bug,” “prepare the investment analysis,” or “resolve the customer issue” is only the visible surface of a much larger process. The person doing the work must determine what the request actually means, locate the relevant evidence, apply rules that may never have been written down, make judgment calls, and leave the surrounding system in a valid state.
-
-This gap is not incidental. It is the central problem in converting real work into a benchmark. [AlphaEval](https://arxiv.org/abs/2604.12162), a production-grounded evaluation of 94 tasks from seven companies, describes production work as structurally different from conventional benchmark tasks: requirements are loosely specified, constraints are often implicit, information is fragmented across heterogeneous documents, and success depends on domain-expert judgment. A benchmark designer must preserve these features while also producing something that can be run repeatedly and graded fairly.
-
-<img class="benchmark-diagram" src="/assets/images/real-work-to-benchmark-task.png?v=4" alt="Diagram contrasting interconnected, ambiguous real work with a reproducible benchmark task composed of a task prompt, environment, and verifiable success criteria.">
+</div>
 
 ### Real work is under-specified
 
