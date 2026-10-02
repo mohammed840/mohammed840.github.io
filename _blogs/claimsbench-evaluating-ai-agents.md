@@ -39,7 +39,7 @@ permalink: /blogs/claimsbench-evaluating-ai-agents/
 .claimsbench-hero-settlement:hover { transform: translateX(-50%) rotate(-7deg) translateY(10px) scale(1.08); }
 .claimsbench-hero-car { left: -1rem; bottom: -.75rem; transform: rotate(-8deg); }
 .claimsbench-hero-folder { right: -.5rem; bottom: -.75rem; transform: rotate(7deg); }
-.claimsbench-hero-settlement { left: 50%; top: -2.25rem; width: 11rem; height: 11rem; transform: translateX(-50%) rotate(-7deg); opacity: .72; }
+.claimsbench-hero-settlement { left: 50%; top: -2.25rem; z-index: 0; width: 11rem; height: 11rem; transform: translateX(-50%) rotate(-7deg); opacity: .42; filter: blur(.15px) drop-shadow(0 12px 18px rgba(0,0,0,.08)); }
 @media (max-width: 650px) { .claimsbench-hero { min-height: 360px; } .claimsbench-hero-art { width: 10rem; height: 10rem; } .claimsbench-hero-car { left: -2.5rem; bottom: -1.5rem; } .claimsbench-hero-folder { right: -2.5rem; bottom: -1.5rem; } .claimsbench-hero-settlement { top: -3.5rem; width: 8rem; height: 8rem; } }
 </style>
 
