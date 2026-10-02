@@ -1,10 +1,12 @@
 ---
 title: "ClaimsBench: Evaluating AI Agents Across a Complete Insurance Claim"
 date: 2026-10-02
-layout: blog
-author: Mohammed Alshehri
+layout: paper
+authors: "Mohammed Alshehri"
+year: 2026
+tldr: "ClaimsBench evaluates AI agents across evidence gathering, adjudication, revision, and closure in complete insurance claims."
 description: "How ClaimsBench evaluates AI agents across evidence gathering, adjudication, revision, and closure in complete insurance claims."
-permalink: /blogs/claimsbench-evaluating-ai-agents/
+permalink: /projects/claimsbench-evaluating-ai-agents/
 ---
 
 <style>
@@ -29,9 +31,6 @@ permalink: /blogs/claimsbench-evaluating-ai-agents/
 .article-intro-grid > .article-toc { grid-column: 2; }
 @media (max-width: 760px) { .article-intro-grid { grid-template-columns: 1fr !important; } .article-intro-grid > .article-toc { grid-column: auto; } }
 .claimsbench-hero { position: relative; display: grid; min-height: 330px; margin: 0 0 2.5rem; overflow: visible; border: 0; background: transparent; isolation: isolate; }
-.claimsbench-hero-copy { position: relative; z-index: 2; align-self: center; justify-self: center; max-width: 31rem; padding: 2.5rem 1.5rem; text-align: center; }
-.claimsbench-hero-copy h2 { margin: 0 0 .7rem; font: 400 clamp(2rem, 5vw, 3.5rem)/1 Georgia, "Times New Roman", serif; letter-spacing: -.03em; }
-.claimsbench-hero-copy p { margin: 0; color: var(--muted); font-size: .95rem; }
 .claimsbench-hero-art { position: absolute; z-index: 1; width: 14rem; height: 14rem; object-fit: contain; opacity: .96; filter: drop-shadow(0 14px 16px rgba(0,0,0,.12)); transition: transform .35s ease, filter .35s ease, opacity .35s ease; cursor: pointer; }
 .claimsbench-hero-art:hover { opacity: 1; filter: drop-shadow(0 20px 22px rgba(0,0,0,.2)); }
 .claimsbench-hero-car:hover { transform: rotate(-8deg) translateY(-10px) scale(1.06); }
@@ -47,10 +46,6 @@ permalink: /blogs/claimsbench-evaluating-ai-agents/
   <img class="claimsbench-hero-art claimsbench-hero-car" src="{{ '/assets/images/claimsbench-car.png' | relative_url }}" alt="Damaged car representing a reported loss">
   <img class="claimsbench-hero-art claimsbench-hero-folder" src="{{ '/assets/images/claimsbench-folder.png' | relative_url }}" alt="Claim documents in a folder">
   <img class="claimsbench-hero-art claimsbench-hero-settlement" src="{{ '/assets/images/claimsbench-settlement.png' | relative_url }}" alt="Claim settlement document">
-  <div class="claimsbench-hero-copy">
-    <h2>ClaimsBench</h2>
-    <p>Evaluating AI agents across a complete insurance claim</p>
-  </div>
 </div>
 
 <div class="article-intro-grid">
