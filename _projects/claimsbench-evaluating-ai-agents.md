@@ -120,6 +120,8 @@ Consider the public opening of `OID-001`: a reported dishwasher-related water lo
 
 Prime Verifiers runs the claims agent and a separate claimant simulator, exposes structured claim tools, and records the authoritative server state. In our evaluation configuration, the agent has up to **80 assistant turns**. The turn limit is not a limit of 80 claim-tool calls.
 
+The claimant is another AI agent, not a fixed questionnaire. In the recorded Prime runs, GPT-5.4-mini plays the claimant from a private profile and answers the claims agent’s questions during intake, for up to seven claimant turns. The claims agent learns those private facts only when the claimant discloses them. A separate intake check measures how well the agent captured the facts; GPT-5.6 Luna judges the official reward.
+
 The official `luna_reward` uses **GPT-5.6 Luna** to grade the accepted work against the private reference. Its five criteria are factual accuracy (30%), no material hallucinations (30%), claim-specific coverage (20%), direct task completion (10%), and grounded citations (10%). Each receives no, partial, or yes credit. Five deterministic checks—investigation, interim decisions, evidence-based revision, coverage and payment, and dispute closure—set the trajectory ceiling. The official reward is the lower of that ceiling and the Luna rubric score after coverage and error penalties. Merely reaching a phase earns no automatic credit, and an attempt with no accepted substantive work scores zero.
 
 This design lets the score represent useful partial progress while still asking whether the agent's statements and decisions are grounded in the claim record. A terminal-completion diagnostic is available separately; it is not the official reward.
@@ -190,7 +192,7 @@ The table below reports results from the **30-claim ClaimsBench benchmark**. It 
 
 Each model received three independent attempts per task. The leaderboard uses the v3 phase-ceiling scorer together with the GPT-5.6 Luna rubric.
 
-<div class="model-chart" markdown="0" role="img" aria-label="Bar chart of mean ClaimsBench reward by model. Opus 5.5 leads at 0.68, followed by Fable 5.1 at 0.64, GPT-6.1 Sol at 0.61, GPT-6 Astra at 0.60, Gemini 3.8 Flash at 0.56, DeepSeek V4.1 Flash at 0.55, and Grok 4.7 at 0.52.">
+<div class="model-chart" markdown="0" role="img" aria-label="Bar chart of mean ClaimsBench reward by model. Opus 5.5 leads at 0.68, followed by Fable 5.1 at 0.64, GPT-6 Sol at 0.61, GPT-6 Astra at 0.60, Gemini 3.8 Flash at 0.56, DeepSeek V4.1 Flash at 0.55, and Grok 4.7 at 0.52.">
 <svg viewBox="0 0 920 390" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <g fill="none" stroke="var(--line)" stroke-width="1">
     <line x1="72" y1="35" x2="72" y2="310" />
@@ -208,7 +210,7 @@ Each model received three independent attempts per task. The leaderboard uses th
   </g>
   <g fill="var(--text)" font-family="SFMono-Regular, Consolas, monospace" font-size="12" text-anchor="middle">
     <text x="141" y="68">0.68</text><text x="256" y="82">0.64</text><text x="371" y="92">0.61</text><text x="486" y="95">0.60</text><text x="601" y="109">0.56</text><text x="716" y="113">0.55</text><text x="831" y="123">0.52</text>
-    <text x="141" y="334">Opus 5.5</text><text x="256" y="334">Fable 5.1</text><text x="371" y="334">GPT-6.1 Sol</text><text x="486" y="334">GPT-6 Astra</text><text x="601" y="334">Gemini 3.8</text><text x="716" y="334">DeepSeek</text><text x="831" y="334">Grok 4.7</text>
+    <text x="141" y="334">Opus 5.5</text><text x="256" y="334">Fable 5.1</text><text x="371" y="334">GPT-6 Sol</text><text x="486" y="334">GPT-6 Astra</text><text x="601" y="334">Gemini 3.8</text><text x="716" y="334">DeepSeek</text><text x="831" y="334">Grok 4.7</text>
   </g>
   <text x="22" y="178" transform="rotate(-90 22 178)" fill="var(--muted)" font-family="SFMono-Regular, Consolas, monospace" font-size="12" text-anchor="middle">Mean reward</text>
   <text x="480" y="375" fill="var(--muted)" font-family="SFMono-Regular, Consolas, monospace" font-size="12" text-anchor="middle">Model</text>
@@ -219,13 +221,13 @@ Each model received three independent attempts per task. The leaderboard uses th
 | --- | --- | ---: | ---: | ---: |
 | Opus 5.5 | native CLI | 70% | 0.68 | 56 |
 | Fable 5.1 | native CLI | 65% | 0.64 | 55 |
-| GPT-6.1 Sol | native CLI | 61% | 0.61 | 50 |
+| GPT-6 Sol | native CLI | 61% | 0.61 | 50 |
 | GPT-6 Astra | native CLI | 60% | 0.60 | 48 |
 | Gemini 3.8 Flash | native CLI | 56% | 0.56 | 45 |
 | DeepSeek V4.1 Flash | native CLI | 55% | 0.55 | 49 |
 | Grok 4.7 | native CLI | 53% | 0.52 | 50 |
 
-Across the benchmark runs, Opus 5.5 has a mean reward of **0.68** with a **70% pass rate**, followed by Fable 5.1 at **0.64** and **65%**. GPT-6.1 Sol and GPT-6 Astra have mean rewards of **0.61** and **0.60**, while Gemini 3.8 Flash and DeepSeek V4.1 Flash are close at **0.56** and **0.55**. Grok 4.7 has a mean reward of **0.52**.
+Across the benchmark runs, Opus 5.5 has a mean reward of **0.68** with a **70% pass rate**, followed by Fable 5.1 at **0.64** and **65%**. GPT-6 Sol and GPT-6 Astra have mean rewards of **0.61** and **0.60**, while Gemini 3.8 Flash and DeepSeek V4.1 Flash are close at **0.56** and **0.55**. Grok 4.7 has a mean reward of **0.52**.
 
 Average tool usage across the benchmark runs ranges from **45 to 56 calls per task**. Tool count alone does not indicate stronger performance. More calls can represent useful evidence gathering, but they can also reflect repeated actions, unnecessary investigation, or difficulty progressing through the workflow.
 
