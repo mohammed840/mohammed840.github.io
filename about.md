@@ -25,8 +25,8 @@ permalink: /about/
           <summary>About</summary>
           <div class="section-copy">
             <p>
-              I grew up between Dublin, Ireland, and London, UK. I work on turning real-world professional workflows into
-              training data that helps frontier models handle complex knowledge work.
+              I grew up between Dublin and London. I’m curious, eager to learn, and take more risks than most.
+              I make more mistakes along the way, but learn quickly and adapt.
             </p>
             <p>
               Previously, I worked with <a href="https://www.primeintellect.ai/" target="_blank" rel="noreferrer">Prime Intellect</a>
