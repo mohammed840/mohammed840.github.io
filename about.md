@@ -7,7 +7,7 @@ permalink: /about/
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Mohammed Alshehri — RL Resident Researcher at Prime Intellect." />
+    <meta name="description" content="Mohammed Alshehri — founder and researcher building training data for knowledge work to accelerate frontier model development." />
     <title>Mohammed Alshehri</title>
     <link rel="stylesheet" href="{{ '/assets/profile.css' | relative_url }}" />
   </head>
@@ -16,8 +16,7 @@ permalink: /about/
       <header class="profile-header">
         <h1>Mohammed Alshehri</h1>
         <p class="intro">
-          RL Resident Researcher at <a href="https://www.primeintellect.ai/" target="_blank" rel="noreferrer">Prime Intellect</a>,
-          working on long-horizon reinforcement learning environments, agentic systems, and the infrastructure that makes capable models more reliable.
+          Founder and researcher building training data for knowledge work to accelerate frontier model development.
         </p>
       </header>
 
@@ -26,12 +25,13 @@ permalink: /about/
           <summary>About</summary>
           <div class="section-copy">
             <p>
-              I grew up between Dublin, Ireland, and London, UK. I’m currently an RL Resident Researcher at Prime Intellect,
-              where I work on long-horizon reinforcement learning environments: training agents to reason, act, and improve over extended tasks.
+              I grew up between Dublin, Ireland, and London, UK. I work on turning real-world professional workflows into
+              training data that helps frontier models handle complex knowledge work.
             </p>
             <p>
-              My work sits at the intersection of reinforcement learning, language models, agent evaluation, and research systems.
-              I’m interested in the gap between impressive short demonstrations and reliable, sustained problem-solving in the real world.
+              Previously, I worked with <a href="https://www.primeintellect.ai/" target="_blank" rel="noreferrer">Prime Intellect</a>
+              and on ML Bench at <a href="https://datacurve.ai/" target="_blank" rel="noreferrer">Datacurve</a>. My research interests include reinforcement learning, agent evaluation, and how to measure
+              whether models are getting better at the work people need them to do.
             </p>
           </div>
         </details>
